@@ -86,14 +86,14 @@ def get_operating_system():
 
 def installation_instructions():
     if get_operating_system() == "Windows":
-        print(f"Install for Windows:"
-              f"1) Navigate to https://github.com/mamedev/mame/releases"
-              f"2) Install mame_...64bit.exe if you have a 64-bit machine or mame.exe if you have a 32-bit machine"
-              f"3) Extract to C:\\mame-tools"
-              f"4) Add C:\\mame-tools to System Environment Variable PATH")
+        print(f"Install for Windows:\n"
+              f"1) Navigate to https://github.com/mamedev/mame/releases\n"
+              f"2) Install mame_...64bit.exe if you have a 64-bit machine or mame.exe if you have a 32-bit machine\n"
+              f"3) Extract to C:\\mame-tools\n"
+              f"4) Add C:\\mame-tools to System Environment Variable PATH\n")
     if get_operating_system() == "Ubuntu":
-        print("Install for Ubuntu:"
-              "1) apt install mame-tools")
+        print("Install for Ubuntu:\n"
+              "1) apt install mame-tools\n")
 
 
 def usage():
