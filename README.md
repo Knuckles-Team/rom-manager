@@ -20,7 +20,7 @@
 ![PyPI - Wheel](https://img.shields.io/pypi/wheel/rom_manager)
 ![PyPI - Implementation](https://img.shields.io/pypi/implementation/rom_manager)
 
-*Version: 0.0.7*
+*Version: 0.0.8*
 
 Convert Game ROMs to Compressed Hunks of Data (CHD) file format
 
