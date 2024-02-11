@@ -272,17 +272,12 @@ def rom_manager(argv):
             silent = True
         elif opt in ("-x", "--delete"):
             clean_origin_files = True
-
     roms_manager = RomManager()
     roms_manager.silent = silent
     roms_manager.force = force
     roms_manager.directory = directory
     roms_manager.clean_origin_files = clean_origin_files
     roms_manager.process_parallel(cpu_count=cpu_count)
-    # roms_manager.parallel_process_archives(cpu_count=cpu_count)
-    # roms_manager.build_commands(force=force)
-    # roms_manager.parallel_run_commands(cpu_count=cpu_count)
-    # roms_manager.cleanup(deep_clean=deep_clean)
 
 
 def main():
@@ -297,27 +292,3 @@ if __name__ == "__main__":
         usage()
         sys.exit(2)
     rom_manager(sys.argv[1:])
-
-    # import csv
-    #
-    # csv_file = "ps1_codes.csv"
-    #
-    # # Initialize an empty dictionary
-    # data_dict = {}
-    #
-    # with open(csv_file, "r") as file:
-    #     reader = csv.reader(file)
-    #     for row in reader:
-    #         key, value = row
-    #         keys = key.split("\n")
-    #         value = value.replace("\xa0", "")
-    #         for k in keys:
-    #             data_dict[k] = value
-    #
-    #
-    #
-    # print(data_dict)
-    # import json
-    # with open('ps1_codes.json', 'w', encoding='utf-8') as f:
-    #     json.dump(data_dict, f, ensure_ascii=False, indent=2)
-    #
