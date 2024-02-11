@@ -10,11 +10,12 @@ import patoolib
 import glob
 import shutil
 from multiprocessing import Pool
-from game_codes import psx_codes
 try:
     from version import __version__, __author__, __credits__
+    from game_codes import psx_codes
 except Exception:
     from rom_manager.version import __version__, __author__, __credits__
+    from rom_manager.game_codes import psx_codes
 
 
 class RomManager:
