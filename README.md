@@ -1,40 +1,42 @@
-# Subshift
+# ROM Manager
 
-![PyPI - Version](https://img.shields.io/pypi/v/subshift)
-![PyPI - Downloads](https://img.shields.io/pypi/dd/subshift)
-![GitHub Repo stars](https://img.shields.io/github/stars/Knuckles-Team/subshift)
-![GitHub forks](https://img.shields.io/github/forks/Knuckles-Team/subshift)
-![GitHub contributors](https://img.shields.io/github/contributors/Knuckles-Team/subshift)
-![PyPI - License](https://img.shields.io/pypi/l/subshift)
-![GitHub](https://img.shields.io/github/license/Knuckles-Team/subshift)
+![PyPI - Version](https://img.shields.io/pypi/v/rom_manager)
+![PyPI - Downloads](https://img.shields.io/pypi/dd/rom_manager)
+![GitHub Repo stars](https://img.shields.io/github/stars/Knuckles-Team/rom_manager)
+![GitHub forks](https://img.shields.io/github/forks/Knuckles-Team/rom_manager)
+![GitHub contributors](https://img.shields.io/github/contributors/Knuckles-Team/rom_manager)
+![PyPI - License](https://img.shields.io/pypi/l/rom_manager)
+![GitHub](https://img.shields.io/github/license/Knuckles-Team/rom_manager)
 
-![GitHub last commit (by committer)](https://img.shields.io/github/last-commit/Knuckles-Team/subshift)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/Knuckles-Team/subshift)
-![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/Knuckles-Team/subshift)
-![GitHub issues](https://img.shields.io/github/issues/Knuckles-Team/subshift)
+![GitHub last commit (by committer)](https://img.shields.io/github/last-commit/Knuckles-Team/rom_manager)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/Knuckles-Team/rom_manager)
+![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/Knuckles-Team/rom_manager)
+![GitHub issues](https://img.shields.io/github/issues/Knuckles-Team/rom_manager)
 
-![GitHub top language](https://img.shields.io/github/languages/top/Knuckles-Team/subshift)
-![GitHub language count](https://img.shields.io/github/languages/count/Knuckles-Team/subshift)
-![GitHub repo size](https://img.shields.io/github/repo-size/Knuckles-Team/subshift)
-![GitHub repo file count (file type)](https://img.shields.io/github/directory-file-count/Knuckles-Team/subshift)
-![PyPI - Wheel](https://img.shields.io/pypi/wheel/subshift)
-![PyPI - Implementation](https://img.shields.io/pypi/implementation/subshift)
+![GitHub top language](https://img.shields.io/github/languages/top/Knuckles-Team/rom_manager)
+![GitHub language count](https://img.shields.io/github/languages/count/Knuckles-Team/rom_manager)
+![GitHub repo size](https://img.shields.io/github/repo-size/Knuckles-Team/rom_manager)
+![GitHub repo file count (file type)](https://img.shields.io/github/directory-file-count/Knuckles-Team/rom_manager)
+![PyPI - Wheel](https://img.shields.io/pypi/wheel/rom_manager)
+![PyPI - Implementation](https://img.shields.io/pypi/implementation/rom_manager)
 
-*Version: 0.10.0*
+*Version: 0.0.1*
 
-A handy Python library to shift your subtitles +/- seconds so they align with your video
+Optimize games to .chd format for enhanced compression
 
-This repository is actively maintained - Contributions are welcome!
+Specify a directory to scan for all .cue, .iso, .gdi files
+
+Automatically extracts .7z, .rar, .zip, .tar.gz, .gz, .tar, .gzip, .bz2, .bzip2
+
 
 <details>
   <summary><b>Usage:</b></summary>
 
-| Short Flag | Long Flag | Description              |
-| --- | ------|--------------------------|
-| -h | --help | See Usage                |
-| -f | --file | Subtitle File            |
-| -m | --mode | + / -                    |
-| -t | --time | Time in seconds to shift |
+| Short Flag | Long Flag   | Description                |
+|------------|-------------|----------------------------|
+| -h         | --help      | See Usage                  |
+| -d         | --directory | Directory to scan for ROMs |
+| -s         | --silent    | Suppress output text       |
 
 </details>
 
@@ -42,7 +44,7 @@ This repository is actively maintained - Contributions are welcome!
   <summary><b>Example:</b></summary>
 
 ```bash
-subshift --file English.srt --mode + --time 5
+rom-manager --directory "C:/Users/default/Games/"
 ```
 
 </details>
@@ -53,7 +55,7 @@ subshift --file English.srt --mode + --time 5
 Install Python Package
 
 ```bash
-python -m pip install subshift
+python -m pip install rom-manager
 ```
 
 </details>
