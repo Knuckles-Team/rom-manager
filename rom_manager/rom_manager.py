@@ -182,9 +182,10 @@ if __name__ == "__main__":
     #     usage()
     #     sys.exit(2)
     # rom_manager(sys.argv[1:])
+
     import csv
 
-    csv_file = "ps2_codes.csv"
+    csv_file = "ps1_codes.csv"
 
     # Initialize an empty dictionary
     data_dict = {}
@@ -202,6 +203,6 @@ if __name__ == "__main__":
 
     print(data_dict)
     import json
-    with open('ps2_codes.json', 'w', encoding='utf-8') as f:
+    with open('ps1_codes.json', 'w', encoding='utf-8') as f:
         json.dump(data_dict, f, ensure_ascii=False, indent=2)
 
