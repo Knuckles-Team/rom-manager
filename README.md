@@ -1,24 +1,24 @@
 # ROM Manager
 
-![PyPI - Version](https://img.shields.io/pypi/v/rom_manager)
-![PyPI - Downloads](https://img.shields.io/pypi/dd/rom_manager)
-![GitHub Repo stars](https://img.shields.io/github/stars/Knuckles-Team/rom_manager)
-![GitHub forks](https://img.shields.io/github/forks/Knuckles-Team/rom_manager)
-![GitHub contributors](https://img.shields.io/github/contributors/Knuckles-Team/rom_manager)
-![PyPI - License](https://img.shields.io/pypi/l/rom_manager)
-![GitHub](https://img.shields.io/github/license/Knuckles-Team/rom_manager)
+![PyPI - Version](https://img.shields.io/pypi/v/rom-manager)
+![PyPI - Downloads](https://img.shields.io/pypi/dd/rom-manager)
+![GitHub Repo stars](https://img.shields.io/github/stars/Knuckles-Team/rom-manager)
+![GitHub forks](https://img.shields.io/github/forks/Knuckles-Team/rom-manager)
+![GitHub contributors](https://img.shields.io/github/contributors/Knuckles-Team/rom-manager)
+![PyPI - License](https://img.shields.io/pypi/l/rom-manager)
+![GitHub](https://img.shields.io/github/license/Knuckles-Team/rom-manager)
 
-![GitHub last commit (by committer)](https://img.shields.io/github/last-commit/Knuckles-Team/rom_manager)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/Knuckles-Team/rom_manager)
-![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/Knuckles-Team/rom_manager)
-![GitHub issues](https://img.shields.io/github/issues/Knuckles-Team/rom_manager)
+![GitHub last commit (by committer)](https://img.shields.io/github/last-commit/Knuckles-Team/rom-manager)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/Knuckles-Team/rom-manager)
+![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/Knuckles-Team/rom-manager)
+![GitHub issues](https://img.shields.io/github/issues/Knuckles-Team/rom-manager)
 
-![GitHub top language](https://img.shields.io/github/languages/top/Knuckles-Team/rom_manager)
-![GitHub language count](https://img.shields.io/github/languages/count/Knuckles-Team/rom_manager)
-![GitHub repo size](https://img.shields.io/github/repo-size/Knuckles-Team/rom_manager)
-![GitHub repo file count (file type)](https://img.shields.io/github/directory-file-count/Knuckles-Team/rom_manager)
-![PyPI - Wheel](https://img.shields.io/pypi/wheel/rom_manager)
-![PyPI - Implementation](https://img.shields.io/pypi/implementation/rom_manager)
+![GitHub top language](https://img.shields.io/github/languages/top/Knuckles-Team/rom-manager)
+![GitHub language count](https://img.shields.io/github/languages/count/Knuckles-Team/rom-manager)
+![GitHub repo size](https://img.shields.io/github/repo-size/Knuckles-Team/rom-manager)
+![GitHub repo file count (file type)](https://img.shields.io/github/directory-file-count/Knuckles-Team/rom-manager)
+![PyPI - Wheel](https://img.shields.io/pypi/wheel/rom-manager)
+![PyPI - Implementation](https://img.shields.io/pypi/implementation/rom-manager)
 
 *Version: 0.0.8*
 
