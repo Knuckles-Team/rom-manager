@@ -11,6 +11,7 @@ import glob
 import shutil
 import re
 from multiprocessing import Pool
+from tqdm import tqdm
 
 try:
     from version import __version__, __author__, __credits__
@@ -32,18 +33,21 @@ class RomManager:
 
     def process_parallel(self, cpu_count=None):
         if not cpu_count:
-            cpu_count = os.cpu_count()
+            cpu_count = os.cpu_count()/2 + 2
         pool = Pool(processes=cpu_count)
         try:
             process_extensions = self.archive_formats + self.supported_types + self.generative_types
             files = self.get_files(directory=self.directory, extensions=process_extensions)
-            pool.map(self.process_file, files)
+            with tqdm(total=len(files), desc="Processing files") as pbar:
+                def update(*args):
+                    pbar.update()
+                pool.starmap_async(self.process_file, [(update, file) for file in files])
+                pool.close()
+                pool.join()
         finally:
-            pool.close()
-            pool.join()
-        print("Conversion of all files complete!")
+            print("Conversion of all files complete!")
 
-    def process_file(self, file=None):
+    def process_file(self, update_func, file=None):
         archive_file = None
         if not file:
             return
@@ -98,6 +102,7 @@ class RomManager:
             self.cleanup_origin_files(game_directory=game_directory,
                                       chd_file_path=chd_file_path,
                                       archive_file=archive_file)
+        update_func()
 
     @staticmethod
     def map_game_code_name(file):
@@ -213,6 +218,19 @@ def get_operating_system():
     return operating_system
 
 
+def get_directory_size(directory):
+    total_size = 0
+    for dirpath, dirnames, filenames in os.walk(directory):
+        for filename in filenames:
+            filepath = os.path.join(dirpath, filename)
+            total_size += os.path.getsize(filepath)
+    size_in_bytes = total_size
+    size_in_kb = size_in_bytes / 1024
+    size_in_mb = size_in_kb / 1024
+    size_in_gb = size_in_mb / 1024
+    return size_in_bytes, size_in_kb, size_in_mb, size_in_gb
+
+
 def installation_instructions():
     if get_operating_system() == "Windows":
         print(f"Install for Windows:\n"
@@ -247,7 +265,7 @@ def usage():
 def rom_manager(argv):
     cpu_count = None
     directory = ""
-    silent = False
+    silent = True
     force = False
     clean_origin_files = False
 
@@ -276,8 +294,13 @@ def rom_manager(argv):
     roms_manager.silent = silent
     roms_manager.force = force
     roms_manager.directory = directory
+    before_size = get_directory_size(directory=directory)
     roms_manager.clean_origin_files = clean_origin_files
     roms_manager.process_parallel(cpu_count=cpu_count)
+    after_size = get_directory_size(directory=directory)
+    print(f"Directory size before: {before_size[3]} GB"
+          f"Directory size after: {after_size[3]} GB"
+          f"Savings: {before_size[3]-after_size[3]} GB")
 
 
 def main():
