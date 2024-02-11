@@ -72,7 +72,7 @@ class RomManager:
                     file_extension = os.path.splitext(file)[1]
                     cleaned_value = re.sub(r'[<>:"/\\|?*\x00-\x1f]', '', value)
                     new_file = os.path.join(file_path, f"{cleaned_value} - {key}{file_extension}")
-                    if file != new_file:
+                    if file != new_file and not os.path.exists(new_file):
                         os.rename(file, new_file)
                         file = new_file
                     print(f"The string contains the key: {key}")
