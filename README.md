@@ -24,6 +24,8 @@
 
 Convert Game ROMs to Compressed Hunks of Data (CHD) file format
 
+Automatically generate missing .cue files for your .bin files!
+
 #### Why?
 
 CHD (“Compressed Hunks of Data”) files are compressed data files that can be used on most CD-based systems. 
