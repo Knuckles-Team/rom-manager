@@ -62,11 +62,13 @@ but now they are compatible with a variety emulators and CD-based consoles.
 <details>
   <summary><b>Usage:</b></summary>
 
-| Short Flag | Long Flag   | Description                |
-|------------|-------------|----------------------------|
-| -h         | --help      | See Usage                  |
-| -d         | --directory | Directory to scan for ROMs |
-| -s         | --silent    | Suppress output text       |
+| Short Flag | Long Flag   | Description                                             |
+|------------|-------------|---------------------------------------------------------|
+| -h         | --help      | See Usage                                               |
+| -c         | --cpu-count | Limit max number of CPUs to use for parallel processing |
+| -d         | --directory | Directory to scan for ROMs                              |
+| -f         | --force     | Force overwrite of existing CHD files                   |
+| -s         | --silent    | Suppress output text                                    |
 
 </details>
 

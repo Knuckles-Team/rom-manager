@@ -9,7 +9,10 @@ import subprocess
 import patoolib
 import shutil
 from multiprocessing import Pool
-from rom_manager.version import __version__, __author__, __credits__
+try:
+    from version import __version__, __author__, __credits__
+except Exception:
+    from rom_manager.version import __version__, __author__, __credits__
 
 
 class RomManager:
@@ -30,12 +33,16 @@ class RomManager:
         finally:
             pool.close()
             pool.join()
+        print("Extracting All Archives Complete!")
 
     def process_archive(self, archive):
-        archive_directory = os.path.splitext(os.path.basename(archive))[0]
+        archive_directory = os.path.dirname(archive)
         print(f"Extracting {archive} to {archive_directory}...")
         os.makedirs(archive_directory, exist_ok=True)
-        patoolib.extract_archive(archive, outdir=archive_directory)
+        try:
+            patoolib.extract_archive(archive, outdir=archive_directory)
+        except patoolib.util.PatoolError as e:
+            print(f"Unable to extract: {archive}\nError: {e}")
         self.extracted_directories.append(archive_directory)
         print(f"Finished Extracting {archive} to {archive_directory}")
 
@@ -45,22 +52,27 @@ class RomManager:
             shutil.rmtree(extracted_directory)
             print(f"Finished Cleaning {extracted_directory}")
 
-    def build_commands(self):
+    def build_commands(self, force=False):
         for file in get_files(directory=self.directory, extensions=self.supported_types):
             chd_file = f"{os.path.splitext(os.path.basename(file))[0]}.chd"
             chd_file_directory = os.path.dirname(file)
-            chd_file_path = f"{chd_file_directory}/{chd_file}"
-            self.chd_commands.append(['chdman', 'createcd', '-i', f'"{file}"', '-o', f'"{chd_file_path}"'])
+            chd_file_path = os.path.join(chd_file_directory, chd_file)
+            chd_command = ['chdman', 'createcd', '-i', f"{file}", '-o', f"{chd_file_path}"]
+            if force:
+                chd_command.append('-f')
+            self.chd_commands.append(chd_command)
 
     def parallel_run_commands(self, cpu_count=None):
         if not cpu_count:
             cpu_count = os.cpu_count()
         pool = Pool(processes=cpu_count)
+        print(f"COMMANDS: {self.chd_commands}")
         try:
             pool.map(self.run_command, self.chd_commands)
         finally:
             pool.close()
             pool.join()
+        print("Converting All Files Complete!")
 
     def run_command(self, command):
         try:
@@ -115,7 +127,9 @@ def usage():
           f"\n"
           f"Usage: \n"
           f"-h | --help      [ See usage for script ]\n"
+          f"-c | --cpu-count [ Limit max number of CPUs to use for parallel processing ]\n"
           f"-d | --directory [ Directory to process ROMs ]\n"
+          f"-f | --force     [ Force overwrite of existing CHD files ]\n"
           f"-s | --silent    [ Suppress output messages ]\n"
           f"\n"
           f"Example: \n"
@@ -127,9 +141,10 @@ def rom_manager(argv):
     cpu_count = None
     directory = ""
     silent = False
+    force = False
 
     try:
-        opts, args = getopt.getopt(argv, "hc:d:s", ["help", "cpu-count=", "directory=", "silent"])
+        opts, args = getopt.getopt(argv, "hc:d:fs", ["help", "cpu-count=", "directory=", "force", "silent"])
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -141,6 +156,8 @@ def rom_manager(argv):
             cpu_count = arg
         elif opt in ("-d", "--directory"):
             directory = arg
+        elif opt in ("-f", "--force"):
+            force = True
         elif opt in ("-s", "--silent"):
             silent = True
 
@@ -148,7 +165,7 @@ def rom_manager(argv):
     roms_manager.silent = silent
     roms_manager.directory = directory
     roms_manager.parallel_process_archives(cpu_count=cpu_count)
-    roms_manager.build_commands()
+    roms_manager.build_commands(force=force)
     roms_manager.parallel_run_commands(cpu_count=cpu_count)
     roms_manager.cleanup_extracted_archives()
 
@@ -161,7 +178,30 @@ def main():
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        usage()
-        sys.exit(2)
-    rom_manager(sys.argv[1:])
+    # if len(sys.argv) < 2:
+    #     usage()
+    #     sys.exit(2)
+    # rom_manager(sys.argv[1:])
+    import csv
+
+    csv_file = "ps2_codes.csv"
+
+    # Initialize an empty dictionary
+    data_dict = {}
+
+    with open(csv_file, "r") as file:
+        reader = csv.reader(file)
+        for row in reader:
+            key, value = row
+            keys = key.split("\n")
+            value = value.replace("\xa0", "")
+            for k in keys:
+                data_dict[k] = value
+
+
+
+    print(data_dict)
+    import json
+    with open('ps2_codes.json', 'w', encoding='utf-8') as f:
+        json.dump(data_dict, f, ensure_ascii=False, indent=2)
+
