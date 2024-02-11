@@ -9,7 +9,7 @@ import subprocess
 import patoolib
 import glob
 import shutil
-from multiprocessing import Pool
+from multiprocessing import Pool, Queue
 from game_codes import psx_codes
 try:
     from version import __version__, __author__, __credits__
@@ -32,11 +32,16 @@ class RomManager:
             cpu_count = os.cpu_count()
         pool = Pool(processes=cpu_count)
         try:
-            pool.map(self.process_archive, get_files(directory=self.directory, extensions=self.archive_formats))
+            files = get_files(directory=self.directory, extensions=self.archive_formats)
+            pool.map(self.process_archive, files)
         finally:
             pool.close()
             pool.join()
         print("Extracting All Archives Complete!")
+        self.processed_files = files
+        for file in files:
+            extracted_directory = os.path.join(os.path.dirname(file), os.path.splitext(os.path.basename(file))[0])
+            self.extracted_directories.append(extracted_directory)
 
     def process_archive(self, archive):
         archive_directory = os.path.join(os.path.dirname(archive), os.path.splitext(os.path.basename(archive))[0])
@@ -46,7 +51,7 @@ class RomManager:
             patoolib.extract_archive(archive, outdir=archive_directory)
         except patoolib.util.PatoolError as e:
             print(f"Unable to extract: {archive}\nError: {e}")
-        self.extracted_directories.append(archive_directory)
+
         print(f"Finished Extracting {archive} to {archive_directory}")
         print("Generating any missing cue file(s)")
         if (glob.glob(os.path.join(str(archive_directory), "*.bin"))
@@ -59,27 +64,37 @@ class RomManager:
 
     def cue_file_generator(self, directory):
         file_names = get_files(directory=directory, extensions=[".bin"])
-        print(f"FOUND BIN FILES: {file_names}")
+        #print(f"FOUND BIN FILES: {file_names}")
         first_file = file_names.pop(0)
         first_file = os.path.basename(first_file)
-        print(f"First file: {first_file}")
-        sheet = f'FILE "{first_file}" BINARY\n  TRACK 01 MODE2/2352\n    INDEX 01 00:00:00\n'
+        #print(f"First file: {first_file}")
+        sheet = (f'FILE "{first_file}" BINARY\n'
+                 f'  TRACK 01 MODE2/2352\n'
+                 f'    INDEX 01 00:00:00\n')
         track_counter = 2
         for file_name in file_names:
-            sheet += f'FILE "{file_name}" BINARY\n  TRACK {self.pad_leading_zero(track_counter)} AUDIO\n    INDEX 00 00:00:00\n    INDEX 01 00:02:00\n'
+            sheet += (f'FILE "{file_name}" BINARY\n'
+                      f'  TRACK {self.pad_leading_zero(track_counter)} AUDIO\n'
+                      f'    INDEX 00 00:00:00\n'
+                      f'    INDEX 01 00:02:00\n')
             track_counter += 1
         cue_file_path = os.path.join(directory, f"{os.path.splitext(os.path.basename(first_file))[0]}.cue")
         with open(cue_file_path, "w") as cue_file:
             cue_file.write(sheet)
 
     def cleanup(self, deep_clean=False):
-        print(f"CLEANING: {self.extracted_directories}")
+        #print(f"CLEANING: {self.extracted_directories}")
         for extracted_directory in self.extracted_directories:
             print(f"Cleaning {extracted_directory}...")
+            for file_path in get_files(directory=extracted_directory, extensions=[".chd"]):
+                parent_directory = os.path.dirname(os.path.dirname(file_path))
+                new_file_path = os.path.join(parent_directory, os.path.basename(file_path))
+                shutil.move(f"{file_path}", f"{new_file_path}")
             shutil.rmtree(extracted_directory)
             print(f"Finished Cleaning {extracted_directory}")
 
         if deep_clean:
+            print(f"PROCESSED FILES: {self.processed_files}")
             for file in self.processed_files:
                 if os.path.exists(file):
                     os.remove(file)
@@ -111,13 +126,14 @@ class RomManager:
         if not cpu_count:
             cpu_count = os.cpu_count()
         pool = Pool(processes=cpu_count)
-        print(f"COMMMANDS: {self.chd_commands}")
+        #print(f"COMMMANDS: {self.chd_commands}")
         try:
             pool.map(self.run_command, self.chd_commands)
         finally:
             pool.close()
             pool.join()
         print("Converting All Files Complete!")
+
 
     def run_command(self, command):
         try:
@@ -126,7 +142,6 @@ class RomManager:
             else:
                 result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                         universal_newlines=True)
-            self.processed_files.append(command[3])
             print(result.returncode, result.stdout, result.stderr)
         except subprocess.CalledProcessError as e:
             print(e.output)
@@ -192,7 +207,8 @@ def rom_manager(argv):
     deep_clean = False
 
     try:
-        opts, args = getopt.getopt(argv, "hc:d:fs", ["help", "cpu-count=", "directory=", "force", "silent"])
+        opts, args = getopt.getopt(argv, "hc:d:fsx", ["help", "cpu-count=", "directory=", "force", "silent",
+                                                      "deep-clean"])
     except getopt.GetoptError:
         usage()
         sys.exit(2)
