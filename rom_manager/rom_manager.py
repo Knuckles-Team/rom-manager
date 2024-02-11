@@ -7,8 +7,10 @@ import getopt
 import platform
 import subprocess
 import patoolib
+import glob
 import shutil
 from multiprocessing import Pool
+from game_codes import psx_codes
 try:
     from version import __version__, __author__, __credits__
 except Exception:
@@ -23,6 +25,7 @@ class RomManager:
         self.supported_types = [".iso", ".cue", ".gdi"]
         self.archive_formats = ['7z', 'zip', 'tar.gz', 'gz', 'gzip', 'bz2', 'bzip2', 'rar', 'tar']
         self.extracted_directories = []
+        self.processed_files = []
 
     def parallel_process_archives(self, cpu_count=None):
         if not cpu_count:
@@ -36,7 +39,7 @@ class RomManager:
         print("Extracting All Archives Complete!")
 
     def process_archive(self, archive):
-        archive_directory = os.path.dirname(archive)
+        archive_directory = os.path.join(os.path.dirname(archive), os.path.splitext(os.path.basename(archive))[0])
         print(f"Extracting {archive} to {archive_directory}...")
         os.makedirs(archive_directory, exist_ok=True)
         try:
@@ -45,15 +48,57 @@ class RomManager:
             print(f"Unable to extract: {archive}\nError: {e}")
         self.extracted_directories.append(archive_directory)
         print(f"Finished Extracting {archive} to {archive_directory}")
+        print("Generating any missing cue file(s)")
+        if (glob.glob(os.path.join(str(archive_directory), "*.bin"))
+                and not glob.glob(os.path.join(str(archive_directory), "*.cue"))):
+            self.cue_file_generator(archive_directory)
 
-    def cleanup_extracted_archives(self):
+    def pad_leading_zero(self, number):
+        padded = "0" + str(number)
+        return padded[-2:]
+
+    def cue_file_generator(self, directory):
+        file_names = get_files(directory=directory, extensions=[".bin"])
+        print(f"FOUND BIN FILES: {file_names}")
+        first_file = file_names.pop(0)
+        first_file = os.path.basename(first_file)
+        print(f"First file: {first_file}")
+        sheet = f'FILE "{first_file}" BINARY\n  TRACK 01 MODE2/2352\n    INDEX 01 00:00:00\n'
+        track_counter = 2
+        for file_name in file_names:
+            sheet += f'FILE "{file_name}" BINARY\n  TRACK {self.pad_leading_zero(track_counter)} AUDIO\n    INDEX 00 00:00:00\n    INDEX 01 00:02:00\n'
+            track_counter += 1
+        cue_file_path = os.path.join(directory, f"{os.path.splitext(os.path.basename(first_file))[0]}.cue")
+        with open(cue_file_path, "w") as cue_file:
+            cue_file.write(sheet)
+
+    def cleanup(self, deep_clean=False):
+        print(f"CLEANING: {self.extracted_directories}")
         for extracted_directory in self.extracted_directories:
             print(f"Cleaning {extracted_directory}...")
             shutil.rmtree(extracted_directory)
             print(f"Finished Cleaning {extracted_directory}")
 
+        if deep_clean:
+            for file in self.processed_files:
+                if os.path.exists(file):
+                    os.remove(file)
+                    print(f"The file {file} has been deleted.")
+                else:
+                    print(f"The file {file} does not exist.")
+
     def build_commands(self, force=False):
         for file in get_files(directory=self.directory, extensions=self.supported_types):
+            for key, value in psx_codes.items():
+                if key in os.path.basename(file):
+                    # filename = os.path.splitext(os.path.basename(file))[0]
+                    file_path = os.path.dirname(file)
+                    file_extension = os.path.splitext(file)[1]
+                    new_file = os.path.join(file_path, f"{value} - {key}{file_extension}")
+                    if file != new_file:
+                        os.rename(file, new_file)
+                        file = new_file
+                    print(f"The string contains the key: {key}")
             chd_file = f"{os.path.splitext(os.path.basename(file))[0]}.chd"
             chd_file_directory = os.path.dirname(file)
             chd_file_path = os.path.join(chd_file_directory, chd_file)
@@ -66,7 +111,7 @@ class RomManager:
         if not cpu_count:
             cpu_count = os.cpu_count()
         pool = Pool(processes=cpu_count)
-        print(f"COMMANDS: {self.chd_commands}")
+        print(f"COMMMANDS: {self.chd_commands}")
         try:
             pool.map(self.run_command, self.chd_commands)
         finally:
@@ -81,6 +126,7 @@ class RomManager:
             else:
                 result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                         universal_newlines=True)
+            self.processed_files.append(command[3])
             print(result.returncode, result.stdout, result.stderr)
         except subprocess.CalledProcessError as e:
             print(e.output)
@@ -126,11 +172,12 @@ def usage():
           f'Credits: {__credits__}\n'
           f"\n"
           f"Usage: \n"
-          f"-h | --help      [ See usage for script ]\n"
-          f"-c | --cpu-count [ Limit max number of CPUs to use for parallel processing ]\n"
-          f"-d | --directory [ Directory to process ROMs ]\n"
-          f"-f | --force     [ Force overwrite of existing CHD files ]\n"
-          f"-s | --silent    [ Suppress output messages ]\n"
+          f"-h | --help       [ See usage for script ]\n"
+          f"-c | --cpu-count  [ Limit max number of CPUs to use for parallel processing ]\n"
+          f"-d | --directory  [ Directory to process ROMs ]\n"
+          f"-f | --force      [ Force overwrite of existing CHD files ]\n"
+          f"-s | --silent     [ Suppress output messages ]\n"
+          f"-x | --deep-clean [ Delete original files after processing ]\n"
           f"\n"
           f"Example: \n"
           f"rom-manager --directory 'C:/Users/default/Games/'\n")
@@ -142,6 +189,7 @@ def rom_manager(argv):
     directory = ""
     silent = False
     force = False
+    deep_clean = False
 
     try:
         opts, args = getopt.getopt(argv, "hc:d:fs", ["help", "cpu-count=", "directory=", "force", "silent"])
@@ -160,6 +208,8 @@ def rom_manager(argv):
             force = True
         elif opt in ("-s", "--silent"):
             silent = True
+        elif opt in ("-x", "--deep-clean"):
+            deep_clean = True
 
     roms_manager = RomManager()
     roms_manager.silent = silent
@@ -167,7 +217,7 @@ def rom_manager(argv):
     roms_manager.parallel_process_archives(cpu_count=cpu_count)
     roms_manager.build_commands(force=force)
     roms_manager.parallel_run_commands(cpu_count=cpu_count)
-    roms_manager.cleanup_extracted_archives()
+    roms_manager.cleanup(deep_clean=deep_clean)
 
 
 def main():
@@ -178,31 +228,31 @@ def main():
 
 
 if __name__ == "__main__":
-    # if len(sys.argv) < 2:
-    #     usage()
-    #     sys.exit(2)
-    # rom_manager(sys.argv[1:])
+    if len(sys.argv) < 2:
+        usage()
+        sys.exit(2)
+    rom_manager(sys.argv[1:])
 
-    import csv
-
-    csv_file = "ps1_codes.csv"
-
-    # Initialize an empty dictionary
-    data_dict = {}
-
-    with open(csv_file, "r") as file:
-        reader = csv.reader(file)
-        for row in reader:
-            key, value = row
-            keys = key.split("\n")
-            value = value.replace("\xa0", "")
-            for k in keys:
-                data_dict[k] = value
-
-
-
-    print(data_dict)
-    import json
-    with open('ps1_codes.json', 'w', encoding='utf-8') as f:
-        json.dump(data_dict, f, ensure_ascii=False, indent=2)
-
+    # import csv
+    #
+    # csv_file = "ps1_codes.csv"
+    #
+    # # Initialize an empty dictionary
+    # data_dict = {}
+    #
+    # with open(csv_file, "r") as file:
+    #     reader = csv.reader(file)
+    #     for row in reader:
+    #         key, value = row
+    #         keys = key.split("\n")
+    #         value = value.replace("\xa0", "")
+    #         for k in keys:
+    #             data_dict[k] = value
+    #
+    #
+    #
+    # print(data_dict)
+    # import json
+    # with open('ps1_codes.json', 'w', encoding='utf-8') as f:
+    #     json.dump(data_dict, f, ensure_ascii=False, indent=2)
+    #
