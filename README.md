@@ -22,12 +22,42 @@
 
 *Version: 0.0.1*
 
-Optimize games to .chd format for enhanced compression
+Convert Game ROMs to Compressed Hunks of Data (CHD) file format
 
-Specify a directory to scan for all .cue, .iso, .gdi files
+Why?
 
-Automatically extracts .7z, .rar, .zip, .tar.gz, .gz, .tar, .gzip, .bz2, .bzip2
+CHD (“Compressed Hunks of Data”) files are compressed data files that can be used on most CD-based systems. 
+They are in a lossless compression format, meaning that they perfectly preserve all game data while reducing file sizes. 
+CHDs were originally developed for MAME to compress CD-based arcade games, 
+but now they are compatible with a variety emulators and CD-based consoles.
 
+Supports:
+- Sony PlayStation
+- Sony PlayStation 2
+- Sega CD
+- Sega Saturn
+- Sega Dreamcast
+- NEC TurboGrafx-CD (PC Engine CD)
+- Neo Geo CD
+- Panasonic 3DO
+- Amiga CD32
+- Philips CD-I
+
+Archive Types Extracted:
+- 7z
+- rar
+- zip
+- tar.gz
+- tar
+- gz
+- gzip
+- bzip2
+- bz2
+
+File Types Scanned:
+- cue
+- iso
+- gdi
 
 <details>
   <summary><b>Usage:</b></summary>
