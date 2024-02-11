@@ -102,7 +102,7 @@ def usage():
           f"-d | --directory [ Directory to process ROMs ]\n"
           f"-s | --silent    [ Suppress output messages ]\n"
           f"\n"
-          f"rom-manager --directory 'C:/Users/default/Games/'")
+          f"rom-manager --directory 'C:/Users/default/Games/'\n")
     installation_instructions()
 
 
