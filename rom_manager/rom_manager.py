@@ -6,7 +6,7 @@ import sys
 import getopt
 import platform
 import subprocess
-import patoolib
+import patoolib as patool
 import glob
 import shutil
 import re
@@ -15,7 +15,7 @@ from multiprocessing import Pool
 try:
     from version import __version__, __author__, __credits__
     from game_codes import psx_codes
-except Exception:
+except ImportError:
     from rom_manager.version import __version__, __author__, __credits__
     from rom_manager.game_codes import psx_codes
 
@@ -29,7 +29,6 @@ class RomManager:
         self.generative_types = (".bin", ".m3u")
         self.supported_types = (".iso", ".cue", ".gdi")
         self.archive_formats = ('7z', 'zip', 'tar.gz', 'gz', 'gzip', 'bz2', 'bzip2', 'rar', 'tar')
-        self.original_files = []
 
     def process_parallel(self, cpu_count=None):
         if not cpu_count:
@@ -62,18 +61,16 @@ class RomManager:
             self.process_archive(archive=archive_file, archive_directory=game_directory)
             files = self.get_files(directory=game_directory, extensions=self.supported_types)
             file = files[0]
-            self.original_files.append(archive_file)
         elif file.lower().endswith(self.supported_types):
             print("ISO/GDI/Cue file found")
             new_file_path = os.path.join(str(game_directory), os.path.basename(file))
             shutil.move(f"{file}", f"{new_file_path}")
-            self.original_files.append(file)
+            file = new_file_path
         elif file.lower().endswith(self.generative_types):
             new_file_path = os.path.join(str(game_directory), os.path.basename(file))
             shutil.move(f"{file}", f"{new_file_path}")
             print("Generating any missing .cue file(s)")
             file = self.cue_file_generator(directory=game_directory)
-            self.original_files.append(os.listdir(game_directory))
 
         # Update the names of ROMs with the included ROM Code mapping
         file = self.map_game_code_name(file=file)
@@ -87,15 +84,20 @@ class RomManager:
             chd_command.append('-f')
 
         # Run the chdman command
-        print(f"Running chdman: {chd_command}...")
-        self.run_command(command=chd_command, silent=self.silent)
+        if os.path.exists(chd_file_path):
+            print(f"Game already exists in .chd format: {chd_file_path}")
+        else:
+            print(f"Running chdman: {chd_command}...")
+            self.run_command(command=chd_command, silent=self.silent)
 
         if archive_file:
             self.cleanup_extracted_files(game_directory, chd_file_path)
 
         # Cleanup
         if self.clean_origin_files:
-            self.cleanup_origin_files(game_directory=game_directory, chd_file_path=chd_file_path, archive_file=archive_file)
+            self.cleanup_origin_files(game_directory=game_directory,
+                                      chd_file_path=chd_file_path,
+                                      archive_file=archive_file)
 
     @staticmethod
     def map_game_code_name(file):
@@ -122,7 +124,7 @@ class RomManager:
     def cleanup_archive(archive_file=None):
         # Cleanup original files
         print(f"Deleting original file {archive_file}...")
-        if os.path.exists(archive_file):
+        if archive_file and os.path.exists(str(archive_file)):
             os.remove(archive_file)
             print(f"The original file {archive_file} has been deleted.")
         else:
@@ -154,8 +156,8 @@ class RomManager:
     def process_archive(self, archive, archive_directory):
         print(f"Extracting {archive} to {archive_directory}...")
         try:
-            patoolib.extract_archive(archive, outdir=archive_directory)
-        except patoolib.util.PatoolError as e:
+            patool.extract_archive(archive, outdir=archive_directory)
+        except patool.util.PatoolError as e:
             print(f"Unable to extract: {archive}\nError: {e}")
 
         print(f"Finished extracting {archive} to {archive_directory}")
