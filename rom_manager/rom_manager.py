@@ -8,6 +8,8 @@ import platform
 import subprocess
 import patoolib
 import shutil
+from multiprocessing import Pool
+from rom_manager.version import __version__, __author__, __credits__
 
 
 class RomManager:
@@ -19,14 +21,23 @@ class RomManager:
         self.archive_formats = ['7z', 'zip', 'tar.gz', 'gz', 'gzip', 'bz2', 'bzip2', 'rar', 'tar']
         self.extracted_directories = []
 
-    def process_archives(self):
-        for archive in get_files(directory=self.directory, extensions=self.archive_formats):
-            archive_directory = os.path.splitext(os.path.basename(archive))[0]
-            print(f"Extracting {archive} to {archive_directory}...")
-            os.makedirs(archive_directory, exist_ok=True)
-            patoolib.extract_archive(archive, outdir=archive_directory)
-            self.extracted_directories.append(archive_directory)
-            print(f"Finished Extracting {archive} to {archive_directory}")
+    def parallel_process_archives(self, cpu_count=None):
+        if not cpu_count:
+            cpu_count = os.cpu_count()
+        pool = Pool(processes=cpu_count)
+        try:
+            pool.map(self.process_archive, get_files(directory=self.directory, extensions=self.archive_formats))
+        finally:
+            pool.close()
+            pool.join()
+
+    def process_archive(self, archive):
+        archive_directory = os.path.splitext(os.path.basename(archive))[0]
+        print(f"Extracting {archive} to {archive_directory}...")
+        os.makedirs(archive_directory, exist_ok=True)
+        patoolib.extract_archive(archive, outdir=archive_directory)
+        self.extracted_directories.append(archive_directory)
+        print(f"Finished Extracting {archive} to {archive_directory}")
 
     def cleanup_extracted_archives(self):
         for extracted_directory in self.extracted_directories:
@@ -41,26 +52,26 @@ class RomManager:
             chd_file_path = f"{chd_file_directory}/{chd_file}"
             self.chd_commands.append(['chdman', 'createcd', '-i', f'"{file}"', '-o', f'"{chd_file_path}"'])
 
-    def batch_run_commands(self):
-        if self.chd_commands:
-            for chd_command in self.chd_commands:
-                print(f"Running Command: {chd_command}...")
-                result = self.run_command(chd_command)
-                if result:
-                    print(result.returncode, result.stdout, result.stderr)
-                print(f"Finished Running Command: {chd_command}")
+    def parallel_run_commands(self, cpu_count=None):
+        if not cpu_count:
+            cpu_count = os.cpu_count()
+        pool = Pool(processes=cpu_count)
+        try:
+            pool.map(self.run_command, self.chd_commands)
+        finally:
+            pool.close()
+            pool.join()
 
     def run_command(self, command):
-        result = None
         try:
             if self.silent:
                 result = subprocess.run(command, stdout=open(os.devnull, 'wb'), stderr=open(os.devnull, 'wb'))
             else:
                 result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                         universal_newlines=True)
+            print(result.returncode, result.stdout, result.stderr)
         except subprocess.CalledProcessError as e:
             print(e.output)
-        return result
 
 
 def get_files(directory, extensions):
@@ -97,21 +108,28 @@ def installation_instructions():
 
 
 def usage():
-    print(f"Usage: \n"
+    print(f'ROM Manager: Convert Game ROMs to Compressed Hunks of Data (CHD) file format\n'
+          f'Version: {__version__}\n'
+          f'Author: {__author__}\n'
+          f'Credits: {__credits__}\n'
+          f"\n"
+          f"Usage: \n"
           f"-h | --help      [ See usage for script ]\n"
           f"-d | --directory [ Directory to process ROMs ]\n"
           f"-s | --silent    [ Suppress output messages ]\n"
           f"\n"
+          f"Example: \n"
           f"rom-manager --directory 'C:/Users/default/Games/'\n")
     installation_instructions()
 
 
 def rom_manager(argv):
+    cpu_count = None
     directory = ""
     silent = False
 
     try:
-        opts, args = getopt.getopt(argv, "hd:m:s", ["help", "directory=", "silent"])
+        opts, args = getopt.getopt(argv, "hc:d:s", ["help", "cpu-count=", "directory=", "silent"])
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -119,6 +137,8 @@ def rom_manager(argv):
         if opt in ("-h", "--help"):
             usage()
             sys.exit()
+        elif opt in ("-c", "--cpu-count"):
+            cpu_count = arg
         elif opt in ("-d", "--directory"):
             directory = arg
         elif opt in ("-s", "--silent"):
@@ -127,9 +147,9 @@ def rom_manager(argv):
     roms_manager = RomManager()
     roms_manager.silent = silent
     roms_manager.directory = directory
-    roms_manager.process_archives()
+    roms_manager.parallel_process_archives(cpu_count=cpu_count)
     roms_manager.build_commands()
-    roms_manager.batch_run_commands()
+    roms_manager.parallel_run_commands(cpu_count=cpu_count)
     roms_manager.cleanup_extracted_archives()
 
 
