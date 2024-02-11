@@ -24,14 +24,14 @@
 
 Convert Game ROMs to Compressed Hunks of Data (CHD) file format
 
-Why?
+#### Why?
 
 CHD (“Compressed Hunks of Data”) files are compressed data files that can be used on most CD-based systems. 
 They are in a lossless compression format, meaning that they perfectly preserve all game data while reducing file sizes. 
 CHDs were originally developed for MAME to compress CD-based arcade games, 
 but now they are compatible with a variety emulators and CD-based consoles.
 
-Supports:
+### Supports:
 - Sony PlayStation
 - Sony PlayStation 2
 - Sega CD
@@ -43,7 +43,7 @@ Supports:
 - Amiga CD32
 - Philips CD-I
 
-Archive Types Extracted:
+### Archive Types Extracted:
 - 7z
 - rar
 - zip
@@ -54,7 +54,7 @@ Archive Types Extracted:
 - bzip2
 - bz2
 
-File Types Scanned:
+### File Types Scanned:
 - cue
 - iso
 - gdi
