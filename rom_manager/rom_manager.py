@@ -9,6 +9,7 @@ import subprocess
 import patoolib
 import glob
 import shutil
+import re
 from multiprocessing import Pool
 try:
     from version import __version__, __author__, __credits__
@@ -69,7 +70,8 @@ class RomManager:
                     # filename = os.path.splitext(os.path.basename(file))[0]
                     file_path = os.path.dirname(file)
                     file_extension = os.path.splitext(file)[1]
-                    new_file = os.path.join(file_path, f"{value} - {key}{file_extension}")
+                    cleaned_value = re.sub(r'[<>:"/\\|?*\x00-\x1f]', '', value)
+                    new_file = os.path.join(file_path, f"{cleaned_value} - {key}{file_extension}")
                     if file != new_file:
                         os.rename(file, new_file)
                         file = new_file
