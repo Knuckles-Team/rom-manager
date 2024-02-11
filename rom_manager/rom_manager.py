@@ -11,6 +11,7 @@ import glob
 import shutil
 import re
 from multiprocessing import Pool
+
 try:
     from version import __version__, __author__, __credits__
     from game_codes import psx_codes
@@ -22,82 +23,126 @@ except Exception:
 class RomManager:
     def __init__(self):
         self.silent = False
-        self.chd_commands = []
+        self.force = False
+        self.clean_origin_files = False
         self.directory = os.path.curdir
-        self.supported_types = [".iso", ".cue", ".gdi"]
-        self.archive_formats = ['7z', 'zip', 'tar.gz', 'gz', 'gzip', 'bz2', 'bzip2', 'rar', 'tar']
-        self.extracted_directories = []
-        self.processed_files = []
+        self.generative_types = (".bin", ".m3u")
+        self.supported_types = (".iso", ".cue", ".gdi")
+        self.archive_formats = ('7z', 'zip', 'tar.gz', 'gz', 'gzip', 'bz2', 'bzip2', 'rar', 'tar')
+        self.original_files = []
 
-    def parallel_process_archives(self, cpu_count=None):
+    def process_parallel(self, cpu_count=None):
         if not cpu_count:
             cpu_count = os.cpu_count()
         pool = Pool(processes=cpu_count)
         try:
-            files = self.get_files(directory=self.directory, extensions=self.archive_formats)
-            pool.map(self.process_archive, files)
+            process_extensions = self.archive_formats + self.supported_types + self.generative_types
+            files = self.get_files(directory=self.directory, extensions=process_extensions)
+            pool.map(self.process_file, files)
         finally:
             pool.close()
             pool.join()
-        print("Extracting All Archives Complete!")
-        self.processed_files = files
-        for file in files:
-            extracted_directory = os.path.join(os.path.dirname(file), os.path.splitext(os.path.basename(file))[0])
-            self.extracted_directories.append(extracted_directory)
+        print("Conversion of all files complete!")
 
-    def cleanup(self, deep_clean=False):
-        for extracted_directory in self.extracted_directories:
-            print(f"Cleaning {extracted_directory}...")
-            for file_path in self.get_files(directory=extracted_directory, extensions=[".chd"]):
-                parent_directory = os.path.dirname(os.path.dirname(file_path))
-                new_file_path = os.path.join(parent_directory, os.path.basename(file_path))
-                shutil.move(f"{file_path}", f"{new_file_path}")
-            shutil.rmtree(extracted_directory)
-            print(f"Finished Cleaning {extracted_directory}")
+    def process_file(self, file=None):
+        archive_file = None
+        if not file:
+            return
 
-        if deep_clean:
-            for file in self.processed_files:
-                if os.path.exists(file):
-                    os.remove(file)
-                    print(f"The file {file} has been deleted.")
-                else:
-                    print(f"The file {file} does not exist.")
+        # Create directory if game is in top folder
+        if os.path.dirname(file) == self.directory:
+            game_directory = os.path.join(os.path.dirname(file), os.path.splitext(os.path.basename(file))[0])
+            os.makedirs(game_directory, exist_ok=True)
+        else:
+            game_directory = os.path.dirname(file)
 
-    def build_commands(self, force=False):
-        for file in self.get_files(directory=self.directory, extensions=self.supported_types):
-            for key, value in psx_codes.items():
-                if key in os.path.basename(file):
-                    # filename = os.path.splitext(os.path.basename(file))[0]
-                    file_path = os.path.dirname(file)
-                    file_extension = os.path.splitext(file)[1]
-                    cleaned_value = re.sub(r'[<>:"/\\|?*\x00-\x1f]', '', value)
-                    new_file = os.path.join(file_path, f"{cleaned_value} - {key}{file_extension}")
-                    if file != new_file and not os.path.exists(new_file):
-                        os.rename(file, new_file)
-                        file = new_file
-                    print(f"The string contains the key: {key}")
-            chd_file = f"{os.path.splitext(os.path.basename(file))[0]}.chd"
-            chd_file_directory = os.path.dirname(file)
-            chd_file_path = os.path.join(chd_file_directory, chd_file)
-            chd_command = ['chdman', 'createcd', '-i', f"{file}", '-o', f"{chd_file_path}"]
-            if force:
-                chd_command.append('-f')
-            self.chd_commands.append(chd_command)
+        # Extract if archive is found
+        if file.lower().endswith(self.archive_formats):
+            archive_file = file
+            self.process_archive(archive=archive_file, archive_directory=game_directory)
+            files = self.get_files(directory=game_directory, extensions=self.supported_types)
+            file = files[0]
+            self.original_files.append(archive_file)
+        elif file.lower().endswith(self.supported_types):
+            print("ISO/GDI/Cue file found")
+            new_file_path = os.path.join(str(game_directory), os.path.basename(file))
+            shutil.move(f"{file}", f"{new_file_path}")
+            self.original_files.append(file)
+        elif file.lower().endswith(self.generative_types):
+            new_file_path = os.path.join(str(game_directory), os.path.basename(file))
+            shutil.move(f"{file}", f"{new_file_path}")
+            print("Generating any missing .cue file(s)")
+            file = self.cue_file_generator(directory=game_directory)
+            self.original_files.append(os.listdir(game_directory))
 
-    def parallel_run_commands(self, cpu_count=None):
-        if not cpu_count:
-            cpu_count = os.cpu_count()
-        pool = Pool(processes=cpu_count)
+        # Update the names of ROMs with the included ROM Code mapping
+        file = self.map_game_code_name(file=file)
+
+        # Build the chdman command
+        chd_file = f"{os.path.splitext(os.path.basename(file))[0]}.chd"
+        chd_file_directory = os.path.dirname(file)
+        chd_file_path = os.path.join(chd_file_directory, chd_file)
+        chd_command = ['chdman', 'createcd', '-i', f"{file}", '-o', f"{chd_file_path}"]
+        if self.force:
+            chd_command.append('-f')
+
+        # Run the chdman command
+        print(f"Running chdman: {chd_command}...")
+        self.run_command(command=chd_command, silent=self.silent)
+
+        if archive_file:
+            self.cleanup_extracted_files(game_directory, chd_file_path)
+
+        # Cleanup
+        if self.clean_origin_files:
+            self.cleanup_origin_files(game_directory=game_directory, chd_file_path=chd_file_path, archive_file=archive_file)
+
+    @staticmethod
+    def map_game_code_name(file):
+        print("Scanning the filename for known ROM codes")
+        for key, value in psx_codes.items():
+            if key in os.path.basename(file):
+                file_path = os.path.dirname(file)
+                file_extension = os.path.splitext(file)[1]
+                cleaned_value = re.sub(r'[<>:"/\\|?*\x00-\x1f]', '', value)
+                new_file = os.path.join(file_path, f"{cleaned_value} - {key}{file_extension}")
+                if file != new_file and not os.path.exists(new_file):
+                    os.rename(file, new_file)
+                    file = new_file
+                print(f"The string contains the key: {key}")
+        return file
+
+    def cleanup_origin_files(self, game_directory, chd_file_path, archive_file=None):
+        # Cleanup original files
+        print(f"Deleting original file {archive_file}...")
+        self.cleanup_archive(archive_file)
+        self.cleanup_extracted_files(game_directory=game_directory, chd_file_path=chd_file_path)
+
+    @staticmethod
+    def cleanup_archive(archive_file=None):
+        # Cleanup original files
+        print(f"Deleting original file {archive_file}...")
+        if os.path.exists(archive_file):
+            os.remove(archive_file)
+            print(f"The original file {archive_file} has been deleted.")
+        else:
+            print(f"The original file {archive_file} does not exist.")
+
+    @staticmethod
+    def cleanup_extracted_files(game_directory=None, chd_file_path=None):
+        # Cleanup any extracted directories
+        if game_directory and os.path.exists(game_directory):
+            print(f"Cleaning {game_directory}...")
+            parent_directory = os.path.dirname(os.path.dirname(chd_file_path))
+            new_file_path = os.path.join(parent_directory, os.path.basename(chd_file_path))
+            shutil.move(f"{chd_file_path}", f"{new_file_path}")
+            shutil.rmtree(game_directory)
+            print(f"Finished cleaning {game_directory}")
+
+    @staticmethod
+    def run_command(command, silent=False):
         try:
-            pool.map(self.run_command, self.chd_commands)
-        finally:
-            pool.close()
-            pool.join()
-        print("Converting All Files Complete!")
-
-    def run_command(self, command):
-        try:
-            if self.silent:
+            if silent:
                 result = subprocess.run(command, stdout=open(os.devnull, 'wb'), stderr=open(os.devnull, 'wb'))
             else:
                 result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
@@ -106,20 +151,19 @@ class RomManager:
         except subprocess.CalledProcessError as e:
             print(e.output)
 
-    def process_archive(self, archive):
-        archive_directory = os.path.join(os.path.dirname(archive), os.path.splitext(os.path.basename(archive))[0])
+    def process_archive(self, archive, archive_directory):
         print(f"Extracting {archive} to {archive_directory}...")
-        os.makedirs(archive_directory, exist_ok=True)
         try:
             patoolib.extract_archive(archive, outdir=archive_directory)
         except patoolib.util.PatoolError as e:
             print(f"Unable to extract: {archive}\nError: {e}")
 
-        print(f"Finished Extracting {archive} to {archive_directory}")
+        print(f"Finished extracting {archive} to {archive_directory}")
         print("Generating any missing cue file(s)")
         if (glob.glob(os.path.join(str(archive_directory), "*.bin"))
                 and not glob.glob(os.path.join(str(archive_directory), "*.cue"))):
             self.cue_file_generator(archive_directory)
+        print("Finished generating missing cue file(s)")
 
     @staticmethod
     def pad_leading_zero(number):
@@ -143,6 +187,7 @@ class RomManager:
         cue_file_path = os.path.join(directory, f"{os.path.splitext(os.path.basename(first_file))[0]}.cue")
         with open(cue_file_path, "w") as cue_file:
             cue_file.write(sheet)
+        return cue_file_path
 
     @staticmethod
     def get_files(directory, extensions):
@@ -202,7 +247,7 @@ def rom_manager(argv):
     directory = ""
     silent = False
     force = False
-    deep_clean = False
+    clean_origin_files = False
 
     try:
         opts, args = getopt.getopt(argv, "hc:d:fsx", ["help", "cpu-count=", "directory=", "force", "silent",
@@ -224,15 +269,18 @@ def rom_manager(argv):
         elif opt in ("-s", "--silent"):
             silent = True
         elif opt in ("-x", "--delete"):
-            deep_clean = True
+            clean_origin_files = True
 
     roms_manager = RomManager()
     roms_manager.silent = silent
+    roms_manager.force = force
     roms_manager.directory = directory
-    roms_manager.parallel_process_archives(cpu_count=cpu_count)
-    roms_manager.build_commands(force=force)
-    roms_manager.parallel_run_commands(cpu_count=cpu_count)
-    roms_manager.cleanup(deep_clean=deep_clean)
+    roms_manager.clean_origin_files = clean_origin_files
+    roms_manager.process_parallel(cpu_count=cpu_count)
+    # roms_manager.parallel_process_archives(cpu_count=cpu_count)
+    # roms_manager.build_commands(force=force)
+    # roms_manager.parallel_run_commands(cpu_count=cpu_count)
+    # roms_manager.cleanup(deep_clean=deep_clean)
 
 
 def main():
