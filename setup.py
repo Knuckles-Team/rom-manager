@@ -24,7 +24,7 @@ setup(
     description=description,
     long_description=f'{readme}',
     long_description_content_type='text/markdown',
-    url='https://github.com/Knuckles-Team/subsync',
+    url='https://github.com/Knuckles-Team/rom-manager',
     author=__author__,
     author_email='knucklessg1@gmail.com',
     license='MIT',
