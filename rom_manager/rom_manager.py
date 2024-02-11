@@ -9,7 +9,7 @@ import subprocess
 import patoolib
 import glob
 import shutil
-from multiprocessing import Pool, Queue
+from multiprocessing import Pool
 from game_codes import psx_codes
 try:
     from version import __version__, __author__, __credits__
@@ -32,7 +32,7 @@ class RomManager:
             cpu_count = os.cpu_count()
         pool = Pool(processes=cpu_count)
         try:
-            files = get_files(directory=self.directory, extensions=self.archive_formats)
+            files = self.get_files(directory=self.directory, extensions=self.archive_formats)
             pool.map(self.process_archive, files)
         finally:
             pool.close()
@@ -43,50 +43,10 @@ class RomManager:
             extracted_directory = os.path.join(os.path.dirname(file), os.path.splitext(os.path.basename(file))[0])
             self.extracted_directories.append(extracted_directory)
 
-    def process_archive(self, archive):
-        archive_directory = os.path.join(os.path.dirname(archive), os.path.splitext(os.path.basename(archive))[0])
-        print(f"Extracting {archive} to {archive_directory}...")
-        os.makedirs(archive_directory, exist_ok=True)
-        try:
-            patoolib.extract_archive(archive, outdir=archive_directory)
-        except patoolib.util.PatoolError as e:
-            print(f"Unable to extract: {archive}\nError: {e}")
-
-        print(f"Finished Extracting {archive} to {archive_directory}")
-        print("Generating any missing cue file(s)")
-        if (glob.glob(os.path.join(str(archive_directory), "*.bin"))
-                and not glob.glob(os.path.join(str(archive_directory), "*.cue"))):
-            self.cue_file_generator(archive_directory)
-
-    def pad_leading_zero(self, number):
-        padded = "0" + str(number)
-        return padded[-2:]
-
-    def cue_file_generator(self, directory):
-        file_names = get_files(directory=directory, extensions=[".bin"])
-        #print(f"FOUND BIN FILES: {file_names}")
-        first_file = file_names.pop(0)
-        first_file = os.path.basename(first_file)
-        #print(f"First file: {first_file}")
-        sheet = (f'FILE "{first_file}" BINARY\n'
-                 f'  TRACK 01 MODE2/2352\n'
-                 f'    INDEX 01 00:00:00\n')
-        track_counter = 2
-        for file_name in file_names:
-            sheet += (f'FILE "{file_name}" BINARY\n'
-                      f'  TRACK {self.pad_leading_zero(track_counter)} AUDIO\n'
-                      f'    INDEX 00 00:00:00\n'
-                      f'    INDEX 01 00:02:00\n')
-            track_counter += 1
-        cue_file_path = os.path.join(directory, f"{os.path.splitext(os.path.basename(first_file))[0]}.cue")
-        with open(cue_file_path, "w") as cue_file:
-            cue_file.write(sheet)
-
     def cleanup(self, deep_clean=False):
-        #print(f"CLEANING: {self.extracted_directories}")
         for extracted_directory in self.extracted_directories:
             print(f"Cleaning {extracted_directory}...")
-            for file_path in get_files(directory=extracted_directory, extensions=[".chd"]):
+            for file_path in self.get_files(directory=extracted_directory, extensions=[".chd"]):
                 parent_directory = os.path.dirname(os.path.dirname(file_path))
                 new_file_path = os.path.join(parent_directory, os.path.basename(file_path))
                 shutil.move(f"{file_path}", f"{new_file_path}")
@@ -94,7 +54,6 @@ class RomManager:
             print(f"Finished Cleaning {extracted_directory}")
 
         if deep_clean:
-            print(f"PROCESSED FILES: {self.processed_files}")
             for file in self.processed_files:
                 if os.path.exists(file):
                     os.remove(file)
@@ -103,7 +62,7 @@ class RomManager:
                     print(f"The file {file} does not exist.")
 
     def build_commands(self, force=False):
-        for file in get_files(directory=self.directory, extensions=self.supported_types):
+        for file in self.get_files(directory=self.directory, extensions=self.supported_types):
             for key, value in psx_codes.items():
                 if key in os.path.basename(file):
                     # filename = os.path.splitext(os.path.basename(file))[0]
@@ -126,14 +85,12 @@ class RomManager:
         if not cpu_count:
             cpu_count = os.cpu_count()
         pool = Pool(processes=cpu_count)
-        #print(f"COMMMANDS: {self.chd_commands}")
         try:
             pool.map(self.run_command, self.chd_commands)
         finally:
             pool.close()
             pool.join()
         print("Converting All Files Complete!")
-
 
     def run_command(self, command):
         try:
@@ -146,14 +103,52 @@ class RomManager:
         except subprocess.CalledProcessError as e:
             print(e.output)
 
+    def process_archive(self, archive):
+        archive_directory = os.path.join(os.path.dirname(archive), os.path.splitext(os.path.basename(archive))[0])
+        print(f"Extracting {archive} to {archive_directory}...")
+        os.makedirs(archive_directory, exist_ok=True)
+        try:
+            patoolib.extract_archive(archive, outdir=archive_directory)
+        except patoolib.util.PatoolError as e:
+            print(f"Unable to extract: {archive}\nError: {e}")
 
-def get_files(directory, extensions):
-    matching_files = []
-    for root, dirs, files in os.walk(directory):
-        for file in files:
-            if any(file.endswith(ext) for ext in extensions):
-                matching_files.append(os.path.join(root, file))
-    return matching_files
+        print(f"Finished Extracting {archive} to {archive_directory}")
+        print("Generating any missing cue file(s)")
+        if (glob.glob(os.path.join(str(archive_directory), "*.bin"))
+                and not glob.glob(os.path.join(str(archive_directory), "*.cue"))):
+            self.cue_file_generator(archive_directory)
+
+    @staticmethod
+    def pad_leading_zero(number):
+        padded = "0" + str(number)
+        return padded[-2:]
+
+    def cue_file_generator(self, directory):
+        file_names = self.get_files(directory=directory, extensions=[".bin"])
+        first_file = file_names.pop(0)
+        first_file = os.path.basename(first_file)
+        sheet = (f'FILE "{first_file}" BINARY\n'
+                 f'  TRACK 01 MODE2/2352\n'
+                 f'    INDEX 01 00:00:00\n')
+        track_counter = 2
+        for file_name in file_names:
+            sheet += (f'FILE "{file_name}" BINARY\n'
+                      f'  TRACK {self.pad_leading_zero(track_counter)} AUDIO\n'
+                      f'    INDEX 00 00:00:00\n'
+                      f'    INDEX 01 00:02:00\n')
+            track_counter += 1
+        cue_file_path = os.path.join(directory, f"{os.path.splitext(os.path.basename(first_file))[0]}.cue")
+        with open(cue_file_path, "w") as cue_file:
+            cue_file.write(sheet)
+
+    @staticmethod
+    def get_files(directory, extensions):
+        matching_files = []
+        for root, dirs, files in os.walk(directory):
+            for file in files:
+                if any(file.endswith(ext) for ext in extensions):
+                    matching_files.append(os.path.join(root, file))
+        return matching_files
 
 
 def get_operating_system():
@@ -217,7 +212,8 @@ def rom_manager(argv):
             usage()
             sys.exit()
         elif opt in ("-c", "--cpu-count"):
-            cpu_count = arg
+            if 0 < int(arg) <= os.cpu_count():
+                cpu_count = int(arg)
         elif opt in ("-d", "--directory"):
             directory = arg
         elif opt in ("-f", "--force"):
