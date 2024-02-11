@@ -187,7 +187,7 @@ def usage():
           f"-d | --directory  [ Directory to process ROMs ]\n"
           f"-f | --force      [ Force overwrite of existing CHD files ]\n"
           f"-s | --silent     [ Suppress output messages ]\n"
-          f"-x | --deep-clean [ Delete original files after processing ]\n"
+          f"-x | --delete     [ Delete original files after processing ]\n"
           f"\n"
           f"Example: \n"
           f"rom-manager --directory 'C:/Users/default/Games/'\n")
@@ -203,7 +203,7 @@ def rom_manager(argv):
 
     try:
         opts, args = getopt.getopt(argv, "hc:d:fsx", ["help", "cpu-count=", "directory=", "force", "silent",
-                                                      "deep-clean"])
+                                                      "delete"])
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -220,7 +220,7 @@ def rom_manager(argv):
             force = True
         elif opt in ("-s", "--silent"):
             silent = True
-        elif opt in ("-x", "--deep-clean"):
+        elif opt in ("-x", "--delete"):
             deep_clean = True
 
     roms_manager = RomManager()

@@ -69,6 +69,7 @@ but now they are compatible with a variety emulators and CD-based consoles.
 | -h         | --help      | See Usage                                               |
 | -c         | --cpu-count | Limit max number of CPUs to use for parallel processing |
 | -d         | --directory | Directory to scan for ROMs                              |
+| -x         | --delete    | Delete the original files                               |
 | -f         | --force     | Force overwrite of existing CHD files                   |
 | -s         | --silent    | Suppress output text                                    |
 
