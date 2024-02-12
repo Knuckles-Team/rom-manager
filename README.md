@@ -38,6 +38,7 @@ RVZ files are compressed also compressed files, but they are built for Dolphin E
 ### Supports:
 - Sony PlayStation
 - Sony PlayStation 2
+- Sony PSP
 - Sega CD
 - Sega Saturn
 - Sega Dreamcast
