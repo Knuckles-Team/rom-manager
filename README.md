@@ -71,7 +71,7 @@ but now they are compatible with a variety emulators and CD-based consoles.
 | -d         | --directory | Directory to scan for ROMs                              |
 | -x         | --delete    | Delete the original files                               |
 | -f         | --force     | Force overwrite of existing CHD files                   |
-| -s         | --silent    | Suppress output text                                    |
+| -v         | --verbose   | Print all debug information                             |
 
 </details>
 

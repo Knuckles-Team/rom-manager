@@ -10,9 +10,12 @@ import patoolib as patool
 import glob
 import shutil
 import re
+import logging
+import time
 from multiprocessing import Pool
 from tqdm import tqdm
 
+logging.getLogger('patoolib').setLevel(logging.WARNING)
 try:
     from version import __version__, __author__, __credits__
     from game_codes import psx_codes
@@ -22,37 +25,39 @@ except ImportError:
 
 
 class RomManager:
+    dolphin_types = ('.wbfs', '.iso')
+    generative_types = ('.bin', '.m3u')
+    supported_types = ('.iso', '.cue', '.gdi')
+    archive_formats = ('.7z', '.zip', '.tar.gz', '.gz', '.gzip', '.bz2', '.bzip2', '.rar', '.tar')
+
     def __init__(self):
-        self.silent = False
+        logger = logging.getLogger()
+        logger.disabled = False
+        self.verbose = False
         self.force = False
         self.clean_origin_files = False
         self.directory = os.path.curdir
-        self.dolphin_types = ('.wbfs', '.iso')
-        self.generative_types = ('.bin', '.m3u')
-        self.supported_types = ('.iso', '.cue', '.gdi')
-        self.archive_formats = ('.7z', 'zip', 'tar.gz', 'gz', 'gzip', 'bz2', 'bzip2', 'rar', 'tar')
 
-    def process_parallel(self, cpu_count=None):
+    def process_parallel(self, cpu_count):
+        if self.verbose:
+            logger = logging.getLogger()
+            logger.disabled = False
         if not cpu_count:
-            cpu_count = os.cpu_count()/2 + 2
+            cpu_count = int(os.cpu_count() / 2 + 2)
         pool = Pool(processes=cpu_count)
-        try:
-            process_extensions = self.archive_formats + self.supported_types + self.generative_types
-            files = self.get_files(directory=self.directory, extensions=process_extensions)
-            with tqdm(total=len(files), desc='Processing files') as pbar:
-                def update(*args):
-                    pbar.update()
-                pool.starmap_async(self.process_file, [(update, file) for file in files])
-                pool.close()
-                pool.join()
-        finally:
-            print('Conversion of all files complete!')
+        print(f"Parallel CPU(s) Engaged: {cpu_count}\nProcessing...\n")
+        process_extensions = self.archive_formats + self.supported_types + self.generative_types
+        files = self.get_files(directory=self.directory, extensions=process_extensions)
 
-    def process_file(self, update_func, file=None):
+        logging.info(f"Total Files: {len(files)}\nFiles: {files}")
+        result_list_tqdm = []
+        for result in tqdm(pool.imap(func=self.process_file, iterable=files), total=len(files)):
+            result_list_tqdm.append(result)
+
+        return result_list_tqdm
+
+    def process_file(self, file):
         archive_file = None
-        if not file:
-            return
-
         # Create directory if game is in top folder
         if os.path.dirname(file) == self.directory:
             game_directory = os.path.join(os.path.dirname(file), os.path.splitext(os.path.basename(file))[0])
@@ -67,14 +72,14 @@ class RomManager:
             files = self.get_files(directory=game_directory, extensions=self.supported_types)
             file = files[0]
         elif file.lower().endswith(self.supported_types):
-            print('ISO/GDI/Cue file found')
+            logging.info('ISO/GDI/Cue file found')
             new_file_path = os.path.join(str(game_directory), os.path.basename(file))
             shutil.move(f'{file}', f'{new_file_path}')
             file = new_file_path
         elif file.lower().endswith(self.generative_types):
             new_file_path = os.path.join(str(game_directory), os.path.basename(file))
             shutil.move(f'{file}', f'{new_file_path}')
-            print('Generating any missing .cue file(s)')
+            logging.info('Generating any missing .cue file(s)')
             file = self.cue_file_generator(directory=game_directory)
 
         # Update the names of ROMs with the included ROM Code mapping
@@ -90,10 +95,9 @@ class RomManager:
 
         # Run the chdman command
         if os.path.exists(chd_file_path):
-            print(f'Game already exists in .chd format: {chd_file_path}')
+            logging.warning(f'Game already exists in .chd format: {chd_file_path}')
         else:
-            print(f'Running chdman: {chd_command}...')
-            self.run_command(command=chd_command, silent=self.silent)
+            self.run_command(command=chd_command, verbose=self.verbose)
 
         if archive_file:
             self.cleanup_extracted_files(game_directory, chd_file_path)
@@ -103,11 +107,10 @@ class RomManager:
             self.cleanup_origin_files(game_directory=game_directory,
                                       chd_file_path=chd_file_path,
                                       archive_file=archive_file)
-        update_func()
 
     @staticmethod
     def map_game_code_name(file):
-        print('Scanning the filename for known ROM codes')
+        logging.info('Scanning the filename for known ROM codes')
         for key, value in psx_codes.items():
             if key in os.path.basename(file):
                 file_path = os.path.dirname(file)
@@ -117,61 +120,65 @@ class RomManager:
                 if file != new_file and not os.path.exists(new_file):
                     os.rename(file, new_file)
                     file = new_file
-                print(f'The string contains the key: {key}')
+                logging.info(f'The string contains the key: {key}')
         return file
 
     def cleanup_origin_files(self, game_directory, chd_file_path, archive_file=None):
         # Cleanup original files
-        print(f'Deleting original file {archive_file}...')
+        logging.info(f'Deleting original file {archive_file}...')
         self.cleanup_archive(archive_file)
         self.cleanup_extracted_files(game_directory=game_directory, chd_file_path=chd_file_path)
 
     @staticmethod
     def cleanup_archive(archive_file=None):
         # Cleanup original files
-        print(f'Deleting original file {archive_file}...')
+        logging.info(f'Deleting original file {archive_file}...')
         if archive_file and os.path.exists(str(archive_file)):
             os.remove(archive_file)
-            print(f'The original file {archive_file} has been deleted.')
+            logging.info(f'The original file {archive_file} has been deleted.')
         else:
-            print(f'The original file {archive_file} does not exist.')
+            logging.info(f'The original file {archive_file} does not exist.')
 
     @staticmethod
     def cleanup_extracted_files(game_directory=None, chd_file_path=None):
         # Cleanup any extracted directories
         if game_directory and os.path.exists(game_directory):
-            print(f'Cleaning {game_directory}...')
+            logging.info(f'Cleaning {game_directory}...')
             parent_directory = os.path.dirname(os.path.dirname(chd_file_path))
             new_file_path = os.path.join(parent_directory, os.path.basename(chd_file_path))
             shutil.move(f'{chd_file_path}', f'{new_file_path}')
             shutil.rmtree(game_directory)
-            print(f'Finished cleaning {game_directory}')
+            logging.info(f'Finished cleaning {game_directory}')
 
     @staticmethod
-    def run_command(command, silent=False):
+    def run_command(command, verbose=False):
         try:
-            if silent:
+            if verbose is False:
                 result = subprocess.run(command, stdout=open(os.devnull, 'wb'), stderr=open(os.devnull, 'wb'))
             else:
                 result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                         universal_newlines=True)
-            print(result.returncode, result.stdout, result.stderr)
+            logging.info(result.returncode, result.stdout, result.stderr)
         except subprocess.CalledProcessError as e:
-            print(e.output)
+            logging.warning(e.output)
 
     def process_archive(self, archive, archive_directory):
-        print(f'Extracting {archive} to {archive_directory}...')
+        logging.info(f'Extracting {archive} to {archive_directory}...')
+        if self.verbose:
+            verbose = 1
+        else:
+            verbose = -1
         try:
-            patool.extract_archive(archive, outdir=archive_directory)
+            patool.extract_archive(archive, outdir=archive_directory, verbosity=verbose)
         except patool.util.PatoolError as e:
-            print(f'Unable to extract: {archive}\nError: {e}')
+            logging.info(f'Unable to extract: {archive}\nError: {e}')
 
-        print(f'Finished extracting {archive} to {archive_directory}')
-        print('Generating any missing cue file(s)')
+        logging.info(f'Finished extracting {archive} to {archive_directory}')
+        logging.info('Generating any missing cue file(s)')
         if (glob.glob(os.path.join(str(archive_directory), '*.bin'))
                 and not glob.glob(os.path.join(str(archive_directory), '*.cue'))):
             self.cue_file_generator(archive_directory)
-        print('Finished generating missing cue file(s)')
+        logging.info('Finished generating missing cue file(s)')
 
     @staticmethod
     def pad_leading_zero(number):
@@ -247,31 +254,32 @@ def installation_instructions():
 def usage():
     print(f'ROM Manager: Convert Game ROMs to Compressed Hunks of Data (CHD) file format\n'
           f'Version: {__version__}\n'
-          f'Author: {__author__}\n'
-          f'Credits: {__credits__}\n'
           f'\n'
           f'Usage: \n'
           f'-h | --help       [ See usage for script ]\n'
           f'-c | --cpu-count  [ Limit max number of CPUs to use for parallel processing ]\n'
           f'-d | --directory  [ Directory to process ROMs ]\n'
           f'-f | --force      [ Force overwrite of existing CHD files ]\n'
-          f'-s | --silent     [ Suppress output messages ]\n'
+          f'-v | --verbose    [ Display all output messages ]\n'
           f'-x | --delete     [ Delete original files after processing ]\n'
           f'\n'
           f'Example: \n'
-          f'rom-manager --directory "C:/Users/default/Games/"\n')
+          f'rom-manager --directory "C:/Users/default/Games/"\n'
+          f'\n'
+          f'Author: {__author__}\n'
+          f'Credits: {__credits__}\n')
     installation_instructions()
 
 
 def rom_manager(argv):
     cpu_count = None
     directory = ''
-    silent = True
+    verbose = False
     force = False
     clean_origin_files = False
 
     try:
-        opts, args = getopt.getopt(argv, 'hc:d:fsx', ['help', 'cpu-count=', 'directory=', 'force', 'silent',
+        opts, args = getopt.getopt(argv, 'hc:d:fvx', ['help', 'cpu-count=', 'directory=', 'force', 'verbose',
                                                       'delete'])
     except getopt.GetoptError:
         usage()
@@ -287,21 +295,32 @@ def rom_manager(argv):
             directory = arg
         elif opt in ('-f', '--force'):
             force = True
-        elif opt in ('-s', '--silent'):
-            silent = True
+        elif opt in ('-v', '--verbose'):
+            verbose = True
         elif opt in ('-x', '--delete'):
             clean_origin_files = True
     roms_manager = RomManager()
-    roms_manager.silent = silent
+    roms_manager.verbose = verbose
     roms_manager.force = force
     roms_manager.directory = directory
-    before_size = get_directory_size(directory=directory)
     roms_manager.clean_origin_files = clean_origin_files
+    before_size = get_directory_size(directory=directory)
+    start_time = time.time()
     roms_manager.process_parallel(cpu_count=cpu_count)
+    end_time = time.time()
     after_size = get_directory_size(directory=directory)
-    print(f'Directory size before: {before_size[3]} GB'
-          f'Directory size after: {after_size[3]} GB'
-          f'Savings: {before_size[3]-after_size[3]} GB')
+    elapsed_time_seconds = end_time - start_time
+    hours = int(elapsed_time_seconds / 3600)
+    minutes = int((elapsed_time_seconds % 3600) / 60)
+    seconds = elapsed_time_seconds % 60
+    time_message = ""
+    if hours > 0:
+        time_message = f"{hours} hours, "
+    time_message = f"{time_message}{minutes} minutes, {seconds:.2f} seconds"
+    print(f'Directory size before: {before_size[3]:.2f} GB\n'
+          f'Directory size after: {after_size[3]:.2f} GB\n'
+          f'Storage delta: {before_size[3]-after_size[3]:.2f} GB\n'
+          f'Total time taken: {time_message}')
 
 
 def main():
