@@ -22,7 +22,7 @@
 
 *Version: 0.0.14*
 
-Convert Game ROMs to Compressed Hunks of Data (CHD) file format
+Convert Game ROMs to Compressed Hunks of Data (CHD) file format or RVZ file format
 
 Automatically generate missing .cue files for your .bin files!
 
@@ -32,6 +32,8 @@ CHD (“Compressed Hunks of Data”) files are compressed data files that can be
 They are in a lossless compression format, meaning that they perfectly preserve all game data while reducing file sizes. 
 CHDs were originally developed for MAME to compress CD-based arcade games, 
 but now they are compatible with a variety emulators and CD-based consoles.
+
+RVZ files are compressed also compressed files, but they are built for Dolphin Emulator specifically
 
 ### Supports:
 - Sony PlayStation
@@ -44,6 +46,8 @@ but now they are compatible with a variety emulators and CD-based consoles.
 - Panasonic 3DO
 - Amiga CD32
 - Philips CD-I
+- Nintendo Wii
+- Nintendo GameCube
 
 ### Archive Types Extracted:
 - 7z
@@ -60,6 +64,8 @@ but now they are compatible with a variety emulators and CD-based consoles.
 - cue
 - iso
 - gdi
+- wbfs
+- bin
 
 <details>
   <summary><b>Usage:</b></summary>

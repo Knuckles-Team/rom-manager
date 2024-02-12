@@ -25,14 +25,15 @@ except ImportError:
 
 
 class RomManager:
-    dolphin_types = ('.wbfs', '.iso')
-    generative_types = ('.bin', '.m3u')
-    supported_types = ('.iso', '.cue', '.gdi')
-    archive_formats = ('.7z', '.zip', '.tar.gz', '.gz', '.gzip', '.bz2', '.bzip2', '.rar', '.tar')
 
     def __init__(self):
         logger = logging.getLogger()
         logger.disabled = False
+        self.iso_type = 'chd'
+        self.generative_types = ('.bin', '.m3u')
+        self.rvz_types = ('.wbfs', '.iso')
+        self.chd_types = ('.iso', '.cue', '.gdi')
+        self.archive_formats = ('.7z', '.zip', '.tar.gz', '.gz', '.gzip', '.bz2', '.bzip2', '.rar', '.tar')
         self.verbose = False
         self.force = False
         self.clean_origin_files = False
@@ -46,7 +47,7 @@ class RomManager:
             cpu_count = int(os.cpu_count() / 2 + 2)
         pool = Pool(processes=cpu_count)
         print(f"Parallel CPU(s) Engaged: {cpu_count}\nProcessing...\n")
-        process_extensions = self.archive_formats + self.supported_types + self.generative_types
+        process_extensions = self.archive_formats + self.chd_types + self.generative_types + self.rvz_types
         files = self.get_files(directory=self.directory, extensions=process_extensions)
 
         logging.info(f"Total Files: {len(files)}\nFiles: {files}")
@@ -69,9 +70,9 @@ class RomManager:
         if file.lower().endswith(self.archive_formats):
             archive_file = file
             self.process_archive(archive=archive_file, archive_directory=game_directory)
-            files = self.get_files(directory=game_directory, extensions=self.supported_types)
+            files = self.get_files(directory=game_directory, extensions=self.chd_types)
             file = files[0]
-        elif file.lower().endswith(self.supported_types):
+        elif file.lower().endswith(self.chd_types):
             logging.info('ISO/GDI/Cue file found')
             new_file_path = os.path.join(str(game_directory), os.path.basename(file))
             shutil.move(f'{file}', f'{new_file_path}')
@@ -85,27 +86,44 @@ class RomManager:
         # Update the names of ROMs with the included ROM Code mapping
         file = self.map_game_code_name(file=file)
 
-        # Build the chdman command
-        chd_file = f'{os.path.splitext(os.path.basename(file))[0]}.chd'
-        chd_file_directory = os.path.dirname(file)
-        chd_file_path = os.path.join(chd_file_directory, chd_file)
-        chd_command = ['chdman', 'createcd', '-i', f'{file}', '-o', f'{chd_file_path}']
-        if self.force:
-            chd_command.append('-f')
+        # Set ISO type conversion
+        if self.iso_type == 'chd':
+            rvz_types_list = list(self.rvz_types)
+            rvz_types_list.remove('.iso')
+            self.rvz_types = tuple(rvz_types_list)
+        elif self.iso_type == 'rvz':
+            chd_types_list = list(self.chd_types)
+            chd_types_list.remove('.iso')
+            self.chd_types = tuple(chd_types_list)
+
+        # Build the conversion command
+        _, extension = os.path.splitext(file)
+        if extension.lower().endswith(self.rvz_types):
+            converted_file = f'{os.path.splitext(os.path.basename(file))[0]}.rvz'
+            converted_file_directory = os.path.dirname(file)
+            converted_file_path = os.path.join(converted_file_directory, converted_file)
+            convert_command = ['dolphin-tool', 'convert', '-i', f'{file}', '-o', f'{converted_file_path}', '-l', '22']
+        else:
+            converted_file = f'{os.path.splitext(os.path.basename(file))[0]}.chd'
+            converted_file_directory = os.path.dirname(file)
+            converted_file_path = os.path.join(converted_file_directory, converted_file)
+            convert_command = ['chdman', 'createcd', '-i', f'{file}', '-o', f'{converted_file_path}']
+            if self.force:
+                convert_command.append('-f')
 
         # Run the chdman command
-        if os.path.exists(chd_file_path):
-            logging.warning(f'Game already exists in .chd format: {chd_file_path}')
+        if os.path.exists(converted_file_path):
+            logging.warning(f'Game already exists in .chd format: {converted_file_path}')
         else:
-            self.run_command(command=chd_command, verbose=self.verbose)
+            self.run_command(command=convert_command, verbose=self.verbose)
 
         if archive_file:
-            self.cleanup_extracted_files(game_directory, chd_file_path)
+            self.cleanup_extracted_files(game_directory, converted_file_path)
 
         # Cleanup
         if self.clean_origin_files:
             self.cleanup_origin_files(game_directory=game_directory,
-                                      chd_file_path=chd_file_path,
+                                      converted_file_path=converted_file_path,
                                       archive_file=archive_file)
 
     @staticmethod
@@ -123,11 +141,11 @@ class RomManager:
                 logging.info(f'The string contains the key: {key}')
         return file
 
-    def cleanup_origin_files(self, game_directory, chd_file_path, archive_file=None):
+    def cleanup_origin_files(self, game_directory, converted_file_path, archive_file=None):
         # Cleanup original files
         logging.info(f'Deleting original file {archive_file}...')
         self.cleanup_archive(archive_file)
-        self.cleanup_extracted_files(game_directory=game_directory, chd_file_path=chd_file_path)
+        self.cleanup_extracted_files(game_directory=game_directory, converted_file_path=converted_file_path)
 
     @staticmethod
     def cleanup_archive(archive_file=None):
@@ -140,13 +158,13 @@ class RomManager:
             logging.info(f'The original file {archive_file} does not exist.')
 
     @staticmethod
-    def cleanup_extracted_files(game_directory=None, chd_file_path=None):
+    def cleanup_extracted_files(game_directory=None, converted_file_path=None):
         # Cleanup any extracted directories
         if game_directory and os.path.exists(game_directory):
             logging.info(f'Cleaning {game_directory}...')
-            parent_directory = os.path.dirname(os.path.dirname(chd_file_path))
-            new_file_path = os.path.join(parent_directory, os.path.basename(chd_file_path))
-            shutil.move(f'{chd_file_path}', f'{new_file_path}')
+            parent_directory = os.path.dirname(os.path.dirname(converted_file_path))
+            new_file_path = os.path.join(parent_directory, os.path.basename(converted_file_path))
+            shutil.move(f'{converted_file_path}', f'{new_file_path}')
             shutil.rmtree(game_directory)
             logging.info(f'Finished cleaning {game_directory}')
 
@@ -249,31 +267,36 @@ def installation_instructions():
     if get_operating_system() == 'Ubuntu':
         print('Install for Ubuntu:\n'
               '1) apt install mame-tools\n')
+    print('For wbfs support, please install dolphin-tool here: \n'
+          'https://github.com/dolphin-emu/dolphin#dolphintool-usage\n')
 
 
 def usage():
-    print(f'ROM Manager: Convert Game ROMs to Compressed Hunks of Data (CHD) file format\n'
+    print(f'ROM Manager: Convert Game ROMs to Compressed Hunks of Data (CHD) file format or RVZ format.\n'
+          f'Backup your ROMs before working with this tool!\n'
           f'Version: {__version__}\n'
           f'\n'
           f'Usage: \n'
           f'-h | --help       [ See usage for script ]\n'
           f'-c | --cpu-count  [ Limit max number of CPUs to use for parallel processing ]\n'
           f'-d | --directory  [ Directory to process ROMs ]\n'
-          f'-f | --force      [ Force overwrite of existing CHD files ]\n'
+          f'-i | --iso        [ Choose how to convert ISO file(s). Options are "rvz" or "chd" ]\n'
+          f'-f | --force      [ Force overwrite of existing .chd files ]\n'
           f'-v | --verbose    [ Display all output messages ]\n'
           f'-x | --delete     [ Delete original files after processing ]\n'
           f'\n'
           f'Example: \n'
           f'rom-manager --directory "C:/Users/default/Games/"\n'
-          f'\n'
-          f'Author: {__author__}\n'
-          f'Credits: {__credits__}\n')
+          f'\n')
     installation_instructions()
+    print(f'Author: {__author__}\n'
+          f'Credits: {__credits__}\n')
 
 
 def rom_manager(argv):
     cpu_count = None
     directory = ''
+    iso_type = 'chd'
     verbose = False
     force = False
     clean_origin_files = False
@@ -295,6 +318,12 @@ def rom_manager(argv):
             directory = arg
         elif opt in ('-f', '--force'):
             force = True
+        elif opt in ('-i', '--iso'):
+            if arg.lower() in ['rvz', 'chd']:
+                iso_type = arg
+            else:
+                usage()
+                sys.exit()
         elif opt in ('-v', '--verbose'):
             verbose = True
         elif opt in ('-x', '--delete'):
@@ -304,6 +333,7 @@ def rom_manager(argv):
     roms_manager.force = force
     roms_manager.directory = directory
     roms_manager.clean_origin_files = clean_origin_files
+    roms_manager.iso_type = iso_type
     before_size = get_directory_size(directory=directory)
     start_time = time.time()
     roms_manager.process_parallel(cpu_count=cpu_count)
