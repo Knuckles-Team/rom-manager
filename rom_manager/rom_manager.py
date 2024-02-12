@@ -98,6 +98,9 @@ class RomManager:
 
         # Build the conversion command
         _, extension = os.path.splitext(file)
+        chd_create_type = "createdvd"
+        if extension.lower().endswith("cue"):
+            chd_create_type = "createcd"
         if extension.lower().endswith(self.rvz_types):
             converted_file = f'{os.path.splitext(os.path.basename(file))[0]}.rvz'
             converted_file_directory = os.path.dirname(file)
@@ -107,7 +110,7 @@ class RomManager:
             converted_file = f'{os.path.splitext(os.path.basename(file))[0]}.chd'
             converted_file_directory = os.path.dirname(file)
             converted_file_path = os.path.join(converted_file_directory, converted_file)
-            convert_command = ['chdman', 'createcd', '-i', f'{file}', '-o', f'{converted_file_path}']
+            convert_command = ['chdman', chd_create_type, '-i', f'{file}', '-o', f'{converted_file_path}']
             if self.force:
                 convert_command.append('-f')
 
