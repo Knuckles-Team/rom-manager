@@ -34,6 +34,7 @@ class RomManager:
         self.rvz_types = ('.wbfs', '.iso')
         self.chd_types = ('.iso', '.cue', '.gdi')
         self.archive_formats = ('.7z', '.zip', '.tar.gz', '.gz', '.gzip', '.bz2', '.bzip2', '.rar', '.tar')
+        self.supported_extensions = self.archive_formats + self.chd_types + self.generative_types + self.rvz_types
         self.verbose = False
         self.force = False
         self.clean_origin_files = False
@@ -47,8 +48,7 @@ class RomManager:
             cpu_count = int(os.cpu_count() / 2 + 2)
         pool = Pool(processes=cpu_count)
         print(f"Parallel CPU(s) Engaged: {cpu_count}\nProcessing...\n")
-        process_extensions = self.archive_formats + self.chd_types + self.generative_types + self.rvz_types
-        files = self.get_files(directory=self.directory, extensions=process_extensions)
+        files = self.get_files(directory=self.directory, extensions=self.supported_extensions)
 
         logging.info(f"Total Files: {len(files)}\nFiles: {files}")
         result_list_tqdm = []
