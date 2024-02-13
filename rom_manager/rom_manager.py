@@ -44,7 +44,7 @@ class RomManager:
         if self.verbose:
             logger = logging.getLogger()
             logger.disabled = False
-            logger.setLevel(logging.INFO)
+            logger.setLevel(logging.DEBUG)
         if not cpu_count:
             cpu_count = int(os.cpu_count() / 2 + 2)
         pool = Pool(processes=cpu_count)
