@@ -27,8 +27,8 @@ except ImportError:
 class RomManager:
 
     def __init__(self):
-        logger = logging.getLogger()
-        logger.disabled = False
+        self.logger = logging.getLogger('rom_manager')
+        self.logger.disabled = False
         self.iso_type = 'chd'
         self.generative_types = ('.bin', '.m3u')
         self.rvz_types = ('.wbfs', '.iso')
@@ -42,16 +42,15 @@ class RomManager:
 
     def process_parallel(self, cpu_count):
         if self.verbose:
-            logger = logging.getLogger()
-            logger.disabled = False
-            logger.setLevel(logging.DEBUG)
+            self.logger.disabled = False
+            self.logger.setLevel(logging.DEBUG)
         if not cpu_count:
             cpu_count = int(os.cpu_count() / 2 + 2)
         pool = Pool(processes=cpu_count)
         print(f"Parallel CPU(s) Engaged: {cpu_count}\nProcessing...\n")
         files = self.get_files(directory=self.directory, extensions=self.supported_extensions)
 
-        logging.info(f"Total Files: {len(files)}\nFiles: {files}")
+        self.logger.info(f"Total Files: {len(files)}\nFiles: {files}")
         result_list_tqdm = []
         for result in tqdm(pool.imap(func=self.process_file, iterable=files), total=len(files)):
             result_list_tqdm.append(result)
@@ -74,18 +73,18 @@ class RomManager:
             files = self.get_files(directory=game_directory, extensions=self.chd_types)
             file = files[0]
         elif file.lower().endswith(self.chd_types):
-            logging.info('ISO/GDI/Cue file found')
+            self.logger.info('ISO/GDI/Cue file found')
             new_file_path = os.path.join(str(game_directory), os.path.basename(file))
             shutil.move(f'{file}', f'{new_file_path}')
             file = new_file_path
         elif file.lower().endswith(self.generative_types):
             new_file_path = os.path.join(str(game_directory), os.path.basename(file))
             shutil.move(f'{file}', f'{new_file_path}')
-            logging.info('Generating any missing .cue file(s)')
+            self.logger.info('Generating any missing .cue file(s)')
             file = self.cue_file_generator(directory=game_directory)
 
         # Update the names of ROMs with the included ROM Code mapping
-        file = self.map_game_code_name(file=file)
+        file = self.map_game_code_name(file=file, logger=self.logger)
 
         # Set ISO type conversion
         if self.iso_type == 'chd':
@@ -115,13 +114,13 @@ class RomManager:
             if self.force:
                 convert_command.append('-f')
 
-        logging.info(f"Command to run: {convert_command}")
+        self.logger.info(f"Command to run: {convert_command}")
 
         # Run the chdman command
         if os.path.exists(converted_file_path):
-            logging.warning(f'Game already exists in .chd format: {converted_file_path}')
+            self.logger.warning(f'Game already exists in .chd format: {converted_file_path}')
         else:
-            self.run_command(command=convert_command, verbose=self.verbose)
+            self.run_command(command=convert_command, verbose=self.verbose, logger=self.logger)
 
         if archive_file:
             self.cleanup_extracted_files(game_directory, converted_file_path)
@@ -133,8 +132,8 @@ class RomManager:
                                       archive_file=archive_file)
 
     @staticmethod
-    def map_game_code_name(file):
-        logging.info('Scanning the filename for known ROM codes')
+    def map_game_code_name(file, logger=None):
+        logger.info('Scanning the filename for known ROM codes')
         for key, value in psx_codes.items():
             if key in os.path.basename(file):
                 file_path = os.path.dirname(file)
@@ -144,50 +143,51 @@ class RomManager:
                 if file != new_file and not os.path.exists(new_file):
                     os.rename(file, new_file)
                     file = new_file
-                logging.info(f'The string contains the key: {key}')
+                logger.info(f'The string contains the key: {key}')
         return file
 
     def cleanup_origin_files(self, game_directory, converted_file_path, archive_file=None):
         # Cleanup original files
-        logging.info(f'Deleting original file {archive_file}...')
-        self.cleanup_archive(archive_file)
-        self.cleanup_extracted_files(game_directory=game_directory, converted_file_path=converted_file_path)
+        self.logger.info(f'Deleting original file {archive_file}...')
+        self.cleanup_archive(archive_file, logger=self.logger)
+        self.cleanup_extracted_files(game_directory=game_directory, converted_file_path=converted_file_path,
+                                     logger=self.logger)
 
     @staticmethod
-    def cleanup_archive(archive_file=None):
+    def cleanup_archive(archive_file=None, logger=None):
         # Cleanup original files
-        logging.info(f'Deleting original file {archive_file}...')
+        logger.info(f'Deleting original file {archive_file}...')
         if archive_file and os.path.exists(str(archive_file)):
             os.remove(archive_file)
-            logging.info(f'The original file {archive_file} has been deleted.')
+            logger.info(f'The original file {archive_file} has been deleted.')
         else:
-            logging.info(f'The original file {archive_file} does not exist.')
+            logger.info(f'The original file {archive_file} does not exist.')
 
     @staticmethod
-    def cleanup_extracted_files(game_directory=None, converted_file_path=None):
+    def cleanup_extracted_files(game_directory=None, converted_file_path=None, logger=None):
         # Cleanup any extracted directories
         if game_directory and os.path.exists(game_directory):
-            logging.info(f'Cleaning {game_directory}...')
+            logger.info(f'Cleaning {game_directory}...')
             parent_directory = os.path.dirname(os.path.dirname(converted_file_path))
             new_file_path = os.path.join(parent_directory, os.path.basename(converted_file_path))
             shutil.move(f'{converted_file_path}', f'{new_file_path}')
             shutil.rmtree(game_directory)
-            logging.info(f'Finished cleaning {game_directory}')
+            logger.info(f'Finished cleaning {game_directory}')
 
     @staticmethod
-    def run_command(command, verbose=False):
+    def run_command(command, verbose=False, logger=None):
         try:
             if verbose is False:
                 result = subprocess.run(command, stdout=open(os.devnull, 'wb'), stderr=open(os.devnull, 'wb'))
             else:
                 result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                         universal_newlines=True)
-            logging.info(result.returncode, result.stdout, result.stderr)
+            logger.info(result.returncode, result.stdout, result.stderr)
         except subprocess.CalledProcessError as e:
-            logging.warning(e.output)
+            logger.warning(e.output)
 
     def process_archive(self, archive, archive_directory):
-        logging.info(f'Extracting {archive} to {archive_directory}...')
+        self.logger.info(f'Extracting {archive} to {archive_directory}...')
         if self.verbose:
             verbose = 1
         else:
@@ -195,14 +195,14 @@ class RomManager:
         try:
             patool.extract_archive(archive, outdir=archive_directory, verbosity=verbose)
         except patool.util.PatoolError as e:
-            logging.info(f'Unable to extract: {archive}\nError: {e}')
+            self.logger.info(f'Unable to extract: {archive}\nError: {e}')
 
-        logging.info(f'Finished extracting {archive} to {archive_directory}')
-        logging.info('Generating any missing cue file(s)')
+        self.logger.info(f'Finished extracting {archive} to {archive_directory}')
+        self.logger.info('Generating any missing cue file(s)')
         if (glob.glob(os.path.join(str(archive_directory), '*.bin'))
                 and not glob.glob(os.path.join(str(archive_directory), '*.cue'))):
             self.cue_file_generator(archive_directory)
-        logging.info('Finished generating missing cue file(s)')
+        self.logger.info('Finished generating missing cue file(s)')
 
     @staticmethod
     def pad_leading_zero(number):
