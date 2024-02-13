@@ -44,6 +44,7 @@ class RomManager:
         if self.verbose:
             logger = logging.getLogger()
             logger.disabled = False
+            logger.setLevel(logging.INFO)
         if not cpu_count:
             cpu_count = int(os.cpu_count() / 2 + 2)
         pool = Pool(processes=cpu_count)
@@ -113,6 +114,8 @@ class RomManager:
             convert_command = ['chdman', chd_create_type, '-i', f'{file}', '-o', f'{converted_file_path}']
             if self.force:
                 convert_command.append('-f')
+
+        logging.info(f"Command to run: {convert_command}")
 
         # Run the chdman command
         if os.path.exists(converted_file_path):
