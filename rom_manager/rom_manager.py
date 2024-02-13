@@ -12,9 +12,11 @@ import shutil
 import re
 import logging
 import time
+import random
+import string
 from multiprocessing import Pool
 from tqdm import tqdm
-
+from functools import partial
 
 try:
     from version import __version__, __author__, __credits__
@@ -28,12 +30,15 @@ class RomManager:
     logging.getLogger('patoolib').setLevel(logging.WARNING)
 
     def __init__(self):
-        self.logger = logging.getLogger('rom_manager')
+        self.logger_name = "rom_manager"
+        self.logger = logging.getLogger(self.logger_name)
         self.logger.disabled = True
+        self.logger_level = logging.WARNING
         # Configure a handler for the logger (outputting to console)
         handler = logging.StreamHandler()
-        formatter = logging.Formatter('%(levelname)s: %(message)s - %(asctime)s')
-        handler.setFormatter(formatter)
+        self.logger_format = '%(levelname)s: %(message)s - %(asctime)s'
+        self.log_formater = logging.Formatter(self.logger_format)
+        handler.setFormatter(self.log_formater)
         self.logger.addHandler(handler)
         self.iso_type = 'chd'
         self.generative_types = ('.bin', '.m3u')
@@ -50,26 +55,49 @@ class RomManager:
         if self.verbose:
             self.logger.disabled = False
             self.logger.setLevel(logging.DEBUG)
+            self.logger_level = logging.DEBUG
             print("Logger level:", self.logger.level)  # Debugging statement
         if not cpu_count:
             cpu_count = int(os.cpu_count() / 2 + 2)
         files = self.get_files(directory=self.directory, extensions=self.supported_extensions)
         if cpu_count > len(files):
             cpu_count = len(files)
-        pool = Pool(processes=cpu_count)
         print(f"Parallel CPU(s) Engaged: {cpu_count}\nProcessing...\n")
         self.logger.info(f"Total Files: {len(files)}\nFiles: {files}")
-        result_list_tqdm = []
-        for result in tqdm(pool.imap(func=self.process_file, iterable=files), total=len(files)):
-            result_list_tqdm.append(result)
+        partial_process_file = partial(self.process_file, logger_name=f'{self.logger_name}',
+                                       logger_level=self.logger_level,
+                                       logger_format=self.logger_format)
+        with Pool(processes=cpu_count, initializer=self.init_logger,
+                  initargs=(self.logger_name, self.logger_level, self.logger_format)) as pool:
+            result_list_tqdm = list(tqdm(pool.imap(partial_process_file, files), total=len(files)))
 
         return result_list_tqdm
 
-    def process_file(self, file):
+    def init_logger(self, logger_name, logger_level, logger_format):
+        # Initialize logger in each worker process
+        logger_name = f'{logger_name}-{"".join(random.choices(string.ascii_letters + string.digits, k=5))}'
+        logger = logging.getLogger(logger_name)
+        logger.setLevel(logger_level)
+        handler = logging.StreamHandler()
+        formatter = logging.Formatter(logger_format)
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+
+    def process_file(self, file, logger_name, logger_level, logger_format):
+        logger = logging.getLogger(logger_name)
+        logger.setLevel(logger_level)
+        formatter = logging.Formatter(logger_format)
+        handler = logging.StreamHandler()
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
         archive_file = None
+        print("\nLogger level:", self.logger.level)  # Debugging statement
         # Create directory if game is in top folder
+
+        logger.info('Detecting parent directory')
         if os.path.dirname(file) == self.directory:
             game_directory = os.path.join(os.path.dirname(file), os.path.splitext(os.path.basename(file))[0])
+            logger.info(f'Creating parent directory for: {file}\n{game_directory}')
             os.makedirs(game_directory, exist_ok=True)
         else:
             game_directory = os.path.dirname(file)
@@ -81,26 +109,26 @@ class RomManager:
             files = self.get_files(directory=game_directory, extensions=self.chd_types)
             file = files[0]
         elif file.lower().endswith(self.chd_types):
-            self.logger.info('ISO/GDI/Cue file found')
+            logger.info('ISO/GDI/Cue file found')
             new_file_path = os.path.join(str(game_directory), os.path.basename(file))
             try:
                 shutil.move(f'{file}', f'{new_file_path}')
                 file = new_file_path
             except Exception as e:
-                self.logger.error(f"Error moving ISO/GDI/Cue file: {file} to {new_file_path}\n"
-                                  f"Error: {e}")
+                logger.error(f"Error moving ISO/GDI/Cue file: {file} to {new_file_path}\n"
+                             f"Error: {e}")
         elif file.lower().endswith(self.generative_types):
             new_file_path = os.path.join(str(game_directory), os.path.basename(file))
             try:
                 shutil.move(f'{file}', f'{new_file_path}')
             except Exception as e:
-                self.logger.error(f"Error moving file: {file} to {new_file_path}\n"
-                                  f"Error: {e}")
-            self.logger.info('Generating any missing .cue file(s)')
+                logger.error(f"Error moving file: {file} to {new_file_path}\n"
+                             f"Error: {e}")
+            logger.info('Generating any missing .cue file(s)')
             file = self.cue_file_generator(directory=game_directory)
 
         # Update the names of ROMs with the included ROM Code mapping
-        file = self.map_game_code_name(file=file, logger=self.logger)
+        file = self.map_game_code_name(file=file, logger=logger)
 
         # Set ISO type conversion
         if self.iso_type == 'chd':
@@ -130,16 +158,16 @@ class RomManager:
             if self.force:
                 convert_command.append('-f')
 
-        self.logger.info(f"Command to run: {convert_command}")
+        logger.info(f"Command to run: {convert_command}")
 
         # Run the chdman command
         if os.path.exists(converted_file_path):
-            self.logger.warning(f'Game already exists in .chd format: {converted_file_path}')
+            logger.warning(f'Game already exists in .chd format: {converted_file_path}')
         else:
-            self.run_command(command=convert_command, verbose=self.verbose, logger=self.logger)
+            self.run_command(command=convert_command, verbose=self.verbose, logger=logger)
 
         if archive_file:
-            self.cleanup_extracted_files(game_directory, converted_file_path, logger=self.logger)
+            self.cleanup_extracted_files(game_directory, converted_file_path, logger=logger)
 
         # Cleanup
         if self.clean_origin_files:
