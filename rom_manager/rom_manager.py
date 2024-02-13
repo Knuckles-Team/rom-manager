@@ -15,7 +15,7 @@ import time
 from multiprocessing import Pool
 from tqdm import tqdm
 
-logging.getLogger('patoolib').setLevel(logging.WARNING)
+
 try:
     from version import __version__, __author__, __credits__
     from game_codes import psx_codes
@@ -25,10 +25,16 @@ except ImportError:
 
 
 class RomManager:
+    logging.getLogger('patoolib').setLevel(logging.WARNING)
 
     def __init__(self):
         self.logger = logging.getLogger('rom_manager')
-        self.logger.disabled = False
+        self.logger.disabled = True
+        # Configure a handler for the logger (outputting to console)
+        handler = logging.StreamHandler()
+        formatter = logging.Formatter('%(levelname)s: %(message)s - %(asctime)s')
+        handler.setFormatter(formatter)
+        self.logger.addHandler(handler)
         self.iso_type = 'chd'
         self.generative_types = ('.bin', '.m3u')
         self.rvz_types = ('.wbfs', '.iso')
@@ -44,12 +50,14 @@ class RomManager:
         if self.verbose:
             self.logger.disabled = False
             self.logger.setLevel(logging.DEBUG)
+            print("Logger level:", self.logger.level)  # Debugging statement
         if not cpu_count:
             cpu_count = int(os.cpu_count() / 2 + 2)
+        files = self.get_files(directory=self.directory, extensions=self.supported_extensions)
+        if cpu_count > len(files):
+            cpu_count = len(files)
         pool = Pool(processes=cpu_count)
         print(f"Parallel CPU(s) Engaged: {cpu_count}\nProcessing...\n")
-        files = self.get_files(directory=self.directory, extensions=self.supported_extensions)
-
         self.logger.info(f"Total Files: {len(files)}\nFiles: {files}")
         result_list_tqdm = []
         for result in tqdm(pool.imap(func=self.process_file, iterable=files), total=len(files)):
@@ -75,11 +83,19 @@ class RomManager:
         elif file.lower().endswith(self.chd_types):
             self.logger.info('ISO/GDI/Cue file found')
             new_file_path = os.path.join(str(game_directory), os.path.basename(file))
-            shutil.move(f'{file}', f'{new_file_path}')
-            file = new_file_path
+            try:
+                shutil.move(f'{file}', f'{new_file_path}')
+                file = new_file_path
+            except Exception as e:
+                self.logger.error(f"Error moving ISO/GDI/Cue file: {file} to {new_file_path}\n"
+                                  f"Error: {e}")
         elif file.lower().endswith(self.generative_types):
             new_file_path = os.path.join(str(game_directory), os.path.basename(file))
-            shutil.move(f'{file}', f'{new_file_path}')
+            try:
+                shutil.move(f'{file}', f'{new_file_path}')
+            except Exception as e:
+                self.logger.error(f"Error moving file: {file} to {new_file_path}\n"
+                                  f"Error: {e}")
             self.logger.info('Generating any missing .cue file(s)')
             file = self.cue_file_generator(directory=game_directory)
 
@@ -123,7 +139,7 @@ class RomManager:
             self.run_command(command=convert_command, verbose=self.verbose, logger=self.logger)
 
         if archive_file:
-            self.cleanup_extracted_files(game_directory, converted_file_path)
+            self.cleanup_extracted_files(game_directory, converted_file_path, logger=self.logger)
 
         # Cleanup
         if self.clean_origin_files:
@@ -170,8 +186,13 @@ class RomManager:
             logger.info(f'Cleaning {game_directory}...')
             parent_directory = os.path.dirname(os.path.dirname(converted_file_path))
             new_file_path = os.path.join(parent_directory, os.path.basename(converted_file_path))
-            shutil.move(f'{converted_file_path}', f'{new_file_path}')
-            shutil.rmtree(game_directory)
+            try:
+                shutil.move(f'{converted_file_path}', f'{new_file_path}')
+                shutil.rmtree(game_directory)
+            except Exception as e:
+                logger.error(f"Error moving file: {converted_file_path} to {new_file_path}\n"
+                             f"Error: {e}")
+
             logger.info(f'Finished cleaning {game_directory}')
 
     @staticmethod
@@ -224,8 +245,9 @@ class RomManager:
                       f'    INDEX 01 00:02:00\n')
             track_counter += 1
         cue_file_path = os.path.join(directory, f'{os.path.splitext(os.path.basename(first_file))[0]}.cue')
-        with open(cue_file_path, 'w') as cue_file:
-            cue_file.write(sheet)
+        if not os.path.exists(cue_file_path):
+            with open(cue_file_path, 'w') as cue_file:
+                cue_file.write(sheet)
         return cue_file_path
 
     @staticmethod
@@ -355,7 +377,7 @@ def rom_manager(argv):
     time_message = f"{time_message}{minutes} minutes, {seconds:.2f} seconds"
     print(f'Directory size before: {before_size[3]:.2f} GB\n'
           f'Directory size after: {after_size[3]:.2f} GB\n'
-          f'Storage delta: {before_size[3]-after_size[3]:.2f} GB\n'
+          f'Storage delta: {before_size[3] - after_size[3]:.2f} GB\n'
           f'Total time taken: {time_message}')
 
 
