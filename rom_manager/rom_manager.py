@@ -6,6 +6,8 @@ import sys
 import getopt
 import platform
 import subprocess
+from typing import List, Tuple
+
 import patoolib as patool
 import glob
 import shutil
@@ -66,7 +68,7 @@ class RomManager:
         self.clean_origin_files = False
         self.directory = os.path.curdir
 
-    def process_parallel(self, cpu_count):
+    def process_parallel(self, cpu_count) -> List:
         if self.verbose:
             self.logger.disabled = False
             self.logger.setLevel(logging.DEBUG)
@@ -228,7 +230,7 @@ class RomManager:
             )
 
     @staticmethod
-    def map_game_code_name(file, logger=None):
+    def map_game_code_name(file, logger=None) -> str:
         logger.info("Scanning the filename for known ROM codes")
         for key, value in psx_codes.items():
             if key in os.path.basename(file):
@@ -328,11 +330,11 @@ class RomManager:
         self.logger.info("Finished generating missing cue file(s)")
 
     @staticmethod
-    def pad_leading_zero(number):
+    def pad_leading_zero(number) -> str:
         padded = "0" + str(number)
         return padded[-2:]
 
-    def cue_file_generator(self, directory):
+    def cue_file_generator(self, directory) -> str:
         file_names = self.get_files(directory=directory, extensions=[".bin"])
         first_file = file_names.pop(0)
         first_file = os.path.basename(first_file)
@@ -359,7 +361,7 @@ class RomManager:
         return cue_file_path
 
     @staticmethod
-    def get_files(directory, extensions):
+    def get_files(directory, extensions) -> List[str]:
         matching_files = []
         for root, dirs, files in os.walk(directory):
             for file in files:
@@ -368,7 +370,7 @@ class RomManager:
         return matching_files
 
 
-def get_operating_system():
+def get_operating_system() -> str:
     operating_system = None
     system = platform.system()
     release = platform.release()
@@ -380,7 +382,7 @@ def get_operating_system():
     return operating_system
 
 
-def get_directory_size(directory):
+def get_directory_size(directory) -> Tuple[int, float, float, float]:
     total_size = 0
     for dirpath, dirnames, filenames in os.walk(directory):
         for filename in filenames:
