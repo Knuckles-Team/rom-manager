@@ -28,9 +28,9 @@ Automatically generate missing .cue files for your .bin files!
 
 #### Why?
 
-CHD (“Compressed Hunks of Data”) files are compressed data files that can be used on most CD-based systems. 
-They are in a lossless compression format, meaning that they perfectly preserve all game data while reducing file sizes. 
-CHDs were originally developed for MAME to compress CD-based arcade games, 
+CHD (“Compressed Hunks of Data”) files are compressed data files that can be used on most CD-based systems.
+They are in a lossless compression format, meaning that they perfectly preserve all game data while reducing file sizes.
+CHDs were originally developed for MAME to compress CD-based arcade games,
 but now they are compatible with a variety emulators and CD-based consoles.
 
 RVZ files are compressed also compressed files, but they are built for Dolphin Emulator specifically
