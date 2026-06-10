@@ -1,131 +1,189 @@
 # ROM Manager
+## CLI or API | MCP | Agent
 
 ![PyPI - Version](https://img.shields.io/pypi/v/rom-manager)
+![MCP Server](https://badge.mcpx.dev?type=server 'MCP Server')
 ![PyPI - Downloads](https://img.shields.io/pypi/dd/rom-manager)
 ![GitHub Repo stars](https://img.shields.io/github/stars/Knuckles-Team/rom-manager)
 ![GitHub forks](https://img.shields.io/github/forks/Knuckles-Team/rom-manager)
 ![GitHub contributors](https://img.shields.io/github/contributors/Knuckles-Team/rom-manager)
 ![PyPI - License](https://img.shields.io/pypi/l/rom-manager)
 ![GitHub](https://img.shields.io/github/license/Knuckles-Team/rom-manager)
-
 ![GitHub last commit (by committer)](https://img.shields.io/github/last-commit/Knuckles-Team/rom-manager)
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/Knuckles-Team/rom-manager)
-![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/Knuckles-Team/rom-manager)
 ![GitHub issues](https://img.shields.io/github/issues/Knuckles-Team/rom-manager)
-
 ![GitHub top language](https://img.shields.io/github/languages/top/Knuckles-Team/rom-manager)
-![GitHub language count](https://img.shields.io/github/languages/count/Knuckles-Team/rom-manager)
 ![GitHub repo size](https://img.shields.io/github/repo-size/Knuckles-Team/rom-manager)
-![GitHub repo file count (file type)](https://img.shields.io/github/directory-file-count/Knuckles-Team/rom-manager)
 ![PyPI - Wheel](https://img.shields.io/pypi/wheel/rom-manager)
 ![PyPI - Implementation](https://img.shields.io/pypi/implementation/rom-manager)
 
-*Version: 0.0.27*
+*Version: 1.0.0*
 
-Convert Game ROMs to Compressed Hunks of Data (CHD) file format or RVZ file format
+> **Documentation** — Installation, deployment, and usage across the API, CLI, and
+> MCP interfaces, plus the integrated A2A agent server, are maintained in the
+> [official documentation](https://knuckles-team.github.io/rom-manager/).
 
-Automatically generate missing .cue files for your .bin files!
+> ⚠️ **Back up your ROMs before working with this tool.** Conversion and the
+> `--delete` / `clean_origin_files` options are destructive to source files.
 
-#### Why?
+---
 
-CHD (“Compressed Hunks of Data”) files are compressed data files that can be used on most CD-based systems.
-They are in a lossless compression format, meaning that they perfectly preserve all game data while reducing file sizes.
-CHDs were originally developed for MAME to compress CD-based arcade games,
-but now they are compatible with a variety emulators and CD-based consoles.
+## Overview
 
-RVZ files are compressed also compressed files, but they are built for Dolphin Emulator specifically
+**ROM Manager** is a production-grade ROM converter/organizer with an integrated
+Model Context Protocol (MCP) server and Agent-to-Agent (A2A) agent. It extracts
+archives, auto-renames ROMs via a known game-code registry, converts ISO/WBFS
+images to **CHD** (`chdman`) or **RVZ** (`dolphin-tool`), generates missing `.cue`
+sheets, and cleans up source files — in parallel.
 
-### Supports:
-- Sony PlayStation
-- Sony PlayStation 2
-- Sony PSP
-- Sega CD
-- Sega Saturn
-- Sega Dreamcast
-- NEC TurboGrafx-CD (PC Engine CD)
-- Neo Geo CD
-- Panasonic 3DO
-- Amiga CD32
-- Philips CD-I
-- Nintendo Wii
-- Nintendo GameCube
+Unlike network connectors, ROM Manager is a **local tool**: there is no service
+URL and no credentials.
 
-### Archive Types Extracted:
-- 7z
-- rar
-- zip
-- tar.gz
-- tar
-- gz
-- gzip
-- bzip2
-- bz2
+---
 
-### File Types Scanned:
-- cue
-- iso
-- gdi
-- wbfs
-- bin
+## Key Features
 
-<details>
-  <summary><b>Usage:</b></summary>
+- **Real conversion pipeline:** parallel extract → rename → convert (CHD/RVZ) → cleanup.
+- **Consolidated Action-Routed MCP Tools:** two togglable domains (`conversion`,
+  `game-codes`) minimize token overhead and IDE tool bloat.
+- **Integrated Graph Agent:** built-in Pydantic-AI agent (AG-UI / ACP).
+- **Native Telemetry & Tracing:** OpenTelemetry exports out of the box.
+- **Lazy native deps:** archive backends are optional extras, imported only when used.
 
-| Short Flag | Long Flag   | Description                                             |
-|------------|-------------|---------------------------------------------------------|
-| -h         | --help      | See Usage                                               |
-| -c         | --cpu-count | Limit max number of CPUs to use for parallel processing |
-| -d         | --directory | Directory to scan for ROMs                              |
-| -x         | --delete    | Delete the original files                               |
-| -f         | --force     | Force overwrite of existing CHD files                   |
-| -v         | --verbose   | Print all debug information                             |
+---
 
-</details>
+## CLI or API
 
-<details>
-  <summary><b>Example:</b></summary>
+This package wraps a local ROM conversion pipeline (`rom_manager.rom_manager.RomManager`).
+Use it via the CLI or the `rom_manager.api_client.Api` facade.
 
 ```bash
-rom-manager --directory "C:/Users/default/Games/"
+rom-manager --directory "/games/PSX/" --iso chd --verbose
 ```
 
-</details>
+| Flag | Long | Description |
+|------|------|-------------|
+| `-c` | `--cpu-count` | Limit max CPUs for parallel processing |
+| `-d` | `--directory` | Directory to process ROMs |
+| `-i` | `--iso` | Conversion target: `rvz` or `chd` |
+| `-f` | `--force` | Force overwrite of existing `.chd` files |
+| `-v` | `--verbose` | Display all output messages |
+| `-x` | `--delete` | Delete original files after processing |
 
-<details>
-  <summary><b>Installation Instructions:</b></summary>
+Detailed API usage is in [docs/usage.md](docs/usage.md).
 
-Install Python Package
+---
+
+## MCP
+
+This server utilizes dynamic Action-Routed tools to optimize token overhead and
+maximize IDE compatibility.
+
+### Available MCP Tools
+| Tool Module | Toggle Env Var | Enabled by Default | Description & Actions |
+|-------------|----------------|--------------------|------------------------|
+| **Conversion** | `CONVERSIONTOOL` | `True` | Manage ROM conversion operations (CONCEPT:ROM-001). Actions: `convert`, `process_directory`, `process_file`, `generate_cue`, `list_files`. |
+| **Game Codes** | `GAMECODESTOOL` | `True` | Manage game code lookup and naming (CONCEPT:ROM-002). Actions: `lookup`, `list`, `rename`. |
+
+### Dynamic Tool Selection
+
+Each domain is gated by an environment toggle (default `True`). Set a toggle to
+`False` to omit that tool from the registered surface.
+
+### Running the MCP server
 
 ```bash
-python -m pip install rom-manager
+# stdio (default)
+rom-manager-mcp
+
+# Streamable HTTP
+rom-manager-mcp --transport streamable-http --host 0.0.0.0 --port 8000
 ```
 
-</details>
+#### stdio client config
 
-## Geniusbot Application
+```json
+{
+  "mcpServers": {
+    "rom-manager": {
+      "command": "uv",
+      "args": ["run", "rom-manager-mcp"],
+      "env": { "ROM_DIRECTORY": "/games", "CONVERSIONTOOL": "True", "GAMECODESTOOL": "True" }
+    }
+  }
+}
+```
 
-Use with a GUI through Geniusbot
-
-Visit our [GitHub](https://github.com/Knuckles-Team/geniusbot) for more information
-
-<details>
-  <summary><b>Installation Instructions with Geniusbot:</b></summary>
-
-Install Python Package
+#### Docker
 
 ```bash
-python -m pip install geniusbot
+docker run --rm -it -v /games:/games -e ROM_DIRECTORY=/games \
+  -p 8000:8000 -e TRANSPORT=streamable-http knucklessg1/rom-manager:latest
 ```
 
-</details>
+---
 
+## Agent
 
-<details>
-  <summary><b>Repository Owners:</b></summary>
+ROM Manager ships a Pydantic-AI agent (`rom-manager-agent`) that calls the MCP
+tool surface and exposes an AG-UI web interface. Its identity lives in
+`rom_manager/agent_data/IDENTITY.md`.
 
+```bash
+rom-manager-agent --web
+```
 
-<img width="100%" height="180em" src="https://github-readme-stats.vercel.app/api?username=Knucklessg1&show_icons=true&hide_border=true&&count_private=true&include_all_commits=true" />
+---
 
-![GitHub followers](https://img.shields.io/github/followers/Knucklessg1)
-![GitHub User's stars](https://img.shields.io/github/stars/Knucklessg1)
-</details>
+## Security & Governance
+
+- **No credentials:** ROM Manager is a local tool with no service URL/token.
+- **Eunomia policies & OpenTelemetry:** inherited from the `agent-utilities`
+  middleware (see `.env.example`).
+- **Destructive-op safety:** the agent recommends backing up ROMs before
+  `clean_origin_files`/delete operations.
+
+---
+
+## External Binary Dependencies
+
+Conversion *actions* shell out to native tools (the Python package installs fine
+without them):
+
+- **`chdman`** (CHD) — `apt install mame-tools` (Ubuntu) or MAME tools on Windows.
+- **`dolphin-tool`** (RVZ) — see the Dolphin emulator docs.
+- **`7z` / archive backends** (extraction) — `apt install p7zip-full`; pair with
+  the `rom-manager[native]` extra (`patool`).
+
+---
+
+## Installation
+
+```bash
+pip install rom-manager            # core CLI + Api
+pip install "rom-manager[mcp]"     # + MCP server
+pip install "rom-manager[agent]"   # + A2A agent
+pip install "rom-manager[native]"  # + patool (archive extraction)
+pip install "rom-manager[all]"     # everything
+```
+
+---
+
+## Documentation
+
+- [Installation](docs/installation.md)
+- [Deployment](docs/deployment.md)
+- [Usage (API / CLI / MCP)](docs/usage.md)
+- [Overview](docs/overview.md)
+- [Concepts (`CONCEPT:ROM-*`)](docs/concepts.md)
+
+---
+
+## Contributing
+
+Contributions are welcome. Run `pre-commit run --all-files` before opening a PR.
+Preserve the real conversion pipeline — wrap `RomManager`, do not break it.
+
+## License
+
+MIT © Knuckles-Team

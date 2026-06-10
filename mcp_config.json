@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "rom-manager": {
+      "command": "uv",
+      "args": [
+        "run",
+        "rom-manager-mcp"
+      ],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "<YOUR_FASTMCP_LOG_LEVEL>",
+        "NO_COLOR": "<YOUR_NO_COLOR>",
+        "TERM": "<YOUR_TERM>",
+        "AGENT_DESCRIPTION": "<YOUR_AGENT_DESCRIPTION>",
+        "AGENT_SYSTEM_PROMPT": "<YOUR_AGENT_SYSTEM_PROMPT>",
+        "DEFAULT_AGENT_NAME": "<YOUR_DEFAULT_AGENT_NAME>",
+        "MCP_URL": "<YOUR_MCP_URL>",
+        "ROM_DIRECTORY": "<YOUR_ROM_DIRECTORY>",
+        "ROM_ISO_TYPE": "chd",
+        "CONVERSIONTOOL": "True",
+        "GAMECODESTOOL": "True"
+      }
+    }
+  }
+}

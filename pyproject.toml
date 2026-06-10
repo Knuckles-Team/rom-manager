@@ -1,0 +1,64 @@
+[build-system]
+requires = [ "setuptools>=80.9.0", "wheel",]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rom-manager"
+version = "1.0.0"
+description = "ROM Converter/Organizer (CHD/RVZ) + MCP Server + A2A Agent"
+readme = "README.md"
+classifiers = [ "Development Status :: 5 - Production/Stable", "License :: Public Domain", "Environment :: Console", "Operating System :: POSIX :: Linux", "Programming Language :: Python :: 3",]
+requires-python = ">=3.11, <3.15"
+dependencies = [ "agent-utilities>=0.47.0", "python-dotenv>=1.0.0", "tqdm>=4.66.0",]
+[[project.authors]]
+name = "Audel Rouhi"
+email = "knucklessg1@gmail.com"
+
+[project.license]
+text = "MIT"
+
+[project.optional-dependencies]
+mcp = [ "agent-utilities[mcp]>=0.47.0",]
+agent = [ "agent-utilities[agent,logfire]>=0.47.0",]
+native = [ "patool>=2.1.1",]
+convert = [ "patool>=2.1.1",]
+all = [ "rom-manager[mcp,agent,native]>=1.0.0",]
+test = [
+    "pytest-xdist>=3.6.0", "pytest", "pytest-asyncio", "pytest-cov",]
+
+[project.scripts]
+rom-manager = "rom_manager.rom_manager:rom_manager"
+rom-manager-mcp = "rom_manager.mcp_server:mcp_server"
+rom-manager-agent = "rom_manager.agent_server:agent_server"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+check_untyped_defs = true
+
+[dependency-groups]
+dev = [
+    "pytest-timeout>=2.4.0",
+]
+
+[tool.setuptools.package-data]
+rom_manager = [ "mcp_config.json", "agent_data/**",]
+
+[tool.ruff.lint]
+select = [ "E", "F", "I", "UP", "B",]
+ignore = [ "E402", "E501", "B008",]
+
+[tool.setuptools.packages.find]
+where = [ ".",]
+include = [ "rom_manager*",]
+exclude = [ "tests*", "docker*", "docs*", "scripts*",]
+
+[tool.vulture]
+ignore_names = ["request", "config"]

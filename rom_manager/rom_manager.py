@@ -1,31 +1,28 @@
 #!/usr/bin/env python
-# coding: utf-8
 
-import os
-import sys
 import getopt
-import platform
-import subprocess
-from typing import List, Tuple
-
-import patoolib as patool
 import glob
-import shutil
-import re
 import logging
-import time
+import os
+import platform
 import random
+import re
+import shutil
 import string
-from multiprocessing import Pool
-from tqdm import tqdm
+import subprocess
+import sys
+import time
 from functools import partial
+from multiprocessing import Pool
+
+from tqdm import tqdm
 
 try:
-    from version import __version__, __author__, __credits__
     from game_codes import psx_codes
+    from version import __author__, __credits__, __version__
 except ImportError:
-    from rom_manager.version import __version__, __author__, __credits__
     from rom_manager.game_codes import psx_codes
+    from rom_manager.version import __author__, __credits__, __version__
 
 
 class RomManager:
@@ -43,9 +40,9 @@ class RomManager:
         handler.setFormatter(self.log_formater)
         self.logger.addHandler(handler)
         self.iso_type = "chd"
-        self.generative_types = (".bin", ".m3u")
-        self.rvz_types = (".wbfs", ".iso")
-        self.chd_types = (".iso", ".cue", ".gdi")
+        self.generative_types: tuple[str, ...] = (".bin", ".m3u")
+        self.rvz_types: tuple[str, ...] = (".wbfs", ".iso")
+        self.chd_types: tuple[str, ...] = (".iso", ".cue", ".gdi")
         self.archive_formats = (
             ".7z",
             ".zip",
@@ -68,14 +65,14 @@ class RomManager:
         self.clean_origin_files = False
         self.directory = os.path.curdir
 
-    def process_parallel(self, cpu_count) -> List:
+    def process_parallel(self, cpu_count) -> list:
         if self.verbose:
             self.logger.disabled = False
             self.logger.setLevel(logging.DEBUG)
             self.logger_level = logging.DEBUG
             print("Logger level:", self.logger.level)  # Debugging statement
         if not cpu_count:
-            cpu_count = int(os.cpu_count() / 2 + 2)
+            cpu_count = int((os.cpu_count() or 2) / 2 + 2)
         files = self.get_files(
             directory=self.directory, extensions=self.supported_extensions
         )
@@ -102,7 +99,7 @@ class RomManager:
 
     def init_logger(self, logger_name, logger_level, logger_format):
         # Initialize logger in each worker process
-        logger_name = f'{logger_name}-{"".join(random.choices(string.ascii_letters + string.digits, k=5))}'
+        logger_name = f"{logger_name}-{''.join(random.choices(string.ascii_letters + string.digits, k=5))}"
         logger = logging.getLogger(logger_name)
         logger.setLevel(logger_level)
         handler = logging.StreamHandler()
@@ -154,7 +151,7 @@ class RomManager:
                 shutil.move(f"{file}", f"{new_file_path}")
             except Exception as e:
                 logger.error(
-                    f"Error moving file: {file} to {new_file_path}\n" f"Error: {e}"
+                    f"Error moving file: {file} to {new_file_path}\nError: {e}"
                 )
             logger.info("Generating any missing .cue file(s)")
             file = self.cue_file_generator(directory=game_directory)
@@ -293,24 +290,33 @@ class RomManager:
     @staticmethod
     def run_command(command, verbose=False, logger=None):
         try:
+            result: subprocess.CompletedProcess
             if verbose is False:
-                result = subprocess.run(
-                    command,
-                    stdout=open(os.devnull, "wb"),
-                    stderr=open(os.devnull, "wb"),
-                )
+                with open(os.devnull, "wb") as devnull:
+                    result = subprocess.run(
+                        command,
+                        stdout=devnull,
+                        stderr=devnull,
+                    )
             else:
                 result = subprocess.run(
                     command,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    universal_newlines=True,
+                    capture_output=True,
+                    text=True,
                 )
             logger.info(result.returncode, result.stdout, result.stderr)
         except subprocess.CalledProcessError as e:
             logger.warning(e.output)
 
     def process_archive(self, archive, archive_directory):
+        try:
+            import patoolib as patool
+        except ImportError as e:  # pragma: no cover - optional native dependency
+            raise ImportError(
+                "Archive extraction requires the 'patool' library. "
+                "Install the native extras with: pip install 'rom-manager[native]'"
+            ) from e
+
         self.logger.info(f"Extracting {archive} to {archive_directory}...")
         if self.verbose:
             verbose = 1
@@ -361,16 +367,16 @@ class RomManager:
         return cue_file_path
 
     @staticmethod
-    def get_files(directory, extensions) -> List[str]:
+    def get_files(directory, extensions) -> list[str]:
         matching_files = []
-        for root, dirs, files in os.walk(directory):
+        for root, _dirs, files in os.walk(directory):
             for file in files:
                 if any(file.endswith(ext) for ext in extensions):
                     matching_files.append(os.path.join(root, file))
         return matching_files
 
 
-def get_operating_system() -> str:
+def get_operating_system() -> str | None:
     operating_system = None
     system = platform.system()
     release = platform.release()
@@ -382,9 +388,9 @@ def get_operating_system() -> str:
     return operating_system
 
 
-def get_directory_size(directory) -> Tuple[int, float, float, float]:
+def get_directory_size(directory) -> tuple[int, float, float, float]:
     total_size = 0
-    for dirpath, dirnames, filenames in os.walk(directory):
+    for dirpath, _dirnames, filenames in os.walk(directory):
         for filename in filenames:
             filepath = os.path.join(dirpath, filename)
             total_size += os.path.getsize(filepath)
@@ -405,7 +411,7 @@ def installation_instructions():
             "4) Add C:\\mame-tools to System Environment Variable PATH\n"
         )
     if get_operating_system() == "Ubuntu":
-        print("Install for Ubuntu:\n" "1) apt install mame-tools\n")
+        print("Install for Ubuntu:\n1) apt install mame-tools\n")
     print(
         "For wbfs support, please install dolphin-tool here: \n"
         "https://github.com/dolphin-emu/dolphin#dolphintool-usage\n"
@@ -432,10 +438,15 @@ def usage():
         f"\n"
     )
     installation_instructions()
-    print(f"Author: {__author__}\n" f"Credits: {__credits__}\n")
+    print(f"Author: {__author__}\nCredits: {__credits__}\n")
 
 
-def rom_manager(argv):
+def rom_manager(argv=None):
+    if argv is None:
+        argv = sys.argv[1:]
+    if not argv:
+        usage()
+        sys.exit(2)
     cpu_count = None
     directory = ""
     iso_type = "chd"
@@ -457,7 +468,7 @@ def rom_manager(argv):
             usage()
             sys.exit()
         elif opt in ("-c", "--cpu-count"):
-            if 0 < int(arg) <= os.cpu_count():
+            if 0 < int(arg) <= (os.cpu_count() or 1):
                 cpu_count = int(arg)
         elif opt in ("-d", "--directory"):
             directory = arg

@@ -1,0 +1,4 @@
+include README.md
+include requirements.txt
+recursive-include rom_manager *.py *.json
+recursive-include rom_manager/agent_data *
