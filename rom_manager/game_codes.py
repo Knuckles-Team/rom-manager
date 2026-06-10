@@ -1,3 +1,12 @@
+"""Verbatim PSX game-code registry (DATA, not logic).
+
+CONCEPT:ROM-002 — Game Codes / Naming. This module is a single large constant
+table mapping PSX serial codes (e.g. ``SLUS-01272``) to canonical game titles.
+It is intentionally a flat data registry, not a "god module" of logic: there is
+no control flow here, only a verbatim dict literal. Do not split it; it is
+treated as a generated/verbatim data asset by the architecture SRP check.
+"""
+
 psx_codes = {
     "SLUS-01272": "007 - THE WORLD IS NOT ENOUGH",
     "SLUS-00975": "007 - TOMORROW NEVER DIES",

@@ -19,10 +19,11 @@ text = "MIT"
 
 [project.optional-dependencies]
 mcp = [ "agent-utilities[mcp]>=0.47.0",]
-agent = [ "agent-utilities[agent,logfire]>=0.47.0",]
+agent = [ "agent-utilities[agent,logfire]>=0.47.0", "logfire>=2.0.0",]
 native = [ "patool>=2.1.1",]
 convert = [ "patool>=2.1.1",]
-all = [ "rom-manager[mcp,agent,native]>=1.0.0",]
+otel = [ "opentelemetry-sdk>=1.27.0", "opentelemetry-exporter-otlp>=1.27.0",]
+all = [ "rom-manager[mcp,agent,native,otel]>=1.0.0",]
 test = [
     "pytest-xdist>=3.6.0", "pytest", "pytest-asyncio", "pytest-cov",]
 
@@ -49,7 +50,7 @@ dev = [
 ]
 
 [tool.setuptools.package-data]
-rom_manager = [ "mcp_config.json", "agent_data/**",]
+rom_manager = [ "mcp_config.json", "agent_data/**", "prompts/*.md",]
 
 [tool.ruff.lint]
 select = [ "E", "F", "I", "UP", "B",]

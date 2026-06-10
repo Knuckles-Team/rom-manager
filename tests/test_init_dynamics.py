@@ -17,11 +17,13 @@ def pkg_name():
     return _get_pkg_name()
 
 
+@pytest.mark.concept("ROM-001")
 def test_package_importable(pkg_name):
     mod = importlib.import_module(pkg_name)
     assert mod is not None
 
 
+@pytest.mark.concept("ROM-001")
 def test_version_exists(pkg_name):
     mod = importlib.import_module(pkg_name)
     version = getattr(mod, "__version__", None)
@@ -32,6 +34,7 @@ def test_version_exists(pkg_name):
     assert version is not None, f"{pkg_name} has no __version__"
 
 
+@pytest.mark.concept("ROM-001")
 def test_version_format(pkg_name):
     mod = importlib.import_module(pkg_name)
     version = getattr(mod, "__version__", None)
@@ -43,6 +46,7 @@ def test_version_format(pkg_name):
     assert len(parts) >= 2, f"Version {version} should have at least major.minor"
 
 
+@pytest.mark.concept("ROM-001")
 def test_core_exports(pkg_name):
     """The real pipeline callables must remain importable from the package."""
     mod = importlib.import_module(pkg_name)

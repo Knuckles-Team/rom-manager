@@ -10,6 +10,8 @@ import os
 import pathlib
 import re
 
+import pytest
+
 ROOT_DIR = str(pathlib.Path(__file__).resolve().parent.parent)
 WORKSPACE_DIR = "/home/apps/workspace/agent-packages"
 MASTER_OVERVIEW_PATH = os.path.join(
@@ -46,6 +48,7 @@ def _concepts_in_doc(path):
     return set(re.findall(r"CONCEPT:([A-Z]+-\d+(?:\.\d+)?)", content))
 
 
+@pytest.mark.concept("ROM-002")
 def test_rom_concepts_registered_in_concepts_doc():
     """All ROM-* concepts used in the codebase are documented in docs/concepts.md."""
     used = _scan_concepts(os.path.join(ROOT_DIR, "rom_manager"), prefixes=("ROM-",))
@@ -56,6 +59,7 @@ def test_rom_concepts_registered_in_concepts_doc():
     )
 
 
+@pytest.mark.concept("ROM-001")
 def test_expected_rom_concepts_present():
     """Sanity: the two canonical ROM domains are registered."""
     documented = _concepts_in_doc(CONCEPTS_DOC)
@@ -63,6 +67,7 @@ def test_expected_rom_concepts_present():
         assert cid in documented, f"{cid} not registered in docs/concepts.md"
 
 
+@pytest.mark.concept("ECO-4.0")
 def test_pillar_concept_parity():
     """agent-utilities pillar concepts used locally must exist in the master registry."""
     if not os.path.exists(MASTER_OVERVIEW_PATH):

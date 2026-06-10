@@ -28,6 +28,25 @@
 
 ---
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Key Features](#key-features)
+- [Architecture](#architecture)
+- [Usage (CLI or API)](#usage-cli-or-api)
+- [MCP](#mcp)
+- [Agent](#agent)
+- [Environment Variables](#environment-variables)
+- [Security & Governance](#security--governance)
+- [External Binary Dependencies](#external-binary-dependencies)
+- [Installation](#installation)
+- [Deployment (agent_server.py)](#deployment-agent_serverpy)
+- [Documentation](#documentation)
+- [Contributing](#contributing)
+- [License](#license)
+
+---
+
 ## Overview
 
 **ROM Manager** is a production-grade ROM converter/organizer with an integrated
@@ -52,7 +71,49 @@ URL and no credentials.
 
 ---
 
-## CLI or API
+## Architecture
+
+ROM Manager keeps a single, well-factored pipeline behind three entry surfaces
+(CLI, MCP server, A2A agent). The orchestrator (`RomManager`) composes focused
+responsibility layers and shells out to external conversion binaries:
+
+```mermaid
+flowchart LR
+    subgraph Entry["Entry Surfaces"]
+        CLI["CLI<br/>rom-manager"]
+        MCP["MCP Server<br/>rom-manager-mcp<br/>(CONCEPT:ROM-001/002)"]
+        AGENT["A2A Agent<br/>rom-manager-agent"]
+    end
+
+    CLI --> RM
+    MCP --> API["api_client.Api<br/>(facade)"]
+    AGENT --> MCP
+    API --> RM
+
+    subgraph Pipeline["RomManager orchestrator"]
+        RM["RomManager"] --> ARCH["archives.py<br/>extract + cue"]
+        RM --> NAME["naming.py<br/>game-code rename"]
+        RM --> CONV["conversion.py<br/>command + runner seam"]
+    end
+
+    ARCH --> P7Z["7z / patool"]
+    CONV --> CHDMAN["chdman (CHD)"]
+    CONV --> DOLPHIN["dolphin-tool (RVZ)"]
+    NAME --> CODES["game_codes.py<br/>(PSX registry, DATA)"]
+```
+
+| Layer | Module | Responsibility |
+|-------|--------|----------------|
+| Orchestrator | `rom_manager/rom_manager.py` | Pipeline composition + CLI (`RomManager`, `rom_manager()`). |
+| Archives | `rom_manager/archives.py` | Archive detection, extraction, `.cue` generation. |
+| Conversion | `rom_manager/conversion.py` | `chdman`/`dolphin-tool` command building + runner seam. |
+| Naming | `rom_manager/naming.py` | Game-code lookup + in-place rename. |
+| Data | `rom_manager/game_codes.py` | Verbatim PSX serial→title registry (DATA). |
+| Facade | `rom_manager/api_client.py` | `Api` wrapper consumed by MCP tools/agent. |
+
+---
+
+## Usage (CLI or API)
 
 This package wraps a local ROM conversion pipeline (`rom_manager.rom_manager.RomManager`).
 Use it via the CLI or the `rom_manager.api_client.Api` facade.
@@ -135,6 +196,51 @@ rom-manager-agent --web
 
 ---
 
+## Environment Variables
+
+All settings are optional — ROM Manager runs with sensible defaults and requires
+no credentials. Copy [`.env.example`](.env.example) to `.env` to override.
+
+### Application Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `ROM_DIRECTORY` | `.` (cwd) | Default directory of ROMs to process when none is supplied. |
+| `ROM_ISO_TYPE` | `chd` | Conversion target: `chd` (chdman) or `rvz` (dolphin-tool). |
+| `ROM_VERBOSE` | `False` | Emit verbose conversion output. |
+| `ROM_FORCE` | `False` | Force overwrite of existing converted files. |
+| `CONVERSIONTOOL` | `True` | Toggle registration of the **conversion** MCP tool domain (`CONCEPT:ROM-001`). |
+| `GAMECODESTOOL` | `True` | Toggle registration of the **game-codes** MCP tool domain (`CONCEPT:ROM-002`). |
+
+> CPU count and "delete originals" are exposed as CLI flags (`--cpu-count` /
+> `--delete`) and MCP action params (`cpu_count` / `clean_origin_files`) rather
+> than environment variables.
+
+### MCP / Framework Variables (agent-utilities)
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `HOST` | `0.0.0.0` | Bind host for HTTP/SSE transports. |
+| `PORT` | `8000` | Bind port for HTTP/SSE transports. |
+| `TRANSPORT` | `stdio` | MCP transport: `stdio`, `streamable-http`, or `sse`. |
+| `AUTH_TYPE` | `none` | MCP authentication mode (this local tool needs none). |
+| `FASTMCP_LOG_LEVEL` | `ERROR` | FastMCP internal log verbosity (pinned at startup). |
+| `ENABLE_OTEL` | `True` | Enable OpenTelemetry export of traces/metrics. |
+| `EUNOMIA_TYPE` | `none` | Eunomia authorization mode: `none`, `embedded`, or `remote`. |
+| `EUNOMIA_POLICY_FILE` | `mcp_policies.json` | Path to the Eunomia policy file when embedded. |
+
+### Terminal Variables
+
+These are set automatically by the server to keep stdio transport clean; you do
+not normally set them yourself.
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `NO_COLOR` | `1` | Disable ANSI colour codes in child tooling output. |
+| `TERM` | `dumb` | Force a dumb terminal so progress output does not corrupt the stdio channel. |
+
+---
+
 ## Security & Governance
 
 - **No credentials:** ROM Manager is a local tool with no service URL/token.
@@ -166,6 +272,45 @@ pip install "rom-manager[agent]"   # + A2A agent
 pip install "rom-manager[native]"  # + patool (archive extraction)
 pip install "rom-manager[all]"     # everything
 ```
+
+---
+
+## Deployment (agent_server.py)
+
+`rom-manager-agent` (entry point `rom_manager.agent_server:agent_server`) starts a
+Pydantic-AI A2A agent that auto-discovers the MCP tool surface from
+`mcp_config.json` and can expose an AG-UI web interface.
+
+```bash
+# Local: web UI on the default host/port, OTEL enabled
+rom-manager-agent --web --otel \
+  --provider openai --model-id gpt-4o-mini \
+  --host 0.0.0.0 --port 8080
+```
+
+Container deployment (compose):
+
+```yaml
+# docker/agent.compose.yml (excerpt)
+services:
+  rom-manager-agent:
+    image: knucklessg1/rom-manager:latest
+    command: ["rom-manager-agent", "--web"]
+    environment:
+      ROM_DIRECTORY: /games
+      TRANSPORT: streamable-http
+      HOST: 0.0.0.0
+      PORT: 8080
+      ENABLE_OTEL: "True"
+      AUTH_TYPE: none
+    volumes:
+      - /srv/roms:/games
+    ports:
+      - "8080:8080"
+```
+
+The MCP server (`rom-manager-mcp`) deploys the same way; see
+[docs/deployment.md](docs/deployment.md) for the full compose/Swarm recipes.
 
 ---
 

@@ -1,5 +1,9 @@
 #!/usr/bin/python
-"""Pydantic models for ROM Manager MCP tool inputs/outputs."""
+"""Pydantic models for ROM Manager MCP tool inputs/outputs.
+
+CONCEPT:ROM-001, CONCEPT:ROM-002 — the model layer: request/response schemas for
+the conversion and game-codes tool domains.
+"""
 
 from typing import Literal
 

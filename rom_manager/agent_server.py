@@ -1,4 +1,14 @@
 #!/usr/bin/python
+"""ROM Manager A2A agent server.
+
+CONCEPT:ROM-001, CONCEPT:ROM-002 — exposes the ROM conversion and game-codes
+tool domains over an A2A/AG-UI surface. The agent is driven by the
+agent-utilities router, the integration point for the cross-project bridge
+capabilities CONCEPT:ORCH-1.2 (Confidence-Gated Router), CONCEPT:OS-5.2
+(Cognitive Scheduler) and CONCEPT:KG-2.0 (Knowledge Graph Core ingestion of the
+tool surface).
+"""
+
 import logging
 import os
 import sys
@@ -20,6 +30,7 @@ DEFAULT_AGENT_SYSTEM_PROMPT = None
 
 
 def agent_server():
+    """Launch the ROM Manager A2A agent (CONCEPT:ROM-001, CONCEPT:ORCH-1.2)."""
     from agent_utilities import (
         build_system_prompt_from_workspace,
         create_agent_parser,

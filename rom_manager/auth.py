@@ -28,7 +28,7 @@ def get_client(
     force: bool = to_boolean(string=os.getenv("ROM_FORCE", "False")),
     config: dict | None = None,
 ) -> Api:
-    """Factory returning the local ROM Manager :class:`Api` facade.
+    """Factory returning the local ROM Manager :class:`Api` facade (CONCEPT:ROM-001).
 
     No credentials are required. ``directory`` defaults to ``ROM_DIRECTORY`` (or
     the current working directory). ``iso_type`` selects the conversion target

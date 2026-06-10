@@ -1,4 +1,14 @@
 #!/usr/bin/python
+"""ROM Manager MCP server assembly.
+
+CONCEPT:ROM-001, CONCEPT:ROM-002 — registers the conversion and game-codes tool
+domains. This server is the integration seam to agent-utilities:
+``create_mcp_server`` wires the shared FastMCP middleware that implements the
+cross-project bridge capabilities — CONCEPT:ECO-4.0 (Unified Toolkit Ingestion),
+CONCEPT:OS-5.1 (Prompt Injection Defense), CONCEPT:OS-5.3 (Guardrail Engine) and
+CONCEPT:OS-5.4 (Audit Logging) via the Eunomia/OTEL middleware stack.
+"""
+
 import warnings
 
 from fastmcp import FastMCP
@@ -42,11 +52,26 @@ DEFAULT_ROM_ISO_TYPE = os.getenv("ROM_ISO_TYPE", "chd")
 
 
 def register_prompts(mcp: FastMCP):
+    """Register externalized prompt templates (CONCEPT:ROM-001).
+
+    Loads templates from ``rom_manager/prompts/`` rather than hardcoding them.
+    """
+    from rom_manager.prompts import load_prompt
+
+    @mcp.prompt(name="convert_rom")
+    def convert_rom(directory: str = ".", iso_type: str = "chd") -> str:
+        """Guided ROM conversion workflow prompt."""
+        return load_prompt("convert_rom").format(directory=directory, iso_type=iso_type)
+
     return None
 
 
 def get_mcp_instance() -> tuple[Any, Any, Any, Any]:
-    """Initialize and return the ROM Manager MCP instance, args, and middlewares."""
+    """Initialize and return the ROM Manager MCP instance, args, and middlewares.
+
+    CONCEPT:ROM-001, CONCEPT:ROM-002 — registers both tool domains and attaches
+    the agent-utilities middleware stack (CONCEPT:ECO-4.0).
+    """
     load_dotenv(find_dotenv())
     os.environ["FASTMCP_LOG_LEVEL"] = "ERROR"
     os.environ["TERM"] = "dumb"
@@ -76,6 +101,7 @@ def get_mcp_instance() -> tuple[Any, Any, Any, Any]:
 
 
 def mcp_server() -> None:
+    """Build and run the ROM Manager MCP server (CONCEPT:ROM-001, CONCEPT:ROM-002)."""
     mcp, args, middlewares, registered_tags = get_mcp_instance()
     print(f"{'rom-manager'} MCP v{__version__}", file=sys.stderr)
     print("\nStarting MCP Server", file=sys.stderr)

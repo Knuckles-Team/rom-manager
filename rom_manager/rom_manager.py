@@ -1,15 +1,20 @@
 #!/usr/bin/env python
+"""ROM Manager orchestrator (the conversion pipeline entry point).
+
+CONCEPT:ROM-001 — ROM Conversion. :class:`RomManager` is the orchestrator that
+composes the focused responsibility layers (:mod:`rom_manager.archives`,
+:mod:`rom_manager.conversion`, :mod:`rom_manager.naming`). Domain logic that
+previously lived inline in this god-module now lives in those modules; this file
+keeps the public ``RomManager`` / ``rom_manager()`` API stable while delegating.
+"""
 
 import getopt
-import glob
 import logging
 import os
 import platform
 import random
-import re
 import shutil
 import string
-import subprocess
 import sys
 import time
 from functools import partial
@@ -17,14 +22,27 @@ from multiprocessing import Pool
 
 from tqdm import tqdm
 
-from rom_manager.game_codes import psx_codes
+from rom_manager import archives, conversion
+from rom_manager.archives import ARCHIVE_FORMATS
+from rom_manager.conversion import Converter
+
+# Re-exported for backwards compatibility (was a module-level import here).
+from rom_manager.game_codes import psx_codes  # noqa: F401,E402
+from rom_manager.naming import map_game_code_name
 from rom_manager.version import __author__, __credits__, __version__
 
 
 class RomManager:
+    """Orchestrates the extract -> rename -> convert -> cleanup ROM pipeline.
+
+    CONCEPT:ROM-001 — composes the archive, naming, and conversion layers; the
+    per-method behaviour is preserved exactly from the original monolith.
+    """
+
     logging.getLogger("patoolib").setLevel(logging.WARNING)
 
     def __init__(self):
+        """Initialise pipeline defaults and supported extensions (CONCEPT:ROM-001)."""
         self.logger_name = "rom_manager"
         self.logger = logging.getLogger(self.logger_name)
         self.logger.disabled = True
@@ -39,17 +57,7 @@ class RomManager:
         self.generative_types: tuple[str, ...] = (".bin", ".m3u")
         self.rvz_types: tuple[str, ...] = (".wbfs", ".iso")
         self.chd_types: tuple[str, ...] = (".iso", ".cue", ".gdi")
-        self.archive_formats = (
-            ".7z",
-            ".zip",
-            ".tar.gz",
-            ".gz",
-            ".gzip",
-            ".bz2",
-            ".bzip2",
-            ".rar",
-            ".tar",
-        )
+        self.archive_formats = ARCHIVE_FORMATS
         self.supported_extensions = (
             self.archive_formats
             + self.chd_types
@@ -60,8 +68,16 @@ class RomManager:
         self.force = False
         self.clean_origin_files = False
         self.directory = os.path.curdir
+        # DI seam: the external-binary runner used by the conversion layer.
+        # Tests may override this to avoid requiring chdman/dolphin-tool.
+        self._runner = None
 
     def process_parallel(self, cpu_count) -> list:
+        """Convert every supported ROM under ``self.directory`` in parallel.
+
+        CONCEPT:ROM-001 — discovers candidate files and fans
+        :meth:`process_file` out across a process pool.
+        """
         if self.verbose:
             self.logger.disabled = False
             self.logger.setLevel(logging.DEBUG)
@@ -104,6 +120,11 @@ class RomManager:
         logger.addHandler(handler)
 
     def process_file(self, file, logger_name, logger_level, logger_format):
+        """Run one ROM through extract -> rename -> convert -> cleanup.
+
+        CONCEPT:ROM-001 — the per-file conversion pipeline: extracts archives,
+        normalises the name (CONCEPT:ROM-002), then converts to CHD/RVZ.
+        """
         logger = logging.getLogger(logger_name)
         logger.setLevel(logger_level)
         formatter = logging.Formatter(logger_format)
@@ -165,49 +186,22 @@ class RomManager:
             chd_types_list.remove(".iso")
             self.chd_types = tuple(chd_types_list)
 
-        # Build the conversion command
+        # Build + run the conversion command via the conversion layer.
         _, extension = os.path.splitext(file)
-        chd_create_type = "createdvd"
-        if extension.lower().endswith("cue"):
-            chd_create_type = "createcd"
-        if extension.lower().endswith(self.rvz_types):
-            converted_file = f"{os.path.splitext(os.path.basename(file))[0]}.rvz"
-            converted_file_directory = os.path.dirname(file)
-            converted_file_path = os.path.join(converted_file_directory, converted_file)
-            convert_command = [
-                "dolphin-tool",
-                "convert",
-                "-i",
-                f"{file}",
-                "-o",
-                f"{converted_file_path}",
-                "-l",
-                "22",
-            ]
-        else:
-            converted_file = f"{os.path.splitext(os.path.basename(file))[0]}.chd"
-            converted_file_directory = os.path.dirname(file)
-            converted_file_path = os.path.join(converted_file_directory, converted_file)
-            convert_command = [
-                "chdman",
-                chd_create_type,
-                "-i",
-                f"{file}",
-                "-o",
-                f"{converted_file_path}",
-            ]
-            if self.force:
-                convert_command.append("-f")
-
-        logger.info(f"Command to run: {convert_command}")
-
-        # Run the chdman command
-        if os.path.exists(converted_file_path):
-            logger.warning(f"Game already exists in .chd format: {converted_file_path}")
-        else:
-            self.run_command(
-                command=convert_command, verbose=self.verbose, logger=logger
-            )
+        is_rvz = extension.lower().endswith(self.rvz_types)
+        new_ext = ".rvz" if is_rvz else ".chd"
+        converted_file = f"{os.path.splitext(os.path.basename(file))[0]}{new_ext}"
+        converted_file_directory = os.path.dirname(file)
+        converted_file_path = os.path.join(converted_file_directory, converted_file)
+        converter = Converter(
+            force=self.force, verbose=self.verbose, runner=self._runner
+        )
+        converter.convert(
+            file=file,
+            converted_file_path=converted_file_path,
+            is_rvz=is_rvz,
+            logger=logger,
+        )
 
         if archive_file:
             self.cleanup_extracted_files(
@@ -224,25 +218,17 @@ class RomManager:
 
     @staticmethod
     def map_game_code_name(file, logger=None) -> str:
-        logger.info("Scanning the filename for known ROM codes")
-        for key, value in psx_codes.items():
-            if key in os.path.basename(file):
-                file_path = os.path.dirname(file)
-                file_extension = os.path.splitext(file)[1]
-                cleaned_value = re.sub(r'[<>:"/\\|?*\x00-\x1f]', "", value)
-                new_file = os.path.join(
-                    file_path, f"{cleaned_value} - {key}{file_extension}"
-                )
-                if file != new_file and not os.path.exists(new_file):
-                    os.rename(file, new_file)
-                    file = new_file
-                logger.info(f"The string contains the key: {key}")
-        return file
+        """Rename a ROM by its embedded game code (CONCEPT:ROM-002).
+
+        Delegates to :func:`rom_manager.naming.map_game_code_name`; kept as a
+        static method for public-API compatibility.
+        """
+        return map_game_code_name(file=file, logger=logger)
 
     def cleanup_origin_files(
         self, game_directory, converted_file_path, archive_file=None
     ):
-        # Cleanup original files
+        """Delete the original archive + extracted dir post-conversion (CONCEPT:ROM-001)."""
         self.logger.info(f"Deleting original file {archive_file}...")
         self.cleanup_archive(archive_file, logger=self.logger)
         self.cleanup_extracted_files(
@@ -265,7 +251,7 @@ class RomManager:
     def cleanup_extracted_files(
         game_directory=None, converted_file_path=None, logger=None
     ):
-        # Cleanup any extracted directories
+        """Move the converted file up and remove the extraction dir (CONCEPT:ROM-001)."""
         if game_directory and os.path.exists(game_directory):
             logger.info(f"Cleaning {game_directory}...")
             parent_directory = os.path.dirname(os.path.dirname(converted_file_path))
@@ -283,103 +269,43 @@ class RomManager:
 
             logger.info(f"Finished cleaning {game_directory}")
 
-    @staticmethod
-    def run_command(command, verbose=False, logger=None):
-        try:
-            result: subprocess.CompletedProcess
-            if verbose is False:
-                with open(os.devnull, "wb") as devnull:
-                    result = subprocess.run(  # nosec B603 - fixed external ROM tool argv, shell=False
-                        command,
-                        stdout=devnull,
-                        stderr=devnull,
-                        check=True,
-                    )
-            else:
-                result = subprocess.run(  # nosec B603 - fixed external ROM tool argv, shell=False
-                    command,
-                    capture_output=True,
-                    text=True,
-                    check=True,
-                )
-            logger.info(
-                "Command exited with %s\nstdout: %s\nstderr: %s",
-                result.returncode,
-                result.stdout,
-                result.stderr,
-            )
-        except subprocess.CalledProcessError as e:
-            logger.warning("Command failed: %s\n%s", command, e.output)
+    def run_command(self, command, verbose=False, logger=None):
+        """Run an external conversion command (delegates to the runner seam)."""
+        runner = self._runner or conversion.run_command
+        return runner(command=command, verbose=verbose, logger=logger)
 
     def process_archive(self, archive, archive_directory):
-        try:
-            import patoolib as patool
-        except ImportError as e:  # pragma: no cover - optional native dependency
-            raise ImportError(
-                "Archive extraction requires the 'patool' library. "
-                "Install the native extras with: pip install 'rom-manager[native]'"
-            ) from e
+        """Extract an archive and backfill cue sheets (CONCEPT:ROM-001).
 
-        self.logger.info(f"Extracting {archive} to {archive_directory}...")
-        if self.verbose:
-            verbose = 1
-        else:
-            verbose = -1
-        try:
-            patool.extract_archive(archive, outdir=archive_directory, verbosity=verbose)
-        except patool.util.PatoolError as e:
-            self.logger.info(f"Unable to extract: {archive}\nError: {e}")
-
-        self.logger.info(f"Finished extracting {archive} to {archive_directory}")
-        self.logger.info("Generating any missing cue file(s)")
-        if glob.glob(os.path.join(str(archive_directory), "*.bin")) and not glob.glob(
-            os.path.join(str(archive_directory), "*.cue")
-        ):
-            self.cue_file_generator(archive_directory)
-        self.logger.info("Finished generating missing cue file(s)")
+        Delegates to :func:`rom_manager.archives.extract_archive`.
+        """
+        archives.extract_archive(
+            archive=archive,
+            archive_directory=archive_directory,
+            verbose=self.verbose,
+            logger=self.logger,
+        )
 
     @staticmethod
     def pad_leading_zero(number) -> str:
-        padded = "0" + str(number)
-        return padded[-2:]
+        """Zero-pad a track index (delegates to the archives layer)."""
+        return archives.pad_leading_zero(number)
 
     def cue_file_generator(self, directory) -> str:
-        file_names = self.get_files(directory=directory, extensions=[".bin"])
-        first_file = file_names.pop(0)
-        first_file = os.path.basename(first_file)
-        sheet = (
-            f'FILE "{first_file}" BINARY\n'
-            f"  TRACK 01 MODE2/2352\n"
-            f"    INDEX 01 00:00:00\n"
-        )
-        track_counter = 2
-        for file_name in file_names:
-            sheet += (
-                f'FILE "{file_name}" BINARY\n'
-                f"  TRACK {self.pad_leading_zero(track_counter)} AUDIO\n"
-                f"    INDEX 00 00:00:00\n"
-                f"    INDEX 01 00:02:00\n"
-            )
-            track_counter += 1
-        cue_file_path = os.path.join(
-            directory, f"{os.path.splitext(os.path.basename(first_file))[0]}.cue"
-        )
-        if not os.path.exists(cue_file_path):
-            with open(cue_file_path, "w") as cue_file:
-                cue_file.write(sheet)
-        return cue_file_path
+        """Generate a ``.cue`` sheet from ``.bin`` tracks (CONCEPT:ROM-001).
+
+        Delegates to :func:`rom_manager.archives.cue_file_generator`.
+        """
+        return archives.cue_file_generator(directory=directory, logger=self.logger)
 
     @staticmethod
     def get_files(directory, extensions) -> list[str]:
-        matching_files = []
-        for root, _dirs, files in os.walk(directory):
-            for file in files:
-                if any(file.endswith(ext) for ext in extensions):
-                    matching_files.append(os.path.join(root, file))
-        return matching_files
+        """List files under ``directory`` matching ``extensions`` (delegates)."""
+        return archives.get_files(directory=directory, extensions=extensions)
 
 
 def get_operating_system() -> str | None:
+    """Best-effort host OS detection (CONCEPT:ROM-001 install guidance)."""
     operating_system = None
     system = platform.system()
     release = platform.release()
@@ -392,6 +318,10 @@ def get_operating_system() -> str | None:
 
 
 def get_directory_size(directory) -> tuple[int, float, float, float]:
+    """Sum file sizes under ``directory`` as (bytes, KB, MB, GB).
+
+    CONCEPT:ROM-001 — used to report storage saved by conversion.
+    """
     total_size = 0
     for dirpath, _dirnames, filenames in os.walk(directory):
         for filename in filenames:
@@ -405,6 +335,10 @@ def get_directory_size(directory) -> tuple[int, float, float, float]:
 
 
 def installation_instructions():
+    """Print OS-specific install steps for the external conversion binaries.
+
+    CONCEPT:ROM-001 — chdman (mame-tools) and dolphin-tool guidance.
+    """
     if get_operating_system() == "Windows":
         print(
             "Install for Windows:\n"
@@ -422,6 +356,7 @@ def installation_instructions():
 
 
 def usage():
+    """Print the CLI usage banner (CONCEPT:ROM-001)."""
     print(
         f"ROM Manager: Convert Game ROMs to Compressed Hunks of Data (CHD) file format or RVZ format.\n"
         f"Backup your ROMs before working with this tool!\n"
@@ -445,6 +380,11 @@ def usage():
 
 
 def rom_manager(argv=None):
+    """CLI entry point: parse args and run the conversion pipeline.
+
+    CONCEPT:ROM-001 — parses CLI options, configures a :class:`RomManager`, runs
+    :meth:`RomManager.process_parallel`, and reports the storage delta.
+    """
     if argv is None:
         argv = sys.argv[1:]
     if not argv:
