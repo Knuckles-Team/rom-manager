@@ -1,0 +1,42 @@
+# syntax=docker/dockerfile:1
+# Slim multi-stage build: install in a builder, ship only /usr/local plus the
+# conversion CLIs. The runtime stage installs `mame-tools` (chdman) and
+# `p7zip-full` (archive extraction) so conversions work out of the box.
+# `dolphin-tool` (RVZ) is not packaged on slim; install it separately if RVZ
+# output is required.
+FROM python:3.11-slim AS builder
+COPY --from=ghcr.io/astral-sh/uv:0.11.7 /uv /uvx /bin/
+ENV UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy \
+    UV_SYSTEM_PYTHON=1 \
+    UV_HTTP_TIMEOUT=3600
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv pip install --system --upgrade --break-system-packages --prerelease=allow rom-manager[all]>=1.0.0
+
+FROM python:3.11-slim
+
+ARG HOST=0.0.0.0
+ARG PORT=8000
+ARG TRANSPORT="stdio"
+ARG AUTH_TYPE="none"
+
+ENV HOST=${HOST} \
+    PORT=${PORT} \
+    TRANSPORT=${TRANSPORT} \
+    AUTH_TYPE=${AUTH_TYPE} \
+    PYTHONUNBUFFERED=1 \
+    PATH="/root/.local/bin:/usr/local/bin:${PATH}" \
+    UV_HTTP_TIMEOUT=3600 \
+    UV_SYSTEM_PYTHON=1 \
+    UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy
+
+# Install conversion CLIs: chdman (mame-tools) + 7z (p7zip-full / patool backend)
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends mame-tools p7zip-full \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /usr/local /usr/local
+
+CMD ["rom-manager-mcp"]

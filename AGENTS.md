@@ -1,24 +1,30 @@
 # AGENTS.md
 
+> Claude Code loads this file via `CLAUDE.md` (`@AGENTS.md` import) — the two stay
+> in sync. Edit **this** file, not `CLAUDE.md`.
+
 ## Tech Stack & Architecture
-- Language/Version: Python 3.10+
-- Core Libraries: `agent-utilities`, `fastmcp`, `pydantic-ai`
+- Language/Version: Python 3.11+
+- Core Libraries: `agent-utilities`, `fastmcp`, `pydantic-ai`, `tqdm`
+- External binaries (runtime, for conversion): `chdman` (mame-tools), `dolphin-tool`, `7z`/`patool`
 - Key principles: Functional patterns, Pydantic for data validation, asynchronous tool execution.
 - Architecture:
-    - `mcp_server.py`: Main MCP server entry point and tool registration.
-    - `agent.py`: Pydantic AI agent definition and logic.
-    - `skills/`: Directory containing modular agent skills (if applicable).
-    - `agent/`: Internal agent logic and prompt templates.
+    - `rom_manager/rom_manager.py`: The real ROM conversion pipeline (`RomManager`, CLI `rom_manager()`).
+    - `rom_manager/mcp_server.py`: MCP server entry point and tool registration.
+    - `rom_manager/mcp/`: Action-routed MCP tool modules (`mcp_conversion.py`, `mcp_game_codes.py`).
+    - `rom_manager/agent_server.py`: Pydantic-AI agent server.
+    - `rom_manager/api_client.py`: Honest local facade (`Api`) over `RomManager`.
+    - `rom_manager/auth.py`: Local/no-op config factory (`get_client`).
 
 ### Architecture Diagram
 ```mermaid
 graph TD
     User([User/A2A]) --> Server[A2A Server / FastAPI]
     Server --> Agent[Pydantic AI Agent]
-    Agent --> Skills[Modular Skills]
     Agent --> MCP[MCP Server / FastMCP]
-    MCP --> Client[API Client / Wrapper]
-    Client --> ExternalAPI([External Service API])
+    MCP --> Client[Api Facade]
+    Client --> Core[RomManager Pipeline]
+    Core --> Bins([chdman / dolphin-tool / patool])
 ```
 
 ### Workflow Diagram
@@ -28,13 +34,13 @@ sequenceDiagram
     participant S as Server
     participant A as Agent
     participant T as MCP Tool
-    participant API as External API
+    participant R as RomManager
 
     U->>S: Request
     S->>A: Process Query
-    A->>T: Invoke Tool
-    T->>API: API Request
-    API-->>T: API Response
+    A->>T: Invoke Tool (action + params_json)
+    T->>R: Convert / lookup
+    R-->>T: Result
     T-->>A: Tool Result
     A-->>S: Final Response
     S-->>U: Output
@@ -48,123 +54,56 @@ pip install .[all]
 pre-commit run --all-files
 
 # Execution Commands
-# Run MCP Server (if applicable)
-python3 mcp_server.py
-# Run Agent (if applicable)
-python3 agent.py
+# rom-manager        -> CLI converter (rom_manager.rom_manager:rom_manager)
+# rom-manager-mcp    -> MCP server (rom_manager.mcp_server:mcp_server)
+# rom-manager-agent  -> A2A agent (rom_manager.agent_server:agent_server)
 
 ## Project Structure Quick Reference
-- MCP Entry Point → `mcp_server.py`
-- Agent Entry Point → `agent.py`
+- CLI / Core Pipeline → `rom_manager/rom_manager.py`
+- MCP Entry Point → `rom_manager/mcp_server.py`
+- Agent Entry Point → `rom_manager/agent_server.py`
 - Source Code → `rom_manager/`
-- Skills → `skills/` (if exists)
-
-### File Tree
-```text
-├── .gitattributes
-├── .github
-│   └── workflows
-│       └── pipeline.yml
-├── .gitignore
-├── .pre-commit-config.yaml
-├── LICENSE
-├── README.md
-├── requirements.txt
-├── rom_manager
-│   ├── __init__.py
-│   ├── game_codes.py
-│   ├── rom_manager.py
-│   └── version.py
-├── scripts
-│   └── pre-commit-mypy-run.sh
-└── setup.py
-```
 
 ## Code Style & Conventions
 **Always:**
-- Use `agent-utilities` for common patterns (e.g., `create_mcp_server`, `create_agent`).
-- Define input/output models using Pydantic.
-- Include descriptive docstrings for all tools (they are used as tool descriptions for LLMs).
-- Check for optional dependencies using `try/except ImportError`.
+- Use `agent-utilities` for common patterns (e.g., `create_mcp_server`, `create_agent_server`).
+- Define input/output models using Pydantic (`rom_manager/models.py`).
+- Include descriptive docstrings for all tools (used as LLM tool descriptions), with the `CONCEPT:ROM-*` id.
+- Check for optional/native dependencies (e.g. `patool`) using `try/except ImportError` and emit an install hint.
 
-**Good example:**
-```python
-from agent_utilities import create_mcp_server
-from mcp.server.fastmcp import FastMCP
+## Concepts
+- `CONCEPT:ROM-001` — ROM Conversion (tag `conversion`)
+- `CONCEPT:ROM-002` — Game Codes / Naming (tag `game-codes`)
 
-mcp = create_mcp_server("my-agent")
-
-@mcp.tool()
-async def my_tool(param: str) -> str:
-    """Description for LLM."""
-    return f"Result: {param}"
-```
+See `docs/concepts.md` for the registry and cross-project references.
 
 ## Dos and Don'ts
 **Do:**
 - Run `pre-commit` before pushing changes.
-- Use existing patterns from `agent-utilities`.
-- Keep tools focused and idempotent where possible.
+- Preserve the real conversion pipeline — wrap `RomManager`, do not break it.
+- Keep heavy/native deps (`patool`) in optional extras and lazily imported.
 
 **Don't:**
-- Use `cd` commands in scripts; use absolute paths or relative to project root.
-- Add new dependencies to `dependencies` in `pyproject.toml` without checking `optional-dependencies` first.
-- Hardcode secrets; use environment variables or `.env` files.
+- Add build-heavy libs to core `dependencies` in `pyproject.toml`.
+- Hardcode secrets; there are no credentials for this local tool.
+- Modify `agent-utilities` or `universal-skills` from within this package.
 
 ## Safety & Boundaries
 **Always do:**
-- Run lint/test via `pre-commit`.
-- Use `agent-utilities` base classes.
-
-**Ask first:**
-- Major refactors of `mcp_server.py` or `agent.py`.
-- Deleting or renaming public tool functions.
+- Recommend backing up ROMs before destructive (`clean_origin_files`) operations.
+- Verify `chdman` / `dolphin-tool` are installed before conversion.
 
 **Never do:**
 - Commit `.env` files or secrets.
-- Modify `agent-utilities` or `universal-skills` files from within this package.
+- Write scratch/temp/debug files at the repository root.
 
 ## When Stuck
 - Propose a plan first before making large changes.
 - Check `agent-utilities` documentation for existing helpers.
 
-## Quality Bar — Leave the Codebase Clean (REQUIRED)
+## ⛔ Keep the Repository Root Pristine — No Scratch / Temp / Debug Files
 
-After completing any code change, run the project's pre-commit suite and drive it
-**fully green** before committing:
-
-```bash
-pre-commit run --all-files
-```
-
-Resolve **every** issue it reports — failures, lint errors, type errors, and
-warnings — **including problems that pre-date your change and were not caused by
-your edits**. The standing goal is a clean, working codebase with **no errors and
-no warnings**. Do not silence checks (`# noqa`, `# type: ignore`, `SKIP=`,
-`--no-verify`) to force green unless the exception is already documented in this
-file as a known, unavoidable limitation. Only commit once `pre-commit run
---all-files` passes cleanly; if a check legitimately cannot pass, stop and explain
-why rather than bypassing it.
-
-## Working with Git Worktrees (multi-session)
-
-Multiple agents/sessions work the `agent-packages/*` repos concurrently. **Do not
-edit the canonical checkout** (`/home/apps/workspace/agent-packages/<repo>`) — a
-background `repository-manager` sync can reset its working tree and discard
-uncommitted edits. Take your own git worktree on your own branch instead:
-
-```bash
-# preferred — repository-manager MCP:
-rm_worktree add <repo> <your-branch>      # -> /home/apps/worktrees/<repo>/<your-branch>
-
-# raw-git fallback:
-git -C agent-packages/<repo> checkout main
-git -C agent-packages/<repo> worktree add /home/apps/worktrees/<repo>/<branch> -b <branch>
-```
-
-Work in the worktree, **commit often** (commits survive a working-tree reset),
-then merge to main locally (`rm_worktree merge <repo> <branch>`, or `git merge
---no-ff`). Each session must use a **distinct branch** — git allows a branch in
-only one worktree, which is what keeps concurrent sessions from colliding.
-Worktrees live under `/home/apps/worktrees/` (outside the workspace scan, so the
-sync leaves them alone). Push only when asked.
+The repository ROOT must contain only canonical project files (packaging, config,
+docs, lockfiles). Put experiments in `~/workspace/scratch/` and command output in
+`~/workspace/reports/`; tests go in `tests/` (pytest). Run `git status` before
+finishing to confirm no stray root files were added.
