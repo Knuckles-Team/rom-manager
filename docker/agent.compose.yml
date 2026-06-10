@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   rom-manager-mcp:
     image: knucklessg1/rom-manager:latest

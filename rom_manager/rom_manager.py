@@ -17,12 +17,8 @@ from multiprocessing import Pool
 
 from tqdm import tqdm
 
-try:
-    from game_codes import psx_codes
-    from version import __author__, __credits__, __version__
-except ImportError:
-    from rom_manager.game_codes import psx_codes
-    from rom_manager.version import __author__, __credits__, __version__
+from rom_manager.game_codes import psx_codes
+from rom_manager.version import __author__, __credits__, __version__
 
 
 class RomManager:
@@ -70,7 +66,7 @@ class RomManager:
             self.logger.disabled = False
             self.logger.setLevel(logging.DEBUG)
             self.logger_level = logging.DEBUG
-            print("Logger level:", self.logger.level)  # Debugging statement
+            self.logger.debug("Logger level: %s", self.logger.level)
         if not cpu_count:
             cpu_count = int((os.cpu_count() or 2) / 2 + 2)
         files = self.get_files(
@@ -115,7 +111,7 @@ class RomManager:
         handler.setFormatter(formatter)
         logger.addHandler(handler)
         archive_file = None
-        print("\nLogger level:", self.logger.level)  # Debugging statement
+        logger.debug("Logger level: %s", logger.level)
         # Create directory if game is in top folder
 
         logger.info("Detecting parent directory")
@@ -293,20 +289,27 @@ class RomManager:
             result: subprocess.CompletedProcess
             if verbose is False:
                 with open(os.devnull, "wb") as devnull:
-                    result = subprocess.run(
+                    result = subprocess.run(  # nosec B603 - fixed external ROM tool argv, shell=False
                         command,
                         stdout=devnull,
                         stderr=devnull,
+                        check=True,
                     )
             else:
-                result = subprocess.run(
+                result = subprocess.run(  # nosec B603 - fixed external ROM tool argv, shell=False
                     command,
                     capture_output=True,
                     text=True,
+                    check=True,
                 )
-            logger.info(result.returncode, result.stdout, result.stderr)
+            logger.info(
+                "Command exited with %s\nstdout: %s\nstderr: %s",
+                result.returncode,
+                result.stdout,
+                result.stderr,
+            )
         except subprocess.CalledProcessError as e:
-            logger.warning(e.output)
+            logger.warning("Command failed: %s\n%s", command, e.output)
 
     def process_archive(self, archive, archive_directory):
         try:

@@ -52,6 +52,9 @@ repos:
   hooks:
   - id: codespell
     args: ["-L", "ans,linar,nam,tread,ot,", "--ignore-words=.codespellignore"]
+    # game_codes.py is a verbatim registry of official PSX ROM titles (proper
+    # nouns / as-shipped spellings); it is data, not prose, and must not be
+    # "corrected".
     exclude: ^(tests/|test/|scripts/|script/|.*lock.*|.*game_codes.*)
 - repo: https://github.com/PyCQA/bandit
   rev: 1.9.4
@@ -64,6 +67,10 @@ repos:
   hooks:
   - id: nbqa-ruff
     args: ["--fix"]
+- repo: https://github.com/astral-sh/uv-pre-commit
+  rev: 0.11.8
+  hooks:
+  - id: uv-lock
 - repo: local
   hooks:
   - id: check-mermaid
@@ -81,6 +88,13 @@ repos:
     name: check agent standards
     entry: |-
       bash -c 'for f in $(find . -type f -name "agent_server.py" -not -path "*/\.venv/*" -not -path "*/__pycache__/*"); do grep -q "warnings.filterwarnings" "$f" && grep -q "file=sys.stderr" "$f" || { echo "Missing warnings.filterwarnings or file=sys.stderr in $f"; exit 1; }; done'
+    language: system
+    pass_filenames: false
+    always_run: true
+  - id: check-cli-help
+    name: check cli help
+    entry: |-
+      bash -c 'for f in $(find . -type f \( -name "mcp_server.py" -o -name "agent_server.py" \) -not -path "*/\.venv/*" -not -path "*/__pycache__/*"); do mod=$(echo "$f" | sed -e "s/^\.\///" -e "s/\.py$//" -e "s/\//./g"); uv run python -m "$mod" --help >/dev/null || exit 1; done'
     language: system
     pass_filenames: false
     always_run: true
@@ -114,3 +128,20 @@ repos:
   rev: v3.0.1
   hooks:
   - id: docker-compose-check
+
+- repo: local
+  hooks:
+  - id: verify-api-integration
+    name: Verify API-to-MCP Integration Coverage
+    entry: python scripts/verify_api_integration.py --local
+    language: system
+    pass_filenames: false
+    always_run: true
+- repo: local
+  hooks:
+  - id: security-sanitizer
+    name: Security and Garbage Sanitizer
+    entry: python scripts/security_sanitizer.py
+    language: python
+    pass_filenames: false
+    always_run: true
