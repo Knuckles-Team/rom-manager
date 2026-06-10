@@ -84,6 +84,13 @@ repos:
     entry: python3 /home/apps/workspace/agent-packages/agent-utilities/scripts/check_stubs.py
     language: system
     types: [python]
+  - id: mermaid-validate
+    name: mermaid-validate
+    entry: mermaid-validate
+    language: node
+    additional_dependencies: ['@zabaca/mermaid-validate@1.0.1']
+    types: [markdown]
+    pass_filenames: true
   - id: check-agent-standards
     name: check agent standards
     entry: |-
