@@ -39,6 +39,7 @@ from dotenv import find_dotenv, load_dotenv
 from rom_manager.mcp import (
     register_conversion_tools,
     register_game_codes_tools,
+    register_romm_tools,
 )
 
 __version__ = "1.0.0"
@@ -90,6 +91,11 @@ def get_mcp_instance() -> tuple[Any, Any, Any, Any]:
     DEFAULT_GAMECODESTOOL = to_boolean(os.getenv("GAMECODESTOOL", "True"))
     if DEFAULT_GAMECODESTOOL:
         register_game_codes_tools(mcp)
+
+    # CONCEPT:ROM-003 — RomM remote-library API tools (one per resource group).
+    DEFAULT_ROMMTOOL = to_boolean(os.getenv("ROMMTOOL", "True"))
+    if DEFAULT_ROMMTOOL:
+        register_romm_tools(mcp)
 
     register_prompts(mcp)
 

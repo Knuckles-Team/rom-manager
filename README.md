@@ -55,16 +55,24 @@ archives, auto-renames ROMs via a known game-code registry, converts ISO/WBFS
 images to **CHD** (`chdman`) or **RVZ** (`dolphin-tool`), generates missing `.cue`
 sheets, and cleans up source files — in parallel.
 
-Unlike network connectors, ROM Manager is a **local tool**: there is no service
-URL and no credentials.
+It also speaks to **[RomM](https://romm.app)** (`CONCEPT:ROM-003`) — a self-hosted
+ROM *library server* — through a full REST client, so one `rom-manager` tool
+manages both the files on disk (local conversion) and the web library (RomM).
+
+The local conversion pipeline needs no service URL or credentials; the RomM
+client is configured via `ROMM_*` environment variables.
 
 ---
 
 ## Key Features
 
 - **Real conversion pipeline:** parallel extract → rename → convert (CHD/RVZ) → cleanup.
-- **Consolidated Action-Routed MCP Tools:** two togglable domains (`conversion`,
-  `game-codes`) minimize token overhead and IDE tool bloat.
+- **Full RomM REST client (`CONCEPT:ROM-003`):** complete coverage of the RomM API
+  (roms, platforms, collections, saves, states, firmware, users, tasks, search,
+  config, feeds, devices, …) with Basic/OAuth2 auth — one unified CLI and one
+  action-routed MCP tool per resource group.
+- **Consolidated Action-Routed MCP Tools:** togglable domains (`conversion`,
+  `game-codes`, `romm-*`) minimize token overhead and IDE tool bloat.
 - **Integrated Graph Agent:** built-in Pydantic-AI agent (AG-UI / ACP).
 - **Native Telemetry & Tracing:** OpenTelemetry exports out of the box.
 - **Lazy native deps:** archive backends are optional extras, imported only when used.
@@ -133,6 +141,25 @@ rom-manager --directory "/games/PSX/" --iso chd --verbose
 
 Detailed API usage is in [docs/usage.md](docs/usage.md).
 
+### RomM web library (`CONCEPT:ROM-003`)
+
+The same `rom-manager` command manages a running RomM server. Set `ROMM_URL` and
+credentials (`ROMM_USERNAME`/`ROMM_PASSWORD` or `ROMM_TOKEN`), then use
+`rom-manager <resource> <action> [positionals] [--flag value …]`:
+
+```bash
+rom-manager roms list --platform_ids 7 --limit 50   # list/search ROMs
+rom-manager roms get 123                             # positional id
+rom-manager platforms list
+rom-manager saves add --rom_id 5 --file_path ./game.srm
+rom-manager tasks run scan                           # trigger a library scan
+rom-manager stats                                    # server statistics
+```
+
+Resources map 1:1 to `RommApi` methods. The on-disk converter is reachable as
+before (bare flags) or via the explicit `rom-manager convert …` alias. From
+Python, use `rom_manager.get_romm_client()` → `RommApi`.
+
 ---
 
 ## MCP
@@ -145,6 +172,7 @@ maximize IDE compatibility.
 |-------------|----------------|--------------------|------------------------|
 | **Conversion** | `CONVERSIONTOOL` | `True` | Manage ROM conversion operations (CONCEPT:ROM-001). Actions: `convert`, `process_directory`, `process_file`, `generate_cue`, `list_files`. |
 | **Game Codes** | `GAMECODESTOOL` | `True` | Manage game code lookup and naming (CONCEPT:ROM-002). Actions: `lookup`, `list`, `rename`. |
+| **RomM** (`romm_roms`, `romm_platforms`, `romm_collections`, `romm_saves`, `romm_states`, `romm_screenshots`, `romm_firmware`, `romm_users`, `romm_tasks`, `romm_search`, `romm_config`, `romm_feeds`, `romm_devices`, `romm_system`) | `ROMMTOOL` | `True` | RomM remote-library API (CONCEPT:ROM-003). One action-routed tool per resource group; each `action` maps to a `RommApi` method, with kwargs in `params_json`. Requires `ROMM_URL` + credentials. |
 
 ### Dynamic Tool Selection
 
@@ -211,10 +239,24 @@ no credentials. Copy [`.env.example`](.env.example) to `.env` to override.
 | `ROM_FORCE` | `False` | Force overwrite of existing converted files. |
 | `CONVERSIONTOOL` | `True` | Toggle registration of the **conversion** MCP tool domain (`CONCEPT:ROM-001`). |
 | `GAMECODESTOOL` | `True` | Toggle registration of the **game-codes** MCP tool domain (`CONCEPT:ROM-002`). |
+| `ROMMTOOL` | `True` | Toggle registration of the **RomM** MCP tool domains (`CONCEPT:ROM-003`). |
 
 > CPU count and "delete originals" are exposed as CLI flags (`--cpu-count` /
 > `--delete`) and MCP action params (`cpu_count` / `clean_origin_files`) rather
 > than environment variables.
+
+### RomM Variables (`CONCEPT:ROM-003`)
+
+Required only when using RomM (`roms`, `platforms`, … commands / `romm_*` tools).
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `ROMM_URL` | — | Base URL of the RomM instance (e.g. `http://host:3000`). **Required** for RomM. |
+| `ROMM_USERNAME` / `ROMM_PASSWORD` | — | Basic or OAuth password-grant credentials. |
+| `ROMM_TOKEN` | — | Pre-minted OAuth2 bearer token (takes precedence over username/password). |
+| `ROMM_AUTH_MODE` | `basic` | `basic` (no expiry) or `oauth` (password grant via `/api/token`, auto-refresh). |
+| `ROMM_SCOPES` | RomM full set | Space-separated OAuth scopes requested when minting a token. |
+| `ROMM_SSL_VERIFY` | `True` | Verify TLS certificates. |
 
 ### MCP / Framework Variables (agent-utilities)
 

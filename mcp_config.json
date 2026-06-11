@@ -17,7 +17,14 @@
         "ROM_DIRECTORY": "<YOUR_ROM_DIRECTORY>",
         "ROM_ISO_TYPE": "chd",
         "CONVERSIONTOOL": "True",
-        "GAMECODESTOOL": "True"
+        "GAMECODESTOOL": "True",
+        "ROMMTOOL": "True",
+        "ROMM_URL": "<YOUR_ROMM_URL>",
+        "ROMM_USERNAME": "<YOUR_ROMM_USERNAME>",
+        "ROMM_PASSWORD": "<YOUR_ROMM_PASSWORD>",
+        "ROMM_TOKEN": "<YOUR_ROMM_TOKEN>",
+        "ROMM_AUTH_MODE": "basic",
+        "ROMM_SSL_VERIFY": "True"
       }
     }
   }

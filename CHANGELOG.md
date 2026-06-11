@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **RomM (romm.app) remote-library integration** (`CONCEPT:ROM-003`). The package
+  now manages both ROM files on disk *and* a running RomM library server:
+  - `rom_manager/romm/` — a full `RommApi` REST client (one mixin per resource:
+    roms, platforms, collections, saves, states, screenshots, firmware, users,
+    tasks, search, config, feeds, devices, system/auth) with Basic + OAuth2
+    password-grant auth (transparent 401 refresh) and streamed up/downloads.
+    Covers **all 126** RomM operations (parity-guarded against the vendored
+    `romm/openapi.json`).
+  - `get_romm_client` factory reading `ROMM_URL`, `ROMM_USERNAME`/`ROMM_PASSWORD`
+    or `ROMM_TOKEN`, `ROMM_AUTH_MODE`, `ROMM_SCOPES`, `ROMM_SSL_VERIFY` (optional
+    OIDC delegation).
+  - One action-routed MCP tool per RomM resource group (`romm_roms`,
+    `romm_platforms`, …), gated by the `ROMMTOOL` flag.
+  - Unified CLI: the existing `rom-manager` entry point gains `convert` and RomM
+    subcommands (e.g. `rom-manager roms list --platform_ids 7`, `rom-manager
+    stats`); legacy on-disk conversion flags are unchanged.
+- `requests` added to core dependencies.
+
 ## [1.0.0] - 2026-06-10
 
 ### Added

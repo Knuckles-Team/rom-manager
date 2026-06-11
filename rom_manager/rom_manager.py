@@ -374,6 +374,12 @@ def usage():
         f"Example: \n"
         f'rom-manager --directory "C:/Users/default/Games/"\n'
         f"\n"
+        f"RomM web library (CONCEPT:ROM-003):\n"
+        f"  rom-manager <resource> <action> [args]   (resources: roms, platforms,\n"
+        f"  collections, saves, states, firmware, users, tasks, search, stats, ...)\n"
+        f"  e.g. rom-manager roms list --platform_ids 7   |   rom-manager stats\n"
+        f"  Set ROMM_URL and ROMM_USERNAME/ROMM_PASSWORD (or ROMM_TOKEN).\n"
+        f"\n"
     )
     installation_instructions()
     print(f"Author: {__author__}\nCredits: {__credits__}\n")
@@ -390,6 +396,27 @@ def rom_manager(argv=None):
     if not argv:
         usage()
         sys.exit(2)
+
+    # Unified CLI (CONCEPT:ROM-003): route RomM web-library subcommands and the
+    # explicit 'convert' alias. Bare conversion flags (-d/-c/-i/-f/-v/-x) keep
+    # the legacy on-disk converter behaviour below.
+    romm_commands = frozenset(
+        {
+            "roms", "platforms", "collections", "saves", "states", "screenshots",
+            "firmware", "users", "tasks", "search", "config", "feeds", "devices",
+            "system", "stats", "heartbeat", "login", "logout", "auth",
+        }
+    )
+    if argv[0] == "convert":
+        argv = argv[1:]
+        if not argv:
+            usage()
+            sys.exit(2)
+    elif argv[0] in romm_commands:
+        from rom_manager.romm.cli import run_romm_cli
+
+        sys.exit(run_romm_cli(argv))
+
     cpu_count = None
     directory = ""
     iso_type = "chd"

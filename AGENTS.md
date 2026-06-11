@@ -5,16 +5,21 @@
 
 ## Tech Stack & Architecture
 - Language/Version: Python 3.11+
-- Core Libraries: `agent-utilities`, `fastmcp`, `pydantic-ai`, `tqdm`
+- Core Libraries: `agent-utilities`, `fastmcp`, `pydantic-ai`, `tqdm`, `requests`
 - External binaries (runtime, for conversion): `chdman` (mame-tools), `dolphin-tool`, `7z`/`patool`
 - Key principles: Functional patterns, Pydantic for data validation, asynchronous tool execution.
+- Two domains, one tool: the **local** pipeline operates on ROM files already on
+  disk (extract/convert/rename); the **RomM** client (CONCEPT:ROM-003) talks to a
+  running RomM *library server* over its REST API. Both are exposed through one
+  `rom-manager` CLI, one MCP server, and one agent.
 - Architecture:
-    - `rom_manager/rom_manager.py`: The real ROM conversion pipeline (`RomManager`, CLI `rom_manager()`).
+    - `rom_manager/rom_manager.py`: The real ROM conversion pipeline (`RomManager`) + the **unified CLI** `rom_manager()` (legacy convert flags + `convert`/RomM subcommands).
     - `rom_manager/mcp_server.py`: MCP server entry point and tool registration.
-    - `rom_manager/mcp/`: Action-routed MCP tool modules (`mcp_conversion.py`, `mcp_game_codes.py`).
+    - `rom_manager/mcp/`: Action-routed MCP tool modules (`mcp_conversion.py`, `mcp_game_codes.py`, `mcp_romm.py`).
     - `rom_manager/agent_server.py`: Pydantic-AI agent server.
     - `rom_manager/api_client.py`: Honest local facade (`Api`) over `RomManager`.
     - `rom_manager/auth.py`: Local/no-op config factory (`get_client`).
+    - `rom_manager/romm/`: RomM remote-library integration (CONCEPT:ROM-003) — `api/` (base + one mixin per resource → `RommApi` facade), `auth.py` (`get_romm_client`), `cli.py` (RomM subcommands), `openapi.json` (vendored spec, parity guard).
 
 ### Architecture Diagram
 ```mermaid
@@ -23,8 +28,10 @@ graph TD
     Server --> Agent[Pydantic AI Agent]
     Agent --> MCP[MCP Server / FastMCP]
     MCP --> Client[Api Facade]
+    MCP --> Romm[RommApi Client]
     Client --> Core[RomManager Pipeline]
     Core --> Bins([chdman / dolphin-tool / patool])
+    Romm --> RommSrv([RomM server REST API])
 ```
 
 ### Workflow Diagram
@@ -74,8 +81,18 @@ pre-commit run --all-files
 ## Concepts
 - `CONCEPT:ROM-001` — ROM Conversion (tag `conversion`)
 - `CONCEPT:ROM-002` — Game Codes / Naming (tag `game-codes`)
+- `CONCEPT:ROM-003` — RomM Remote Library API (tags `romm-*`)
 
 See `docs/concepts.md` for the registry and cross-project references.
+
+## RomM configuration (CONCEPT:ROM-003)
+The RomM client reads connection/auth from the environment (no secrets in code):
+`ROMM_URL` (required), `ROMM_USERNAME`/`ROMM_PASSWORD` or `ROMM_TOKEN`,
+`ROMM_AUTH_MODE` (`basic` default, or `oauth`), `ROMM_SCOPES`, `ROMM_SSL_VERIFY`.
+The `ROMMTOOL` flag (default `True`) gates registration of the RomM MCP tools,
+mirroring `CONVERSIONTOOL`/`GAMECODESTOOL`. The vendored `rom_manager/romm/openapi.json`
+is the parity source for `tests/test_romm_coverage.py` — refresh it from
+`<instance>/openapi.json` if RomM adds endpoints, then extend `ROMM_TOOLS`.
 
 ## Dos and Don'ts
 **Do:**
