@@ -9,7 +9,7 @@ description = "ROM Converter/Organizer (CHD/RVZ) + MCP Server + A2A Agent"
 readme = "README.md"
 classifiers = [ "Development Status :: 5 - Production/Stable", "License :: Public Domain", "Environment :: Console", "Operating System :: POSIX :: Linux", "Programming Language :: Python :: 3",]
 requires-python = ">=3.11, <3.15"
-dependencies = [ "agent-utilities>=0.47.0", "python-dotenv>=1.0.0", "tqdm>=4.66.0",]
+dependencies = [ "agent-utilities>=0.47.0", "python-dotenv>=1.0.0", "tqdm>=4.66.0", "requests>=2.31.0",]
 [[project.authors]]
 name = "Audel Rouhi"
 email = "knucklessg1@gmail.com"
@@ -50,7 +50,7 @@ dev = [
 ]
 
 [tool.setuptools.package-data]
-rom_manager = [ "mcp_config.json", "agent_data/**", "prompts/*.md",]
+rom_manager = [ "mcp_config.json", "agent_data/**", "prompts/*.md", "romm/openapi.json",]
 
 [tool.ruff.lint]
 select = [ "E", "F", "I", "UP", "B",]

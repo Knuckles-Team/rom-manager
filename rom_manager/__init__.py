@@ -14,6 +14,7 @@ from rom_manager.rom_manager import (
     main,
     rom_manager,
 )
+from rom_manager.romm import RommApi, get_romm_client
 from rom_manager.version import __author__, __credits__, __version__
 
 __all__ = [
@@ -23,6 +24,8 @@ __all__ = [
     "RomManager",
     "get_operating_system",
     "get_directory_size",
+    "RommApi",
+    "get_romm_client",
     "__version__",
     "__author__",
     "__credits__",

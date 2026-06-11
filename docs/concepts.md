@@ -12,6 +12,7 @@
 |------------|------|-----|-------------|
 | `CONCEPT:ROM-001` | ROM Conversion | `conversion` | MCP tool domain `conversion` — Action-routed dynamic tool registration wrapping the `RomManager` extract/convert pipeline (CHD/RVZ). |
 | `CONCEPT:ROM-002` | Game Codes / Naming | `game-codes` | MCP tool domain `game-codes` — Action-routed dynamic tool registration for game-code lookup and ROM filename normalization. |
+| `CONCEPT:ROM-003` | RomM Remote Library API | `romm-*` | RomM ([romm.app](https://romm.app)) remote-library integration — a full `RommApi` REST client (one mixin per resource), the `get_romm_client` factory, unified-CLI commands, and one action-routed MCP tool per resource group (`romm-roms`, `romm-platforms`, …) covering all RomM operations. |
 
 ## Cross-Project References (from agent-utilities)
 
