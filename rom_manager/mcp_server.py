@@ -42,7 +42,7 @@ from rom_manager.mcp import (
     register_romm_tools,
 )
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 print(f"ROM Manager MCP v{__version__}", file=sys.stderr)
 
 logger = get_logger(name="mcp_server")
