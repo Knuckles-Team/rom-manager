@@ -23,7 +23,7 @@ agent = [ "agent-utilities[agent,logfire]>=0.48.0", "logfire>=2.0.0",]
 native = [ "patool>=2.1.1",]
 convert = [ "patool>=2.1.1",]
 otel = [ "opentelemetry-sdk>=1.27.0", "opentelemetry-exporter-otlp>=1.27.0",]
-all = [ "rom-manager[mcp,agent,native,otel]>=1.0.0",]
+all = [ "rom-manager[mcp,agent,native,otel]>=1.1.0",]
 test = [
     "pytest-xdist>=3.6.0", "pytest", "pytest-asyncio", "pytest-cov",]
 
