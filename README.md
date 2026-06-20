@@ -176,21 +176,21 @@ The table below is auto-generated from the MCP server — do not edit by hand.
 | MCP Tool | Toggle Env Var | Description |
 |----------|----------------|-------------|
 | `rom_conversion` | `CONVERSIONTOOL` | Manage ROM conversion operations (CONCEPT:ROM-001). |
-| `rom_game_codes` | `GAME-CODESTOOL` | Manage ROM game code lookup and naming operations (CONCEPT:ROM-002). |
-| `romm_collections` | `ROMM-COLLECTIONSTOOL` |  |
-| `romm_config` | `ROMM-CONFIGTOOL` |  |
-| `romm_devices` | `ROMM-DEVICESTOOL` |  |
-| `romm_feeds` | `ROMM-FEEDSTOOL` |  |
-| `romm_firmware` | `ROMM-FIRMWARETOOL` |  |
-| `romm_platforms` | `ROMM-PLATFORMSTOOL` |  |
-| `romm_roms` | `ROMM-ROMSTOOL` |  |
-| `romm_saves` | `ROMM-SAVESTOOL` |  |
-| `romm_screenshots` | `ROMM-SCREENSHOTSTOOL` |  |
-| `romm_search` | `ROMM-SEARCHTOOL` |  |
-| `romm_states` | `ROMM-STATESTOOL` |  |
-| `romm_system` | `ROMM-SYSTEMTOOL` |  |
-| `romm_tasks` | `ROMM-TASKSTOOL` |  |
-| `romm_users` | `ROMM-USERSTOOL` |  |
+| `rom_game_codes` | `GAME_CODESTOOL` | Manage ROM game code lookup and naming operations (CONCEPT:ROM-002). |
+| `romm_collections` | `ROMMTOOL` |  |
+| `romm_config` | `ROMMTOOL` |  |
+| `romm_devices` | `ROMMTOOL` |  |
+| `romm_feeds` | `ROMMTOOL` |  |
+| `romm_firmware` | `ROMMTOOL` |  |
+| `romm_platforms` | `ROMMTOOL` |  |
+| `romm_roms` | `ROMMTOOL` |  |
+| `romm_saves` | `ROMMTOOL` |  |
+| `romm_screenshots` | `ROMMTOOL` |  |
+| `romm_search` | `ROMMTOOL` |  |
+| `romm_states` | `ROMMTOOL` |  |
+| `romm_system` | `ROMMTOOL` |  |
+| `romm_tasks` | `ROMMTOOL` |  |
+| `romm_users` | `ROMMTOOL` |  |
 
 _16 action-routed tools (default `MCP_TOOL_MODE=condensed`). Each is enabled unless its toggle is set false; set `MCP_TOOL_MODE=verbose` (or `both`) for the 1:1 per-operation surface. Auto-generated — do not edit._
 <!-- MCP-TOOLS-TABLE:END -->
