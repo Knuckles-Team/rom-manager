@@ -33,8 +33,7 @@ import sys
 from typing import Any
 
 from agent_utilities.base_utilities import to_boolean
-from agent_utilities.mcp_utilities import create_mcp_server
-from dotenv import find_dotenv, load_dotenv
+from agent_utilities.mcp_utilities import create_mcp_server, load_config
 
 from rom_manager.mcp import (
     register_conversion_tools,
@@ -73,7 +72,7 @@ def get_mcp_instance() -> tuple[Any, Any, Any, Any]:
     CONCEPT:ROM-001, CONCEPT:ROM-002 — registers both tool domains and attaches
     the agent-utilities middleware stack (CONCEPT:ECO-4.0).
     """
-    load_dotenv(find_dotenv())
+    load_config()
     os.environ["FASTMCP_LOG_LEVEL"] = "ERROR"
     os.environ["TERM"] = "dumb"
     os.environ["NO_COLOR"] = "1"
