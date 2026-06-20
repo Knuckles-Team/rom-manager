@@ -168,11 +168,32 @@ This server utilizes dynamic Action-Routed tools to optimize token overhead and
 maximize IDE compatibility.
 
 ### Available MCP Tools
-| Tool Module | Toggle Env Var | Enabled by Default | Description & Actions |
-|-------------|----------------|--------------------|------------------------|
-| **Conversion** | `CONVERSIONTOOL` | `True` | Manage ROM conversion operations (CONCEPT:ROM-001). Actions: `convert`, `process_directory`, `process_file`, `generate_cue`, `list_files`. |
-| **Game Codes** | `GAMECODESTOOL` | `True` | Manage game code lookup and naming (CONCEPT:ROM-002). Actions: `lookup`, `list`, `rename`. |
-| **RomM** (`romm_roms`, `romm_platforms`, `romm_collections`, `romm_saves`, `romm_states`, `romm_screenshots`, `romm_firmware`, `romm_users`, `romm_tasks`, `romm_search`, `romm_config`, `romm_feeds`, `romm_devices`, `romm_system`) | `ROMMTOOL` | `True` | RomM remote-library API (CONCEPT:ROM-003). One action-routed tool per resource group; each `action` maps to a `RommApi` method, with kwargs in `params_json`. Requires `ROMM_URL` + credentials. |
+
+The table below is auto-generated from the MCP server — do not edit by hand.
+
+<!-- MCP-TOOLS-TABLE:START -->
+
+| MCP Tool | Toggle Env Var | Description |
+|----------|----------------|-------------|
+| `rom_conversion` | `CONVERSIONTOOL` | Manage ROM conversion operations (CONCEPT:ROM-001). |
+| `rom_game_codes` | `GAME-CODESTOOL` | Manage ROM game code lookup and naming operations (CONCEPT:ROM-002). |
+| `romm_collections` | `ROMM-COLLECTIONSTOOL` |  |
+| `romm_config` | `ROMM-CONFIGTOOL` |  |
+| `romm_devices` | `ROMM-DEVICESTOOL` |  |
+| `romm_feeds` | `ROMM-FEEDSTOOL` |  |
+| `romm_firmware` | `ROMM-FIRMWARETOOL` |  |
+| `romm_platforms` | `ROMM-PLATFORMSTOOL` |  |
+| `romm_roms` | `ROMM-ROMSTOOL` |  |
+| `romm_saves` | `ROMM-SAVESTOOL` |  |
+| `romm_screenshots` | `ROMM-SCREENSHOTSTOOL` |  |
+| `romm_search` | `ROMM-SEARCHTOOL` |  |
+| `romm_states` | `ROMM-STATESTOOL` |  |
+| `romm_system` | `ROMM-SYSTEMTOOL` |  |
+| `romm_tasks` | `ROMM-TASKSTOOL` |  |
+| `romm_users` | `ROMM-USERSTOOL` |  |
+
+_16 action-routed tools (default `MCP_TOOL_MODE=condensed`). Each is enabled unless its toggle is set false; set `MCP_TOOL_MODE=verbose` (or `both`) for the 1:1 per-operation surface. Auto-generated — do not edit._
+<!-- MCP-TOOLS-TABLE:END -->
 
 ### Dynamic Tool Selection
 
