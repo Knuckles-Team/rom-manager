@@ -32,14 +32,16 @@ import os
 import sys
 from typing import Any
 
-from agent_utilities.base_utilities import to_boolean
-from agent_utilities.mcp_utilities import create_mcp_server, load_config
-
-from rom_manager.mcp import (
-    register_conversion_tools,
-    register_game_codes_tools,
-    register_romm_tools,
+from agent_utilities.core.config import setting
+from agent_utilities.mcp_utilities import (
+    create_mcp_server,
+    load_config,
+    register_tool_surface,
 )
+
+from rom_manager import mcp as rom_tools
+from rom_manager.api_client import Api
+from rom_manager.auth import get_client
 
 __version__ = "1.4.0"
 print(f"ROM Manager MCP v{__version__}", file=sys.stderr)
@@ -47,8 +49,8 @@ print(f"ROM Manager MCP v{__version__}", file=sys.stderr)
 logger = get_logger(name="mcp_server")
 logger.setLevel(logging.DEBUG)
 
-DEFAULT_ROM_DIRECTORY = os.getenv("ROM_DIRECTORY", os.path.curdir)
-DEFAULT_ROM_ISO_TYPE = os.getenv("ROM_ISO_TYPE", "chd")
+DEFAULT_ROM_DIRECTORY = setting("ROM_DIRECTORY", os.path.curdir)
+DEFAULT_ROM_ISO_TYPE = setting("ROM_ISO_TYPE", "chd")
 
 
 def register_prompts(mcp: FastMCP):
@@ -83,25 +85,19 @@ def get_mcp_instance() -> tuple[Any, Any, Any, Any]:
         instructions="ROM Manager MCP Server - Convert ROMs to CHD/RVZ, extract archives, generate cue sheets, and resolve game codes.",
     )
 
-    DEFAULT_CONVERSIONTOOL = to_boolean(os.getenv("CONVERSIONTOOL", "True"))
-    if DEFAULT_CONVERSIONTOOL:
-        register_conversion_tools(mcp)
-
-    DEFAULT_GAMECODESTOOL = to_boolean(os.getenv("GAMECODESTOOL", "True"))
-    if DEFAULT_GAMECODESTOOL:
-        register_game_codes_tools(mcp)
-
-    # CONCEPT:ROM-003 — RomM remote-library API tools (one per resource group).
-    DEFAULT_ROMMTOOL = to_boolean(os.getenv("ROMMTOOL", "True"))
-    if DEFAULT_ROMMTOOL:
-        register_romm_tools(mcp)
+    registered_tags = register_tool_surface(
+        mcp,
+        client_cls=Api,
+        get_client=get_client,
+        service="rom-manager",
+        tools_module=rom_tools,
+    )
 
     register_prompts(mcp)
 
     for mw in middlewares:
         mcp.add_middleware(mw)
 
-    registered_tags: list[str] = []
     return mcp, args, middlewares, registered_tags
 
 

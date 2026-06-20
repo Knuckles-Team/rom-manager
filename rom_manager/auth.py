@@ -14,7 +14,8 @@ as the default working directory when none is supplied.
 
 import os
 
-from agent_utilities.base_utilities import get_logger, to_boolean
+from agent_utilities.base_utilities import get_logger
+from agent_utilities.core.config import setting
 
 from rom_manager.api_client import Api
 
@@ -23,9 +24,9 @@ logger = get_logger(__name__)
 
 def get_client(
     directory: str | None = None,
-    iso_type: str = os.getenv("ROM_ISO_TYPE", "chd"),
-    verbose: bool = to_boolean(string=os.getenv("ROM_VERBOSE", "False")),
-    force: bool = to_boolean(string=os.getenv("ROM_FORCE", "False")),
+    iso_type: str | None = None,
+    verbose: bool | None = None,
+    force: bool | None = None,
     config: dict | None = None,
 ) -> Api:
     """Factory returning the local ROM Manager :class:`Api` facade (CONCEPT:ROM-001).
@@ -34,14 +35,19 @@ def get_client(
     the current working directory). ``iso_type`` selects the conversion target
     (``chd`` or ``rvz``).
     """
-    resolved_directory = directory or os.getenv("ROM_DIRECTORY") or os.path.curdir
+    resolved_iso_type = (
+        iso_type if iso_type is not None else setting("ROM_ISO_TYPE", "chd")
+    )
+    resolved_verbose = verbose if verbose is not None else setting("ROM_VERBOSE", False)
+    resolved_force = force if force is not None else setting("ROM_FORCE", False)
+    resolved_directory = directory or setting("ROM_DIRECTORY", os.path.curdir)
     logger.info(
         "Creating local ROM Manager client",
-        extra={"directory": resolved_directory, "iso_type": iso_type},
+        extra={"directory": resolved_directory, "iso_type": resolved_iso_type},
     )
     return Api(
         directory=resolved_directory,
-        iso_type=iso_type if iso_type in ("chd", "rvz") else "chd",
-        verbose=verbose,
-        force=force,
+        iso_type=resolved_iso_type if resolved_iso_type in ("chd", "rvz") else "chd",
+        verbose=resolved_verbose,
+        force=resolved_force,
     )
