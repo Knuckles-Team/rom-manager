@@ -32,6 +32,12 @@ rom-manager = "rom_manager.rom_manager:rom_manager"
 rom-manager-mcp = "rom_manager.mcp_server:mcp_server"
 rom-manager-agent = "rom_manager.agent_server:agent_server"
 
+[project.entry-points."agent_utilities.skill_providers"]
+rom-manager = "rom_manager.skills"
+
+[project.entry-points."agent_utilities.prompt_providers"]
+rom-manager = "rom_manager.prompts"
+
 [tool.setuptools]
 include-package-data = true
 
@@ -50,7 +56,7 @@ dev = [
 ]
 
 [tool.setuptools.package-data]
-rom_manager = [ "mcp_config.json", "agent_data/**", "prompts/*.md", "romm/openapi.json",]
+rom_manager = [ "mcp_config.json", "agent_data/**", "prompts/*.md", "romm/openapi.json", "prompts/**", "skills/**",]
 
 [tool.ruff.lint]
 select = [ "E", "F", "I", "UP", "B",]
