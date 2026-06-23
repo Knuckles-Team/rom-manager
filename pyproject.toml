@@ -56,7 +56,7 @@ dev = [
 ]
 
 [tool.setuptools.package-data]
-rom_manager = [ "mcp_config.json", "agent_data/**", "prompts/*.md", "romm/openapi.json", "prompts/**", "skills/**",]
+rom_manager = [ "mcp_config.json", "prompts/*.md", "romm/openapi.json", "prompts/**", "skills/**",]
 
 [tool.ruff.lint]
 select = [ "E", "F", "I", "UP", "B",]
