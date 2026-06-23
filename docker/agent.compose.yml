@@ -1,6 +1,6 @@
 services:
   rom-manager-mcp:
-    image: knucklessg1/rom-manager:latest
+    image: knucklessg1/rom-manager:mcp
     container_name: rom-manager-mcp
     hostname: rom-manager-mcp
     restart: always
