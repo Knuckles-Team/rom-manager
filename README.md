@@ -210,15 +210,23 @@ rom-manager-mcp
 rom-manager-mcp --transport streamable-http --host 0.0.0.0 --port 8000
 ```
 
+> **Install the slim `[mcp]` extra.** The examples below install
+> `rom-manager[mcp]` — the MCP-server extra that pulls only the FastMCP / FastAPI
+> tooling (`agent-utilities[mcp]`). It deliberately **excludes** the heavy agent
+> runtime (the epistemic-graph engine, `pydantic-ai`, `dspy`, `llama-index`,
+> `tree-sitter`), so `uvx`/container installs are dramatically smaller and faster.
+> Use the full `[agent]` extra only when you need the integrated Pydantic AI agent
+> (see [Installation](#installation)).
+
 #### stdio client config
 
 ```json
 {
   "mcpServers": {
     "rom-manager": {
-      "command": "uv",
-      "args": ["run", "rom-manager-mcp"],
-      "env": { "ROM_DIRECTORY": "/games", "CONVERSIONTOOL": "True", "GAMECODESTOOL": "True" }
+      "command": "uvx",
+      "args": ["--from", "rom-manager[mcp]", "rom-manager-mcp"],
+      "env": { "ROM_DIRECTORY": "/games", "CONVERSIONTOOL": "True", "GAME_CODESTOOL": "True" }
     }
   }
 }
@@ -228,8 +236,15 @@ rom-manager-mcp --transport streamable-http --host 0.0.0.0 --port 8000
 
 ```bash
 docker run --rm -it -v /games:/games -e ROM_DIRECTORY=/games \
-  -p 8000:8000 -e TRANSPORT=streamable-http knucklessg1/rom-manager:latest
+  -p 8000:8000 -e TRANSPORT=streamable-http knucklessg1/rom-manager:mcp
 ```
+
+> The `:mcp` tag is the **slim MCP-server image** (built from
+> `docker/Dockerfile --target mcp`, installing `rom-manager[mcp]`). The default
+> `:latest` tag is the **full agent image** (`--target agent`, `rom-manager[agent]`)
+> which also bundles the Pydantic AI agent and the epistemic-graph engine — use it
+> when you run `rom-manager-agent` (the agent), not just the MCP server. See
+> [Container images](#container-images-mcp-vs-agent).
 
 ---
 
@@ -274,7 +289,7 @@ no credentials. Copy [`.env.example`](.env.example) to `.env` to override.
 | `ROM_VERBOSE` | `False` | Emit verbose conversion output. |
 | `ROM_FORCE` | `False` | Force overwrite of existing converted files. |
 | `CONVERSIONTOOL` | `True` | Toggle registration of the **conversion** MCP tool domain (`CONCEPT:ROM-001`). |
-| `GAMECODESTOOL` | `True` | Toggle registration of the **game-codes** MCP tool domain (`CONCEPT:ROM-002`). |
+| `GAME_CODESTOOL` | `True` | Toggle registration of the **game-codes** MCP tool domain (`CONCEPT:ROM-002`). |
 | `ROMMTOOL` | `True` | Toggle registration of the **RomM** MCP tool domains (`CONCEPT:ROM-003`). |
 
 > CPU count and "delete originals" are exposed as CLI flags (`--cpu-count` /
@@ -343,13 +358,50 @@ without them):
 
 ## Installation
 
+Pick the extra that matches what you want to run:
+
+| Extra | Installs | Use when |
+|-------|----------|----------|
+| `rom-manager` (core) | CLI converter + `Api` facade (no server tooling) | You only use the **CLI / Python API** |
+| `rom-manager[mcp]` | Slim MCP server (`agent-utilities[mcp]` — FastMCP/FastAPI) | You run the **MCP server** (smallest server install / image) |
+| `rom-manager[agent]` | Full agent runtime (`agent-utilities[agent,logfire]` — Pydantic AI + the epistemic-graph engine) | You run the **integrated agent** |
+| `rom-manager[native]` | + `patool` (archive extraction backends) | You convert archived ROMs locally |
+| `rom-manager[all]` | Everything (`mcp` + `agent` + `native` + `otel`) | Development / all surfaces |
+
 ```bash
 pip install rom-manager            # core CLI + Api
-pip install "rom-manager[mcp]"     # + MCP server
-pip install "rom-manager[agent]"   # + A2A agent
+pip install "rom-manager[mcp]"     # + slim MCP server
+pip install "rom-manager[agent]"   # + A2A agent (Pydantic AI + epistemic-graph engine)
 pip install "rom-manager[native]"  # + patool (archive extraction)
 pip install "rom-manager[all]"     # everything
 ```
+
+### Container images (`:mcp` vs `:agent`)
+
+One multi-stage `docker/Dockerfile` builds two right-sized images, selected by `--target`:
+
+| Image tag | Build target | Contents | Entrypoint |
+|-----------|--------------|----------|------------|
+| `knucklessg1/rom-manager:mcp` | `--target mcp` | `rom-manager[mcp]` — **slim**, no engine/`pydantic-ai`/`dspy`/`llama-index`/`tree-sitter` | `rom-manager-mcp` |
+| `knucklessg1/rom-manager:latest` | `--target agent` (default) | `rom-manager[agent]` — **full** agent runtime + epistemic-graph engine | `rom-manager-agent` |
+
+```bash
+docker build --target mcp   -t knucklessg1/rom-manager:mcp    docker/   # slim MCP server
+docker build --target agent -t knucklessg1/rom-manager:latest docker/   # full agent
+```
+
+`docker/mcp.compose.yml` runs the slim `:mcp` server; `docker/agent.compose.yml` runs the
+agent (`:latest`) with a co-located `:mcp` sidecar.
+
+### Knowledge-graph database (`epistemic-graph`)
+
+The **full agent** (`[agent]` / `:latest`) embeds the **epistemic-graph** engine (pulled in
+transitively via `agent-utilities[agent]`). For production — or to share one knowledge graph
+across multiple agents — run **epistemic-graph as its own database container** and point the
+agent at it instead of embedding it. Deployment recipes (single-node + Raft HA), connection
+config, and the full database architecture (with diagrams) are documented in the
+[epistemic-graph deployment guide](https://knuckles-team.github.io/epistemic-graph/deployment/).
+The slim `[mcp]` server and the core CLI do **not** require the database.
 
 ---
 
