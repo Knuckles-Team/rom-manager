@@ -277,6 +277,65 @@ rom-manager-agent --web
 
 ## Environment Variables
 
+<!-- ENV-VARS-TABLE:START -->
+
+#### Package environment variables
+
+| Variable | Example | Description |
+|----------|---------|-------------|
+| `HOST` | `0.0.0.0` |  |
+| `PORT` | `8000` |  |
+| `TRANSPORT` | `stdio` | options: stdio, streamable-http, sse |
+| `AUTH_TYPE` | `none` | Authentication mode for the MCP server (none for this local tool). |
+| `FASTMCP_LOG_LEVEL` | `ERROR` | FastMCP internal log verbosity (the server pins this to ERROR at startup). |
+| `NO_COLOR` | `1` | Disable ANSI colour output in child tooling. |
+| `TERM` | `dumb` | Force a dumb terminal so progress bars / colour codes do not corrupt stdio. |
+| `ENABLE_OTEL` | `True` |  |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | `http://localhost:8080/api/public/otel` |  |
+| `OTEL_EXPORTER_OTLP_PUBLIC_KEY` | `pk-...` |  |
+| `OTEL_EXPORTER_OTLP_SECRET_KEY` | `sk-...` |  |
+| `OTEL_EXPORTER_OTLP_PROTOCOL` | `http/protobuf` |  |
+| `EUNOMIA_TYPE` | `none` | options: none, embedded, remote |
+| `EUNOMIA_POLICY_FILE` | `mcp_policies.json` |  |
+| `EUNOMIA_REMOTE_URL` | `http://eunomia-server:8000` |  |
+| `ROM_DIRECTORY` | `./roms` | Default directory of ROMs to process when none is supplied. |
+| `ROM_ISO_TYPE` | `chd` | Conversion target: chd (chdman) or rvz (dolphin-tool) |
+| `ROM_VERBOSE` | `False` |  |
+| `ROM_FORCE` | `False` |  |
+| `ROMM_URL` | `http://localhost:3000` | any RomM (`roms`, `platforms`, ...) command or MCP tool. |
+| `ROMM_USERNAME` | `admin` | Credentials: Basic/OAuth username+password, or a pre-minted bearer token. |
+| `ROMM_PASSWORD` | `changeme` |  |
+| `ROMM_TOKEN` | — |  |
+| `ROMM_AUTH_MODE` | `basic` | Auth mode: basic (default, no expiry) or oauth (password grant via /api/token). |
+| `ROMM_SCOPES` | `roms.read roms.write platforms.read` | Space-separated OAuth scopes (defaults to RomM's full read+write set). |
+| `ROMM_SSL_VERIFY` | `True` |  |
+| `CONVERSIONTOOL` | `True` | MCP tools table (condensed action-routed surface). |
+| `GAME_CODESTOOL` | `True` |  |
+| `ROMMTOOL` | `True` | Master switch for the RomM remote-library tools. |
+
+#### Inherited agent-utilities variables (apply to every connector)
+
+| Variable | Example | Description |
+|----------|---------|-------------|
+| `MCP_TOOL_MODE` | `condensed` | Tool surface: `condensed` | `verbose` | `both` |
+| `MCP_ENABLED_TOOLS` | — | Comma-separated tool allow-list |
+| `MCP_DISABLED_TOOLS` | — | Comma-separated tool deny-list |
+| `MCP_ENABLED_TAGS` | — | Comma-separated tag allow-list |
+| `MCP_DISABLED_TAGS` | — | Comma-separated tag deny-list |
+| `MCP_CLIENT_AUTH` | — | Outbound MCP auth (`oidc-client-credentials` for fleet calls) |
+| `OIDC_CLIENT_ID` | — | OIDC client id (service-account auth) |
+| `OIDC_CLIENT_SECRET` | — | OIDC client secret (service-account auth) |
+| `DEBUG` | `False` | Verbose logging |
+| `PYTHONUNBUFFERED` | `1` | Unbuffered stdout (recommended in containers) |
+| `MCP_URL` | `http://localhost:8000/mcp` | URL of the MCP server the agent connects to |
+| `PROVIDER` | `openai` | LLM provider for the agent |
+| `MODEL_ID` | `gpt-4o` | Model id for the agent |
+| `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
+
+_29 package + 14 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
+<!-- ENV-VARS-TABLE:END -->
+
+
 All settings are optional — ROM Manager runs with sensible defaults and requires
 no credentials. Copy [`.env.example`](.env.example) to `.env` to override.
 
