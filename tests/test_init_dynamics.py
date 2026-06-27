@@ -7,8 +7,19 @@ import pytest
 
 
 def _get_pkg_name():
-    test_dir = pathlib.Path(__file__).resolve().parent
-    project_dir = test_dir.parent
+    project_dir = pathlib.Path(__file__).resolve().parent.parent
+    # Discover the actual top-level package (the dir with an __init__.py) rather
+    # than inferring it from the project directory name, which is wrong inside a
+    # git worktree whose leaf dir differs from the package name.
+    ignore = {"tests", "test", "docs", "scripts", "examples"}
+    for child in sorted(project_dir.iterdir()):
+        if (
+            child.is_dir()
+            and child.name not in ignore
+            and not child.name.startswith(".")
+            and (child / "__init__.py").exists()
+        ):
+            return child.name
     return project_dir.name.replace("-", "_")
 
 
