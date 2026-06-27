@@ -173,6 +173,8 @@ The table below is auto-generated from the MCP server — do not edit by hand.
 
 <!-- MCP-TOOLS-TABLE:START -->
 
+#### Condensed action-routed tools (default — `MCP_TOOL_MODE=condensed`)
+
 | MCP Tool | Toggle Env Var | Description |
 |----------|----------------|-------------|
 | `rom_conversion` | `CONVERSIONTOOL` | Manage ROM conversion operations (CONCEPT:ROM-001). |
@@ -192,7 +194,25 @@ The table below is auto-generated from the MCP server — do not edit by hand.
 | `romm_tasks` | `ROMMTOOL` |  |
 | `romm_users` | `ROMMTOOL` |  |
 
-_16 action-routed tools (default `MCP_TOOL_MODE=condensed`). Each is enabled unless its toggle is set false; set `MCP_TOOL_MODE=verbose` (or `both`) for the 1:1 per-operation surface. Auto-generated — do not edit._
+#### Verbose 1:1 API-mapped tools (`MCP_TOOL_MODE=verbose` or `both`)
+
+<details>
+<summary>8 per-operation tools — one per public API method (click to expand)</summary>
+
+| MCP Tool | Toggle Env Var | Description |
+|----------|----------------|-------------|
+| `rom_manager_convert` | `APITOOL` | Run the full parallel conversion pipeline over a directory (CONCEPT:ROM-001). |
+| `rom_manager_generate_cue` | `APITOOL` | Generate a missing ``.cue`` sheet for ``.bin`` tracks in a directory. |
+| `rom_manager_list_files` | `APITOOL` | List ROM/archive files under a directory matching extensions. |
+| `rom_manager_list_game_codes` | `APITOOL` | List known game codes, optionally filtered by a code prefix. |
+| `rom_manager_lookup_game_code` | `APITOOL` | Look up a single game code -> name in the PSX code registry. |
+| `rom_manager_process_directory` | `APITOOL` | Run the full parallel conversion pipeline over a directory (CONCEPT:ROM-001). |
+| `rom_manager_process_file` | `APITOOL` | Process a single ROM file through the conversion pipeline (CONCEPT:ROM-001). |
+| `rom_manager_rename_by_game_code` | `APITOOL` | Rename a file in-place using the embedded game code, if recognised. |
+
+</details>
+
+_16 action-routed tool(s) (default) · 8 verbose 1:1 tool(s). Each is enabled unless its `<DOMAIN>TOOL` toggle is set false; `MCP_TOOL_MODE` selects the surface (`condensed` default · `verbose` 1:1 · `both`). Auto-generated — do not edit._
 <!-- MCP-TOOLS-TABLE:END -->
 
 ### Dynamic Tool Selection
@@ -309,6 +329,8 @@ rom-manager-agent --web
 | `ROMM_AUTH_MODE` | `basic` | Auth mode: basic (default, no expiry) or oauth (password grant via /api/token). |
 | `ROMM_SCOPES` | `roms.read roms.write platforms.read` | Space-separated OAuth scopes (defaults to RomM's full read+write set). |
 | `ROMM_SSL_VERIFY` | `True` |  |
+| `AUDIENCE` | `http://localhost:3000` | Target audience for the exchanged token (defaults to ROMM_URL). |
+| `DELEGATED_SCOPES` | `roms.read` | Scopes requested for the delegated token. |
 | `CONVERSIONTOOL` | `True` | MCP tools table (condensed action-routed surface). |
 | `GAME_CODESTOOL` | `True` |  |
 | `ROMMTOOL` | `True` | Master switch for the RomM remote-library tools. |
@@ -332,7 +354,7 @@ rom-manager-agent --web
 | `MODEL_ID` | `gpt-4o` | Model id for the agent |
 | `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
 
-_29 package + 14 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
+_31 package + 14 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
 <!-- ENV-VARS-TABLE:END -->
 
 
