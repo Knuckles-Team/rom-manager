@@ -8,24 +8,22 @@
       ],
       "env": {
         "MCP_TOOL_MODE": "condensed",
-        "FASTMCP_LOG_LEVEL": "<YOUR_FASTMCP_LOG_LEVEL>",
-        "NO_COLOR": "<YOUR_NO_COLOR>",
-        "TERM": "<YOUR_TERM>",
-        "AGENT_DESCRIPTION": "<YOUR_AGENT_DESCRIPTION>",
-        "AGENT_SYSTEM_PROMPT": "<YOUR_AGENT_SYSTEM_PROMPT>",
-        "DEFAULT_AGENT_NAME": "<YOUR_DEFAULT_AGENT_NAME>",
-        "MCP_URL": "<YOUR_MCP_URL>",
-        "ROM_DIRECTORY": "<YOUR_ROM_DIRECTORY>",
-        "ROM_ISO_TYPE": "chd",
+        "AUDIENCE": "http://localhost:3000",
         "CONVERSIONTOOL": "True",
+        "DELEGATED_SCOPES": "roms.read",
         "GAME_CODESTOOL": "True",
         "ROMMTOOL": "True",
-        "ROMM_URL": "<YOUR_ROMM_URL>",
-        "ROMM_USERNAME": "<YOUR_ROMM_USERNAME>",
-        "ROMM_PASSWORD": "<YOUR_ROMM_PASSWORD>",
-        "ROMM_TOKEN": "<YOUR_ROMM_TOKEN>",
         "ROMM_AUTH_MODE": "basic",
-        "ROMM_SSL_VERIFY": "True"
+        "ROMM_HOST": "",
+        "ROMM_PASSWORD": "changeme",
+        "ROMM_SCOPES": "roms.read roms.write platforms.read",
+        "ROMM_TOKEN": "",
+        "ROMM_URL": "http://localhost:3000",
+        "ROMM_USERNAME": "admin",
+        "ROM_DIRECTORY": "./roms",
+        "ROM_FORCE": "False",
+        "ROM_ISO_TYPE": "chd",
+        "ROM_VERBOSE": "False"
       }
     }
   }
