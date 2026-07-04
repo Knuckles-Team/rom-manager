@@ -1,6 +1,6 @@
 """Adapter layer for ROM Manager.
 
-CONCEPT:ROM-001, CONCEPT:ROM-002 — adapts the core pipeline for tool/agent
+CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool, CONCEPT:RO-OS.governance.game-codes-naming-resolves — adapts the core pipeline for tool/agent
 consumption. Houses the :class:`~rom_manager.adapters.api_client.Api` facade that
 the MCP tools and the ``auth.get_client`` factory depend on.
 """

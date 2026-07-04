@@ -1,4 +1,4 @@
-"""RomM (romm.app) remote-library integration for rom-manager (CONCEPT:ROM-003).
+"""RomM (romm.app) remote-library integration for rom-manager (CONCEPT:RO-OS.state.api-base-one-mixin).
 
 While the rest of ``rom_manager`` operates on ROM files already on disk
 (extract/convert/rename), this subpackage talks to a running RomM *library

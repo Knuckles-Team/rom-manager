@@ -2,7 +2,7 @@
 
 The real implementation now lives in :mod:`rom_manager.core.naming` (the domain
 layer). This shim preserves the historical ``rom_manager.naming`` import path.
-CONCEPT:ROM-002.
+CONCEPT:RO-OS.governance.game-codes-naming-resolves.
 """
 
 from rom_manager.core.naming import (

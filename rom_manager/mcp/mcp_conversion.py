@@ -1,6 +1,6 @@
 """MCP tools for ROM conversion operations.
 
-CONCEPT:ROM-001 — ROM Conversion. Action-routed dynamic tool registration that
+CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool — ROM Conversion. Action-routed dynamic tool registration that
 wraps the real ``RomManager`` conversion pipeline (extract -> rename -> convert
 ISO/WBFS to CHD/RVZ -> cleanup).
 """
@@ -28,7 +28,7 @@ def register_conversion_tools(mcp: FastMCP):
             default=None, description="MCP context for progress reporting"
         ),
     ) -> Any:
-        """Manage ROM conversion operations (CONCEPT:ROM-001).
+        """Manage ROM conversion operations (CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool).
 
         Convert game ROMs to CHD (chdman) or RVZ (dolphin-tool), extract
         archives, generate cue sheets, and list candidate files. Requires the

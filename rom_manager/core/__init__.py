@@ -1,6 +1,6 @@
 """Domain (core) layer for ROM Manager.
 
-CONCEPT:ROM-001, CONCEPT:ROM-002 — the pure pipeline responsibilities, free of
+CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool, CONCEPT:RO-OS.governance.game-codes-naming-resolves — the pure pipeline responsibilities, free of
 transport/CLI concerns: archive handling, conversion command construction, and
 game-code naming. The top-level orchestrator (:class:`rom_manager.rom_manager.
 RomManager`) composes these. Thin re-export shims at the package root

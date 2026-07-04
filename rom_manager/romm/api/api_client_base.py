@@ -1,6 +1,6 @@
 """RomM REST API base client.
 
-CONCEPT:ROM-003 — RomM (https://romm.app) remote-library integration. This is the
+CONCEPT:RO-OS.state.api-base-one-mixin — RomM (https://romm.app) remote-library integration. This is the
 session/auth/transport layer shared by every resource mixin. It mirrors the house
 pattern (``servicenow-api``) — a ``requests.Session`` with header-based auth and a
 small set of verb helpers — but is deliberately network-free at construction so the
@@ -38,7 +38,7 @@ DEFAULT_SCOPES = (
 
 
 class RommApiBase:
-    """Session + auth + verb helpers for the RomM API (CONCEPT:ROM-003)."""
+    """Session + auth + verb helpers for the RomM API (CONCEPT:RO-OS.state.api-base-one-mixin)."""
 
     def __init__(
         self,
@@ -52,7 +52,7 @@ class RommApiBase:
         proxies: dict | None = None,
         timeout: int = 60,
     ) -> None:
-        """Configure the client; no network call is made here (CONCEPT:ROM-003)."""
+        """Configure the client; no network call is made here (CONCEPT:RO-OS.state.api-base-one-mixin)."""
         if not url:
             raise MissingParameterError
         self.base_url = url.rstrip("/")

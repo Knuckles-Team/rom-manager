@@ -9,7 +9,7 @@
 - External binaries (runtime, for conversion): `chdman` (mame-tools), `dolphin-tool`, `7z`/`patool`
 - Key principles: Functional patterns, Pydantic for data validation, asynchronous tool execution.
 - Two domains, one tool: the **local** pipeline operates on ROM files already on
-  disk (extract/convert/rename); the **RomM** client (CONCEPT:ROM-003) talks to a
+  disk (extract/convert/rename); the **RomM** client (CONCEPT:RO-OS.state.api-base-one-mixin) talks to a
   running RomM *library server* over its REST API. Both are exposed through one
   `rom-manager` CLI, one MCP server, and one agent.
 - Architecture:
@@ -19,7 +19,7 @@
     - `rom_manager/agent_server.py`: Pydantic-AI agent server.
     - `rom_manager/api_client.py`: Honest local facade (`Api`) over `RomManager`.
     - `rom_manager/auth.py`: Local/no-op config factory (`get_client`).
-    - `rom_manager/romm/`: RomM remote-library integration (CONCEPT:ROM-003) — `api/` (base + one mixin per resource → `RommApi` facade), `auth.py` (`get_romm_client`), `cli.py` (RomM subcommands), `openapi.json` (vendored spec, parity guard).
+    - `rom_manager/romm/`: RomM remote-library integration (CONCEPT:RO-OS.state.api-base-one-mixin) — `api/` (base + one mixin per resource → `RommApi` facade), `auth.py` (`get_romm_client`), `cli.py` (RomM subcommands), `openapi.json` (vendored spec, parity guard).
 
 ### Architecture Diagram
 ```mermaid
@@ -79,13 +79,13 @@ pre-commit run --all-files
 - Check for optional/native dependencies (e.g. `patool`) using `try/except ImportError` and emit an install hint.
 
 ## Concepts
-- `CONCEPT:ROM-001` — ROM Conversion (tag `conversion`)
-- `CONCEPT:ROM-002` — Game Codes / Naming (tag `game-codes`)
-- `CONCEPT:ROM-003` — RomM Remote Library API (tags `romm-*`)
+- `CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool` — ROM Conversion (tag `conversion`)
+- `CONCEPT:RO-OS.governance.game-codes-naming-resolves` — Game Codes / Naming (tag `game-codes`)
+- `CONCEPT:RO-OS.state.api-base-one-mixin` — RomM Remote Library API (tags `romm-*`)
 
 See `docs/concepts.md` for the registry and cross-project references.
 
-## RomM configuration (CONCEPT:ROM-003)
+## RomM configuration (CONCEPT:RO-OS.state.api-base-one-mixin)
 The RomM client reads connection/auth from the environment (no secrets in code):
 `ROMM_URL` (required), `ROMM_USERNAME`/`ROMM_PASSWORD` or `ROMM_TOKEN`,
 `ROMM_AUTH_MODE` (`basic` default, or `oauth`), `ROMM_SCOPES`, `ROMM_SSL_VERIFY`.
@@ -206,7 +206,7 @@ alone).
 Working in parallel with other sessions/worktrees? **Reserve a concept id before you write its `CONCEPT:` marker** so two sessions never collide:
 
 ```bash
-agent-utilities --json concept reserve --ns KG-2   # or a package prefix, e.g. KEY
+agent-utilities --json concept reserve --ns EG-KG.compute.backend   # or a package prefix, e.g. KEY
 ```
 
 Full protocol (ledger, merge=union, reconcile, MCP/REST): <https://knuckles-team.github.io/agent-utilities/concept_coordination/>

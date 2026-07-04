@@ -1,4 +1,4 @@
-"""RomM client transport/auth tests (CONCEPT:ROM-003).
+"""RomM client transport/auth tests (CONCEPT:RO-OS.state.api-base-one-mixin).
 
 All network is faked — the base client never touches the wire in these tests.
 """
@@ -49,7 +49,7 @@ class FakeSession:
         return self._next("GET", url, **kw)
 
 
-@pytest.mark.concept("ROM-003")
+@pytest.mark.concept("RO-OS.state.api-base-one-mixin")
 def test_basic_auth_header_no_network():
     client = RommApi(url="http://romm.test", username="u", password="p")
     assert client.auth_headers["Authorization"].startswith("Basic ")
@@ -57,7 +57,7 @@ def test_basic_auth_header_no_network():
     assert client.url == "http://romm.test/api"
 
 
-@pytest.mark.concept("ROM-003")
+@pytest.mark.concept("RO-OS.state.api-base-one-mixin")
 def test_missing_url_raises():
     from agent_utilities.core.exceptions import MissingParameterError
 
@@ -65,7 +65,7 @@ def test_missing_url_raises():
         RommApiBase(url=None)
 
 
-@pytest.mark.concept("ROM-003")
+@pytest.mark.concept("RO-OS.state.api-base-one-mixin")
 def test_get_builds_correct_url_and_params():
     client = RommApi(url="http://romm.test", username="u", password="p")
     session = FakeSession([FakeResponse(json_data={"roms": []})])
@@ -79,7 +79,7 @@ def test_get_builds_correct_url_and_params():
     assert call["params"] == {"platform_ids": 7, "limit": 50}
 
 
-@pytest.mark.concept("ROM-003")
+@pytest.mark.concept("RO-OS.state.api-base-one-mixin")
 def test_post_json_body():
     client = RommApi(url="http://romm.test", username="u", password="p")
     session = FakeSession([FakeResponse(json_data={"id": 3})])
@@ -92,7 +92,7 @@ def test_post_json_body():
     assert call["json"] == {"roms": [1, 2], "delete_from_fs": []}
 
 
-@pytest.mark.concept("ROM-003")
+@pytest.mark.concept("RO-OS.state.api-base-one-mixin")
 def test_oauth_mint_and_refresh_on_401(monkeypatch):
     # Queue: token mint, a 401, a refresh mint, then the real 200 result.
     session = FakeSession(
@@ -117,7 +117,7 @@ def test_oauth_mint_and_refresh_on_401(monkeypatch):
     assert client.auth_headers["Authorization"] == "Bearer a2"
 
 
-@pytest.mark.concept("ROM-003")
+@pytest.mark.concept("RO-OS.state.api-base-one-mixin")
 def test_unauthorized_maps_to_exception():
     from agent_utilities.core.exceptions import UnauthorizedError
 

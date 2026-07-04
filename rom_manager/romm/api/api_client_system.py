@@ -1,4 +1,4 @@
-"""RomM System/auth/misc resource mixin (CONCEPT:ROM-003).
+"""RomM System/auth/misc resource mixin (CONCEPT:RO-OS.state.api-base-one-mixin).
 
 Heartbeat, stats, netplay, gamelist export, raw-asset streaming, session
 login/logout, OAuth token, OpenID, and password-reset endpoints.

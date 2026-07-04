@@ -1,4 +1,4 @@
-"""RomM command-line handlers (CONCEPT:ROM-003).
+"""RomM command-line handlers (CONCEPT:RO-OS.state.api-base-one-mixin).
 
 Extends the unified ``rom-manager`` CLI with RomM web-library commands of the
 form ``rom-manager <resource> <action> [positionals] [--flag value ...]``, e.g.::
@@ -130,7 +130,7 @@ def romm_usage() -> str:
 
 
 def run_romm_cli(argv: list[str]) -> int:
-    """Dispatch a RomM CLI invocation (CONCEPT:ROM-003). Returns an exit code."""
+    """Dispatch a RomM CLI invocation (CONCEPT:RO-OS.state.api-base-one-mixin). Returns an exit code."""
     if not argv or argv[0] in ("-h", "--help", "help"):
         print(romm_usage())
         return 0

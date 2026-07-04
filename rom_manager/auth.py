@@ -29,7 +29,7 @@ def get_client(
     force: bool | None = None,
     config: dict | None = None,
 ) -> Api:
-    """Factory returning the local ROM Manager :class:`Api` facade (CONCEPT:ROM-001).
+    """Factory returning the local ROM Manager :class:`Api` facade (CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool).
 
     No credentials are required. ``directory`` defaults to ``ROM_DIRECTORY`` (or
     the current working directory). ``iso_type`` selects the conversion target

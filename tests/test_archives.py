@@ -1,6 +1,6 @@
 """Tests for the archive extraction / cue-generation layer.
 
-CONCEPT:ROM-001 — verifies archive-format detection, file discovery, track
+CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool — verifies archive-format detection, file discovery, track
 index padding, and ``.cue`` sheet synthesis without requiring the native
 ``patool`` extension or the external conversion binaries.
 """
@@ -10,7 +10,7 @@ import pytest
 from rom_manager import archives
 
 
-@pytest.mark.concept("ROM-001")
+@pytest.mark.concept("RO-OS.identity.verifies-chdman-dolphin-tool")
 @pytest.mark.parametrize(
     "filename,expected",
     [
@@ -24,21 +24,21 @@ from rom_manager import archives
     ],
 )
 def test_is_archive_detection(filename, expected):
-    """Happy + negative + boundary: archive extension detection (CONCEPT:ROM-001)."""
+    """Happy + negative + boundary: archive extension detection (CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool)."""
     assert archives.is_archive(filename) is expected
 
 
-@pytest.mark.concept("ROM-001")
+@pytest.mark.concept("RO-OS.identity.verifies-chdman-dolphin-tool")
 @pytest.mark.parametrize(
     "number,expected",
     [(1, "01"), (2, "02"), (9, "09"), (10, "10"), (99, "99")],
 )
 def test_pad_leading_zero(number, expected):
-    """Boundary: track-index zero padding rolls correctly (CONCEPT:ROM-001)."""
+    """Boundary: track-index zero padding rolls correctly (CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool)."""
     assert archives.pad_leading_zero(number) == expected
 
 
-@pytest.mark.concept("ROM-001")
+@pytest.mark.concept("RO-OS.identity.verifies-chdman-dolphin-tool")
 def test_get_files_filters_by_extension(tmp_path):
     """Happy path: get_files returns only matching extensions, recursively."""
     (tmp_path / "a.bin").write_text("x")
@@ -52,7 +52,7 @@ def test_get_files_filters_by_extension(tmp_path):
     assert sorted(f.split("/")[-1] for f in found) == ["a.bin", "c.bin"]
 
 
-@pytest.mark.concept("ROM-001")
+@pytest.mark.concept("RO-OS.identity.verifies-chdman-dolphin-tool")
 def test_cue_file_generator_single_track(tmp_path):
     """Happy path: a single .bin yields a one-track MODE2/2352 cue sheet."""
     (tmp_path / "game.bin").write_text("data")
@@ -65,7 +65,7 @@ def test_cue_file_generator_single_track(tmp_path):
     assert "AUDIO" not in content  # only one track
 
 
-@pytest.mark.concept("ROM-001")
+@pytest.mark.concept("RO-OS.identity.verifies-chdman-dolphin-tool")
 def test_cue_file_generator_multi_track(tmp_path):
     """Happy path: extra .bin tracks become numbered AUDIO tracks."""
     (tmp_path / "game.bin").write_text("d")
@@ -76,7 +76,7 @@ def test_cue_file_generator_multi_track(tmp_path):
     assert "TRACK 02 AUDIO" in content
 
 
-@pytest.mark.concept("ROM-001")
+@pytest.mark.concept("RO-OS.identity.verifies-chdman-dolphin-tool")
 def test_cue_file_generator_idempotent(tmp_path):
     """Boundary: an existing cue file is not overwritten."""
     (tmp_path / "game.bin").write_text("d")
@@ -86,7 +86,7 @@ def test_cue_file_generator_idempotent(tmp_path):
     assert cue.read_text() == "PRE-EXISTING"
 
 
-@pytest.mark.concept("ROM-001")
+@pytest.mark.concept("RO-OS.identity.verifies-chdman-dolphin-tool")
 def test_extract_archive_missing_patool_raises(monkeypatch, tmp_path):
     """Negative: extraction without the native extra raises a helpful ImportError."""
     import builtins

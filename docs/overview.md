@@ -25,8 +25,8 @@ overhead in LLM contexts.
 
 | Domain | Tag | Toggle | Actions |
 |--------|-----|--------|---------|
-| ROM Conversion (`CONCEPT:ROM-001`) | `conversion` | `CONVERSIONTOOL` | `convert`, `process_directory`, `process_file`, `generate_cue`, `list_files` |
-| Game Codes / Naming (`CONCEPT:ROM-002`) | `game-codes` | `GAMECODESTOOL` | `lookup`, `list`, `rename` |
+| ROM Conversion (`CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool`) | `conversion` | `CONVERSIONTOOL` | `convert`, `process_directory`, `process_file`, `generate_cue`, `list_files` |
+| Game Codes / Naming (`CONCEPT:RO-OS.governance.game-codes-naming-resolves`) | `game-codes` | `GAMECODESTOOL` | `lookup`, `list`, `rename` |
 
 ## The conversion pipeline
 

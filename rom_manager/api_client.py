@@ -2,7 +2,7 @@
 
 The real implementation now lives in :mod:`rom_manager.adapters.api_client` (the
 adapter layer). This shim preserves the historical ``rom_manager.api_client``
-import path used by ``auth.get_client`` and the MCP tools. CONCEPT:ROM-001.
+import path used by ``auth.get_client`` and the MCP tools. CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool.
 """
 
 from rom_manager.adapters.api_client import (

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Archive extraction and ``.cue`` sheet generation.
 
-CONCEPT:ROM-001 — ROM Conversion (pre-processing stage). Owns the archive
+CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool — ROM Conversion (pre-processing stage). Owns the archive
 responsibilities split out of the former ``rom_manager`` god-module: detecting
 supported archive formats, extracting them (via the optional ``patool`` native
 extra), and synthesising missing ``.cue`` sheets from ``.bin`` tracks.
@@ -52,7 +52,7 @@ def pad_leading_zero(number) -> str:
 def cue_file_generator(directory, logger=None) -> str:
     """Generate a ``.cue`` sheet from the ``.bin`` tracks in ``directory``.
 
-    CONCEPT:ROM-001 — emits a standard CD cue sheet (track 01 ``MODE2/2352``,
+    CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool — emits a standard CD cue sheet (track 01 ``MODE2/2352``,
     subsequent tracks ``AUDIO``) so ``chdman`` can ingest multi-track ``.bin``
     images. Returns the path to the (existing or newly written) cue file.
     """
@@ -83,7 +83,7 @@ def cue_file_generator(directory, logger=None) -> str:
 def extract_archive(archive, archive_directory, verbose=False, logger=None) -> None:
     """Extract ``archive`` into ``archive_directory`` and backfill cue sheets.
 
-    CONCEPT:ROM-001 — the archive pre-processing stage of the conversion
+    CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool — the archive pre-processing stage of the conversion
     pipeline. ``patool`` is imported lazily so the core package installs without
     native extras; install with ``rom-manager[native]`` for extraction.
     """

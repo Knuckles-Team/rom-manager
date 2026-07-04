@@ -1,4 +1,4 @@
-"""RomM API parity guard (CONCEPT:ROM-003).
+"""RomM API parity guard (CONCEPT:RO-OS.state.api-base-one-mixin).
 
 Asserts the client + MCP tool map covers every operation in the vendored RomM
 OpenAPI spec, and that every mapped action resolves to a real RommApi method.
@@ -28,13 +28,13 @@ def _operation_count() -> int:
     )
 
 
-@pytest.mark.concept("ROM-003")
+@pytest.mark.concept("RO-OS.state.api-base-one-mixin")
 def test_vendored_spec_present():
     assert SPEC_PATH.exists(), "RomM openapi.json must be vendored for parity checks"
     assert _operation_count() == 126
 
 
-@pytest.mark.concept("ROM-003")
+@pytest.mark.concept("RO-OS.state.api-base-one-mixin")
 def test_every_action_maps_to_a_real_method():
     for _name, _tag, _summary, actions in ROMM_TOOLS:
         for action, method in actions.items():
@@ -43,7 +43,7 @@ def test_every_action_maps_to_a_real_method():
             )
 
 
-@pytest.mark.concept("ROM-003")
+@pytest.mark.concept("RO-OS.state.api-base-one-mixin")
 def test_action_count_matches_spec_operations():
     """Full parity: one (tool, action) per RomM operation, no duplicates."""
     methods = [m for _n, _t, _s, actions in ROMM_TOOLS for m in actions.values()]
@@ -51,7 +51,7 @@ def test_action_count_matches_spec_operations():
     assert len(methods) == _operation_count() == 126
 
 
-@pytest.mark.concept("ROM-003")
+@pytest.mark.concept("RO-OS.state.api-base-one-mixin")
 def test_resource_groups_have_tools():
     expected = {
         "romm-roms",

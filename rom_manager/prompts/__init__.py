@@ -1,6 +1,6 @@
 """Externalized prompt templates for ROM Manager.
 
-CONCEPT:ROM-001, CONCEPT:ROM-002 — prompt templates are kept as files here
+CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool, CONCEPT:RO-OS.governance.game-codes-naming-resolves — prompt templates are kept as files here
 (rather than hardcoded in source) so they can be versioned and registered as MCP
 prompts. See :func:`load_prompt`.
 """

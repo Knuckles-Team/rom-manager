@@ -1,6 +1,6 @@
 """Verbatim PSX game-code registry (DATA, not logic).
 
-CONCEPT:ROM-002 — Game Codes / Naming. This module is a single large constant
+CONCEPT:RO-OS.governance.game-codes-naming-resolves — Game Codes / Naming. This module is a single large constant
 table mapping PSX serial codes (e.g. ``SLUS-01272``) to canonical game titles.
 It is intentionally a flat data registry, not a "god module" of logic: there is
 no control flow here, only a verbatim dict literal. Do not split it; it is

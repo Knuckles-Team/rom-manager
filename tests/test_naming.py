@@ -1,6 +1,6 @@
 """Tests for the game-code naming / rename layer.
 
-CONCEPT:ROM-002 — verifies game-code lookup, title sanitisation, and in-place
+CONCEPT:RO-OS.governance.game-codes-naming-resolves — verifies game-code lookup, title sanitisation, and in-place
 renaming behaviour against the embedded PSX registry.
 """
 
@@ -15,20 +15,20 @@ from rom_manager.game_codes import psx_codes
 _LOG = logging.getLogger("test_naming")
 
 
-@pytest.mark.concept("ROM-002")
+@pytest.mark.concept("RO-OS.governance.game-codes-naming-resolves")
 def test_lookup_known_code():
     """Happy path: a known code resolves to its title."""
     code = next(iter(psx_codes))
     assert naming.lookup_game_code(code) == psx_codes[code]
 
 
-@pytest.mark.concept("ROM-002")
+@pytest.mark.concept("RO-OS.governance.game-codes-naming-resolves")
 def test_lookup_unknown_code_returns_none():
     """Negative: an unknown code resolves to None."""
     assert naming.lookup_game_code("NOPE-99999") is None
 
 
-@pytest.mark.concept("ROM-002")
+@pytest.mark.concept("RO-OS.governance.game-codes-naming-resolves")
 @pytest.mark.parametrize(
     "raw,expected",
     [
@@ -38,11 +38,11 @@ def test_lookup_unknown_code_returns_none():
     ],
 )
 def test_sanitize_title(raw, expected):
-    """Boundary: filesystem-illegal characters are stripped (CONCEPT:ROM-002)."""
+    """Boundary: filesystem-illegal characters are stripped (CONCEPT:RO-OS.governance.game-codes-naming-resolves)."""
     assert naming.sanitize_title(raw) == expected
 
 
-@pytest.mark.concept("ROM-002")
+@pytest.mark.concept("RO-OS.governance.game-codes-naming-resolves")
 def test_map_game_code_name_renames(tmp_path):
     """Happy path: a file whose name embeds a known code is renamed to the title."""
     code = next(iter(psx_codes))
@@ -55,7 +55,7 @@ def test_map_game_code_name_renames(tmp_path):
     assert os.path.exists(result)
 
 
-@pytest.mark.concept("ROM-002")
+@pytest.mark.concept("RO-OS.governance.game-codes-naming-resolves")
 def test_map_game_code_name_no_match_is_noop(tmp_path):
     """Negative: a file with no recognised code is left untouched."""
     src = tmp_path / "random-file.chd"
@@ -64,7 +64,7 @@ def test_map_game_code_name_no_match_is_noop(tmp_path):
     assert result == str(src)
 
 
-@pytest.mark.concept("ROM-002")
+@pytest.mark.concept("RO-OS.governance.game-codes-naming-resolves")
 def test_map_game_code_name_skips_existing_target(tmp_path):
     """Boundary: an existing target name prevents an overwriting rename."""
     code = next(iter(psx_codes))

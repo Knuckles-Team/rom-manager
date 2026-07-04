@@ -1,4 +1,4 @@
-"""RomM API client package (CONCEPT:ROM-003).
+"""RomM API client package (CONCEPT:RO-OS.state.api-base-one-mixin).
 
 ``api_client_base`` provides the session/auth/transport; one mixin per resource
 domain; ``api_client.RommApi`` combines them into a single facade.

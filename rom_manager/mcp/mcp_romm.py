@@ -1,4 +1,4 @@
-"""MCP tools for the RomM remote library API (CONCEPT:ROM-003).
+"""MCP tools for the RomM remote library API (CONCEPT:RO-OS.state.api-base-one-mixin).
 
 One action-routed tool per RomM resource group, mirroring the conversion tool's
 ``action`` + ``params_json`` shape. Each action maps 1:1 to a :class:`RommApi`
@@ -249,7 +249,7 @@ ROMM_TOOLS: list[tuple[str, str, str, dict[str, str]]] = [
 def _make_romm_tool(
     mcp: FastMCP, tool_name: str, tag: str, summary: str, actions: dict[str, str]
 ) -> None:
-    """Register one action-routed RomM tool (CONCEPT:ROM-003)."""
+    """Register one action-routed RomM tool (CONCEPT:RO-OS.state.api-base-one-mixin)."""
     action_list = ", ".join(f"'{a}'" for a in actions)
 
     @mcp.tool(name=tool_name, tags={tag})
@@ -278,10 +278,10 @@ def _make_romm_tool(
             return {"error": f"Unknown action '{action}'. Valid actions: {action_list}"}
         return getattr(client, method)(**kwargs)
 
-    _romm_tool.__doc__ = f"{summary}\n\nActions: {action_list}. (CONCEPT:ROM-003)"
+    _romm_tool.__doc__ = f"{summary}\n\nActions: {action_list}. (CONCEPT:RO-OS.state.api-base-one-mixin)"
 
 
 def register_romm_tools(mcp: FastMCP) -> None:
-    """Register every RomM resource tool on the given FastMCP server (CONCEPT:ROM-003)."""
+    """Register every RomM resource tool on the given FastMCP server (CONCEPT:RO-OS.state.api-base-one-mixin)."""
     for tool_name, tag, summary, actions in ROMM_TOOLS:
         _make_romm_tool(mcp, tool_name, tag, summary, actions)

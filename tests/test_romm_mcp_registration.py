@@ -1,4 +1,4 @@
-"""RomM MCP tool registration tests (CONCEPT:ROM-003)."""
+"""RomM MCP tool registration tests (CONCEPT:RO-OS.state.api-base-one-mixin)."""
 
 import pytest
 
@@ -21,7 +21,7 @@ class FakeMCP:
         return decorator
 
 
-@pytest.mark.concept("ROM-003")
+@pytest.mark.concept("RO-OS.state.api-base-one-mixin")
 def test_register_romm_tools_registers_every_resource():
     mcp = FakeMCP()
     register_romm_tools(mcp)
@@ -33,7 +33,7 @@ def test_register_romm_tools_registers_every_resource():
     assert len(mcp.names) == 14
 
 
-@pytest.mark.concept("ROM-003")
+@pytest.mark.concept("RO-OS.state.api-base-one-mixin")
 def test_get_mcp_instance_builds_with_romm(monkeypatch):
     monkeypatch.setenv("ROMMTOOL", "True")
     from rom_manager.mcp_server import get_mcp_instance

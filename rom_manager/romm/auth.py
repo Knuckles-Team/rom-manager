@@ -1,4 +1,4 @@
-"""RomM client factory (CONCEPT:ROM-003).
+"""RomM client factory (CONCEPT:RO-OS.state.api-base-one-mixin).
 
 Mirrors the ecosystem ``auth.py`` shape (``get_romm_client`` is the factory the
 RomM MCP tools depend on via ``Depends``). Unlike the local converter's
@@ -34,7 +34,7 @@ def get_romm_client(
     scopes: str | None = None,
     verify: bool | None = None,
 ) -> RommApi:
-    """Build a :class:`RommApi` from arguments or ``ROMM_*`` environment (CONCEPT:ROM-003)."""
+    """Build a :class:`RommApi` from arguments or ``ROMM_*`` environment (CONCEPT:RO-OS.state.api-base-one-mixin)."""
     url = url or os.getenv("ROMM_URL") or os.getenv("ROMM_HOST")
     if not url:
         raise RuntimeError("ROMM_URL is not set (base URL of the RomM instance)")

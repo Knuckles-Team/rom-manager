@@ -1,4 +1,4 @@
-"""Unified RomM API client (CONCEPT:ROM-003).
+"""Unified RomM API client (CONCEPT:RO-OS.state.api-base-one-mixin).
 
 Combines every resource mixin into a single :class:`RommApi` facade — the object
 the RomM MCP tools and CLI depend on.

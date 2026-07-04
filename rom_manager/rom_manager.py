@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """ROM Manager orchestrator (the conversion pipeline entry point).
 
-CONCEPT:ROM-001 — ROM Conversion. :class:`RomManager` is the orchestrator that
+CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool — ROM Conversion. :class:`RomManager` is the orchestrator that
 composes the focused responsibility layers (:mod:`rom_manager.archives`,
 :mod:`rom_manager.conversion`, :mod:`rom_manager.naming`). Domain logic that
 previously lived inline in this god-module now lives in those modules; this file
@@ -35,14 +35,14 @@ from rom_manager.version import __author__, __credits__, __version__
 class RomManager:
     """Orchestrates the extract -> rename -> convert -> cleanup ROM pipeline.
 
-    CONCEPT:ROM-001 — composes the archive, naming, and conversion layers; the
+    CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool — composes the archive, naming, and conversion layers; the
     per-method behaviour is preserved exactly from the original monolith.
     """
 
     logging.getLogger("patoolib").setLevel(logging.WARNING)
 
     def __init__(self):
-        """Initialise pipeline defaults and supported extensions (CONCEPT:ROM-001)."""
+        """Initialise pipeline defaults and supported extensions (CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool)."""
         self.logger_name = "rom_manager"
         self.logger = logging.getLogger(self.logger_name)
         self.logger.disabled = True
@@ -75,7 +75,7 @@ class RomManager:
     def process_parallel(self, cpu_count) -> list:
         """Convert every supported ROM under ``self.directory`` in parallel.
 
-        CONCEPT:ROM-001 — discovers candidate files and fans
+        CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool — discovers candidate files and fans
         :meth:`process_file` out across a process pool.
         """
         if self.verbose:
@@ -122,8 +122,8 @@ class RomManager:
     def process_file(self, file, logger_name, logger_level, logger_format):
         """Run one ROM through extract -> rename -> convert -> cleanup.
 
-        CONCEPT:ROM-001 — the per-file conversion pipeline: extracts archives,
-        normalises the name (CONCEPT:ROM-002), then converts to CHD/RVZ.
+        CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool — the per-file conversion pipeline: extracts archives,
+        normalises the name (CONCEPT:RO-OS.governance.game-codes-naming-resolves), then converts to CHD/RVZ.
         """
         logger = logging.getLogger(logger_name)
         logger.setLevel(logger_level)
@@ -218,7 +218,7 @@ class RomManager:
 
     @staticmethod
     def map_game_code_name(file, logger=None) -> str:
-        """Rename a ROM by its embedded game code (CONCEPT:ROM-002).
+        """Rename a ROM by its embedded game code (CONCEPT:RO-OS.governance.game-codes-naming-resolves).
 
         Delegates to :func:`rom_manager.naming.map_game_code_name`; kept as a
         static method for public-API compatibility.
@@ -228,7 +228,7 @@ class RomManager:
     def cleanup_origin_files(
         self, game_directory, converted_file_path, archive_file=None
     ):
-        """Delete the original archive + extracted dir post-conversion (CONCEPT:ROM-001)."""
+        """Delete the original archive + extracted dir post-conversion (CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool)."""
         self.logger.info(f"Deleting original file {archive_file}...")
         self.cleanup_archive(archive_file, logger=self.logger)
         self.cleanup_extracted_files(
@@ -251,7 +251,7 @@ class RomManager:
     def cleanup_extracted_files(
         game_directory=None, converted_file_path=None, logger=None
     ):
-        """Move the converted file up and remove the extraction dir (CONCEPT:ROM-001)."""
+        """Move the converted file up and remove the extraction dir (CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool)."""
         if game_directory and os.path.exists(game_directory):
             logger.info(f"Cleaning {game_directory}...")
             parent_directory = os.path.dirname(os.path.dirname(converted_file_path))
@@ -275,7 +275,7 @@ class RomManager:
         return runner(command=command, verbose=verbose, logger=logger)
 
     def process_archive(self, archive, archive_directory):
-        """Extract an archive and backfill cue sheets (CONCEPT:ROM-001).
+        """Extract an archive and backfill cue sheets (CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool).
 
         Delegates to :func:`rom_manager.archives.extract_archive`.
         """
@@ -292,7 +292,7 @@ class RomManager:
         return archives.pad_leading_zero(number)
 
     def cue_file_generator(self, directory) -> str:
-        """Generate a ``.cue`` sheet from ``.bin`` tracks (CONCEPT:ROM-001).
+        """Generate a ``.cue`` sheet from ``.bin`` tracks (CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool).
 
         Delegates to :func:`rom_manager.archives.cue_file_generator`.
         """
@@ -305,7 +305,7 @@ class RomManager:
 
 
 def get_operating_system() -> str | None:
-    """Best-effort host OS detection (CONCEPT:ROM-001 install guidance)."""
+    """Best-effort host OS detection (CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool install guidance)."""
     operating_system = None
     system = platform.system()
     release = platform.release()
@@ -320,7 +320,7 @@ def get_operating_system() -> str | None:
 def get_directory_size(directory) -> tuple[int, float, float, float]:
     """Sum file sizes under ``directory`` as (bytes, KB, MB, GB).
 
-    CONCEPT:ROM-001 — used to report storage saved by conversion.
+    CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool — used to report storage saved by conversion.
     """
     total_size = 0
     for dirpath, _dirnames, filenames in os.walk(directory):
@@ -337,7 +337,7 @@ def get_directory_size(directory) -> tuple[int, float, float, float]:
 def installation_instructions():
     """Print OS-specific install steps for the external conversion binaries.
 
-    CONCEPT:ROM-001 — chdman (mame-tools) and dolphin-tool guidance.
+    CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool — chdman (mame-tools) and dolphin-tool guidance.
     """
     if get_operating_system() == "Windows":
         print(
@@ -356,7 +356,7 @@ def installation_instructions():
 
 
 def usage():
-    """Print the CLI usage banner (CONCEPT:ROM-001)."""
+    """Print the CLI usage banner (CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool)."""
     print(
         f"ROM Manager: Convert Game ROMs to Compressed Hunks of Data (CHD) file format or RVZ format.\n"
         f"Backup your ROMs before working with this tool!\n"
@@ -374,7 +374,7 @@ def usage():
         f"Example: \n"
         f'rom-manager --directory "C:/Users/default/Games/"\n'
         f"\n"
-        f"RomM web library (CONCEPT:ROM-003):\n"
+        f"RomM web library (CONCEPT:RO-OS.state.api-base-one-mixin):\n"
         f"  rom-manager <resource> <action> [args]   (resources: roms, platforms,\n"
         f"  collections, saves, states, firmware, users, tasks, search, stats, ...)\n"
         f"  e.g. rom-manager roms list --platform_ids 7   |   rom-manager stats\n"
@@ -388,7 +388,7 @@ def usage():
 def rom_manager(argv=None):
     """CLI entry point: parse args and run the conversion pipeline.
 
-    CONCEPT:ROM-001 — parses CLI options, configures a :class:`RomManager`, runs
+    CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool — parses CLI options, configures a :class:`RomManager`, runs
     :meth:`RomManager.process_parallel`, and reports the storage delta.
     """
     if argv is None:
@@ -397,7 +397,7 @@ def rom_manager(argv=None):
         usage()
         sys.exit(2)
 
-    # Unified CLI (CONCEPT:ROM-003): route RomM web-library subcommands and the
+    # Unified CLI (CONCEPT:RO-OS.state.api-base-one-mixin): route RomM web-library subcommands and the
     # explicit 'convert' alias. Bare conversion flags (-d/-c/-i/-f/-v/-x) keep
     # the legacy on-disk converter behaviour below.
     romm_commands = frozenset(

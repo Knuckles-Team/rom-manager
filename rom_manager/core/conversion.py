@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Conversion command construction and the external-binary runner seam.
 
-CONCEPT:ROM-001 — ROM Conversion. Builds the ``chdman`` / ``dolphin-tool``
+CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool — ROM Conversion. Builds the ``chdman`` / ``dolphin-tool``
 command lines and runs them. The subprocess call is isolated behind
 :func:`run_command` (and the ``runner`` parameter on :class:`Converter`) so the
 conversion logic has a clean dependency-injection seam: tests can substitute a
@@ -23,7 +23,7 @@ Runner = Callable[..., None]
 def run_command(command, verbose=False, logger=None) -> None:
     """Execute an external conversion ``command`` (the real runner seam).
 
-    CONCEPT:ROM-001 — wraps ``subprocess.run`` with fixed argv and
+    CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool — wraps ``subprocess.run`` with fixed argv and
     ``shell=False``. This is the default :class:`Converter` runner; tests inject
     a fake to avoid requiring ``chdman``/``dolphin-tool``.
     """
@@ -63,7 +63,7 @@ def build_convert_command(
 ) -> Sequence[str]:
     """Build the ``chdman``/``dolphin-tool`` argv for converting ``file``.
 
-    CONCEPT:ROM-001 — selects ``dolphin-tool convert`` (RVZ) for WBFS/ISO
+    CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool — selects ``dolphin-tool convert`` (RVZ) for WBFS/ISO
     targets, otherwise ``chdman createcd`` for ``.cue`` inputs and
     ``chdman createdvd`` for everything else (appending ``-f`` when ``force``).
     """
@@ -98,7 +98,7 @@ def build_convert_command(
 class Converter:
     """Builds and executes ROM conversion commands.
 
-    CONCEPT:ROM-001 — composed by :class:`~rom_manager.rom_manager.RomManager`.
+    CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool — composed by :class:`~rom_manager.rom_manager.RomManager`.
     The ``runner`` callable is injectable (defaults to :func:`run_command`) to
     decouple command construction from the external-binary side effect.
     """
@@ -122,7 +122,7 @@ class Converter:
     ) -> Sequence[str]:
         """Build and run the conversion command for ``file``.
 
-        CONCEPT:ROM-001 — skips conversion (warns) if the output already exists;
+        CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool — skips conversion (warns) if the output already exists;
         otherwise dispatches the built command through the injected runner.
         Returns the command that was (or would have been) executed.
         """

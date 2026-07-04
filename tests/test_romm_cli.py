@@ -1,4 +1,4 @@
-"""Unified CLI dispatch tests (CONCEPT:ROM-001, ROM-003).
+"""Unified CLI dispatch tests (CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool, CONCEPT:RO-OS.state.api-base-one-mixin).
 
 Confirms the legacy on-disk converter and the RomM web commands coexist in one
 ``rom-manager`` entry point.
@@ -43,41 +43,41 @@ def fake_client(monkeypatch):
     return client
 
 
-@pytest.mark.concept("ROM-003")
+@pytest.mark.concept("RO-OS.state.api-base-one-mixin")
 def test_cli_flags_parsed(fake_client):
     rc = romm_cli.run_romm_cli(["roms", "list", "--platform_ids", "7", "--limit", "50"])
     assert rc == 0
     assert fake_client.calls == [("list_roms", {"platform_ids": 7, "limit": 50})]
 
 
-@pytest.mark.concept("ROM-003")
+@pytest.mark.concept("RO-OS.state.api-base-one-mixin")
 def test_cli_positional_bound_by_name(fake_client):
     rc = romm_cli.run_romm_cli(["roms", "get", "123"])
     assert rc == 0
     assert fake_client.calls == [("get_rom", {"id": 123})]
 
 
-@pytest.mark.concept("ROM-003")
+@pytest.mark.concept("RO-OS.state.api-base-one-mixin")
 def test_cli_alias_stats(fake_client):
     rc = romm_cli.run_romm_cli(["stats"])
     assert rc == 0
     assert fake_client.calls == [("stats", {})]
 
 
-@pytest.mark.concept("ROM-003")
+@pytest.mark.concept("RO-OS.state.api-base-one-mixin")
 def test_cli_tasks_run_positional(fake_client):
     rc = romm_cli.run_romm_cli(["tasks", "run", "scan"])
     assert rc == 0
     assert fake_client.calls == [("run_task", {"task_name": "scan"})]
 
 
-@pytest.mark.concept("ROM-003")
+@pytest.mark.concept("RO-OS.state.api-base-one-mixin")
 def test_cli_unknown_action_returns_2(fake_client):
     rc = romm_cli.run_romm_cli(["roms", "frobnicate"])
     assert rc == 2
 
 
-@pytest.mark.concept("ROM-001")
+@pytest.mark.concept("RO-OS.identity.verifies-chdman-dolphin-tool")
 def test_unified_cli_routes_convert_to_converter(monkeypatch):
     """The 'convert' alias and legacy flags still drive the local pipeline."""
     captured = {}
@@ -97,7 +97,7 @@ def test_unified_cli_routes_convert_to_converter(monkeypatch):
     assert captured.get("ran") is True
 
 
-@pytest.mark.concept("ROM-003")
+@pytest.mark.concept("RO-OS.state.api-base-one-mixin")
 def test_unified_cli_routes_romm_resource(monkeypatch):
     called = {}
 

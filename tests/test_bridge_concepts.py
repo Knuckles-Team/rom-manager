@@ -19,47 +19,47 @@ def _module_source(dotted: str) -> str:
     return open(path).read()
 
 
-@pytest.mark.concept("ECO-4.0")
+@pytest.mark.concept("AU-ECO.messaging.native-backend-abstraction")
 def test_eco_4_0_unified_toolkit_ingestion():
     """ECO-4.0 — MCP server registers tools via agent-utilities create_mcp_server."""
     src = _module_source("rom_manager.mcp_server")
     assert "create_mcp_server" in src
-    assert "CONCEPT:ECO-4.0" in src
+    assert "CONCEPT:AU-ECO.messaging.native-backend-abstraction" in src
 
 
-@pytest.mark.concept("OS-5.1")
+@pytest.mark.concept("AU-OS.config.secrets-authentication")
 def test_os_5_1_prompt_injection_defense():
     """OS-5.1 — guardrail/prompt-injection middleware is wired in the MCP server."""
-    assert "CONCEPT:OS-5.1" in _module_source("rom_manager.mcp_server")
+    assert "CONCEPT:AU-OS.config.secrets-authentication" in _module_source("rom_manager.mcp_server")
 
 
-@pytest.mark.concept("OS-5.3")
+@pytest.mark.concept("AU-OS.governance.reactive-multi-axis-budget")
 def test_os_5_3_guardrail_engine():
     """OS-5.3 — guardrail engine is wired via the shared middleware."""
-    assert "CONCEPT:OS-5.3" in _module_source("rom_manager.mcp_server")
+    assert "CONCEPT:AU-OS.governance.reactive-multi-axis-budget" in _module_source("rom_manager.mcp_server")
 
 
-@pytest.mark.concept("OS-5.4")
+@pytest.mark.concept("AU-OS.governance.wasm-micro-agent-sandbox")
 def test_os_5_4_audit_logging():
     """OS-5.4 — audit-logging middleware is wired in the MCP server."""
-    assert "CONCEPT:OS-5.4" in _module_source("rom_manager.mcp_server")
+    assert "CONCEPT:AU-OS.governance.wasm-micro-agent-sandbox" in _module_source("rom_manager.mcp_server")
 
 
-@pytest.mark.concept("ORCH-1.2")
+@pytest.mark.concept("AU-ORCH.adapter.hot-cache-invalidation")
 def test_orch_1_2_confidence_gated_router():
     """ORCH-1.2 — the A2A agent is driven by the agent-utilities router."""
     src = _module_source("rom_manager.agent_server")
     assert "create_agent_server" in src
-    assert "CONCEPT:ORCH-1.2" in src
+    assert "CONCEPT:AU-ORCH.adapter.hot-cache-invalidation" in src
 
 
-@pytest.mark.concept("OS-5.2")
+@pytest.mark.concept("AU-OS.state.cognitive-scheduler-preemption")
 def test_os_5_2_cognitive_scheduler():
     """OS-5.2 — the cognitive scheduler is referenced by the agent server."""
-    assert "CONCEPT:OS-5.2" in _module_source("rom_manager.agent_server")
+    assert "CONCEPT:AU-OS.state.cognitive-scheduler-preemption" in _module_source("rom_manager.agent_server")
 
 
-@pytest.mark.concept("KG-2.0")
+@pytest.mark.concept("AU-KG.query.object-graph-mapper")
 def test_kg_2_0_knowledge_graph_core():
     """KG-2.0 — the agent surface is ingested into the Knowledge Graph."""
-    assert "CONCEPT:KG-2.0" in _module_source("rom_manager.agent_server")
+    assert "CONCEPT:AU-KG.query.object-graph-mapper" in _module_source("rom_manager.agent_server")

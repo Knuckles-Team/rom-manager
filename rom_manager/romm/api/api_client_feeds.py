@@ -1,4 +1,4 @@
-"""RomM Feeds resource mixin (CONCEPT:ROM-003).
+"""RomM Feeds resource mixin (CONCEPT:RO-OS.state.api-base-one-mixin).
 
 Integration feeds for external frontends (WebRcade, Tinfoil, PKGi, PKGj, fpkgi,
 Kekatsu). Each returns the feed document as JSON (or text when not JSON).

@@ -1,4 +1,4 @@
-"""RomM Collections resource mixin (CONCEPT:ROM-003).
+"""RomM Collections resource mixin (CONCEPT:RO-OS.state.api-base-one-mixin).
 
 Covers regular, smart, and virtual collections.
 """

@@ -1,6 +1,6 @@
 # Convert ROM — Guided Prompt
 
-CONCEPT:ROM-001 — Externalized prompt template for the ROM conversion workflow.
+CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool — Externalized prompt template for the ROM conversion workflow.
 
 You are assisting with **ROM conversion** using the ROM Manager MCP tools.
 
@@ -13,7 +13,7 @@ Follow this checklist:
    are destructive to the source files. Confirm the user has a backup.
 2. List candidate files with the `conversion` tool, `action="list_files"`.
 3. Normalize names with the `game-codes` tool (`action="rename"`) so titles
-   resolve via the embedded PSX registry (CONCEPT:ROM-002).
+   resolve via the embedded PSX registry (CONCEPT:RO-OS.governance.game-codes-naming-resolves).
 4. Run `conversion` with `action="convert"`, passing `directory`, `iso_type`,
    and optionally `force` / `cpu_count`.
 5. Report the storage delta (size before vs. after) back to the user.

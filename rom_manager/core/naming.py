@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """ROM filename normalization via the embedded game-code registry.
 
-CONCEPT:ROM-002 — Game Codes / Naming. Resolves a serial/game code embedded in a
+CONCEPT:RO-OS.governance.game-codes-naming-resolves — Game Codes / Naming. Resolves a serial/game code embedded in a
 ROM filename to its canonical title and renames the file in-place. Split out of
 the former ``rom_manager`` god-module so the naming responsibility (lookup +
 rename) is isolated, independently testable, and free of conversion/archive
@@ -24,7 +24,7 @@ _NULL_LOGGER.addHandler(logging.NullHandler())
 def sanitize_title(title: str) -> str:
     """Strip filesystem-illegal characters from a resolved game title.
 
-    CONCEPT:ROM-002 — keeps generated filenames portable across POSIX/Windows.
+    CONCEPT:RO-OS.governance.game-codes-naming-resolves — keeps generated filenames portable across POSIX/Windows.
     """
     return _ILLEGAL_FILENAME_CHARS.sub("", title)
 
@@ -37,7 +37,7 @@ def lookup_game_code(code: str) -> str | None:
 def map_game_code_name(file, logger=None) -> str:
     """Rename ``file`` using the first known game code found in its basename.
 
-    CONCEPT:ROM-002 — scans the filename against the PSX code registry; when a
+    CONCEPT:RO-OS.governance.game-codes-naming-resolves — scans the filename against the PSX code registry; when a
     code is matched, renames the file to ``"<Title> - <CODE><ext>"``. Returns
     the (possibly updated) path. Behaviour is preserved exactly from the
     original ``RomManager.map_game_code_name``.

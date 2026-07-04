@@ -1,12 +1,12 @@
 #!/usr/bin/python
 """ROM Manager MCP server assembly.
 
-CONCEPT:ROM-001, CONCEPT:ROM-002 — registers the conversion and game-codes tool
+CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool, CONCEPT:RO-OS.governance.game-codes-naming-resolves — registers the conversion and game-codes tool
 domains. This server is the integration seam to agent-utilities:
 ``create_mcp_server`` wires the shared FastMCP middleware that implements the
-cross-project bridge capabilities — CONCEPT:ECO-4.0 (Unified Toolkit Ingestion),
-CONCEPT:OS-5.1 (Prompt Injection Defense), CONCEPT:OS-5.3 (Guardrail Engine) and
-CONCEPT:OS-5.4 (Audit Logging) via the Eunomia/OTEL middleware stack.
+cross-project bridge capabilities — CONCEPT:AU-ECO.messaging.native-backend-abstraction (Unified Toolkit Ingestion),
+CONCEPT:AU-OS.config.secrets-authentication (Prompt Injection Defense), CONCEPT:AU-OS.governance.reactive-multi-axis-budget (Guardrail Engine) and
+CONCEPT:AU-OS.governance.wasm-micro-agent-sandbox (Audit Logging) via the Eunomia/OTEL middleware stack.
 """
 
 import warnings
@@ -54,7 +54,7 @@ DEFAULT_ROM_ISO_TYPE = setting("ROM_ISO_TYPE", "chd")
 
 
 def register_prompts(mcp: FastMCP):
-    """Register externalized prompt templates (CONCEPT:ROM-001).
+    """Register externalized prompt templates (CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool).
 
     Loads templates from ``rom_manager/prompts/`` rather than hardcoding them.
     """
@@ -71,8 +71,8 @@ def register_prompts(mcp: FastMCP):
 def get_mcp_instance() -> tuple[Any, Any, Any, Any]:
     """Initialize and return the ROM Manager MCP instance, args, and middlewares.
 
-    CONCEPT:ROM-001, CONCEPT:ROM-002 — registers both tool domains and attaches
-    the agent-utilities middleware stack (CONCEPT:ECO-4.0).
+    CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool, CONCEPT:RO-OS.governance.game-codes-naming-resolves — registers both tool domains and attaches
+    the agent-utilities middleware stack (CONCEPT:AU-ECO.messaging.native-backend-abstraction).
     """
     load_config()
     os.environ["FASTMCP_LOG_LEVEL"] = "ERROR"
@@ -102,7 +102,7 @@ def get_mcp_instance() -> tuple[Any, Any, Any, Any]:
 
 
 def mcp_server() -> None:
-    """Build and run the ROM Manager MCP server (CONCEPT:ROM-001, CONCEPT:ROM-002)."""
+    """Build and run the ROM Manager MCP server (CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool, CONCEPT:RO-OS.governance.game-codes-naming-resolves)."""
     mcp, args, middlewares, registered_tags = get_mcp_instance()
     print(f"{'rom-manager'} MCP v{__version__}", file=sys.stderr)
     print("\nStarting MCP Server", file=sys.stderr)

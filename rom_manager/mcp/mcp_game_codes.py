@@ -1,6 +1,6 @@
 """MCP tools for game code / naming operations.
 
-CONCEPT:ROM-002 — Game Codes / Naming. Action-routed dynamic tool registration
+CONCEPT:RO-OS.governance.game-codes-naming-resolves — Game Codes / Naming. Action-routed dynamic tool registration
 that wraps the embedded PSX game-code registry and the ``RomManager`` rename
 logic used to normalise ROM filenames.
 """
@@ -28,7 +28,7 @@ def register_game_codes_tools(mcp: FastMCP):
             default=None, description="MCP context for progress reporting"
         ),
     ) -> Any:
-        """Manage ROM game code lookup and naming operations (CONCEPT:ROM-002).
+        """Manage ROM game code lookup and naming operations (CONCEPT:RO-OS.governance.game-codes-naming-resolves).
 
         Resolve a game/serial code to its title, list the known code registry,
         or rename a ROM file in-place using its embedded code.

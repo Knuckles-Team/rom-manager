@@ -1,4 +1,4 @@
-"""RomM Search resource mixin (CONCEPT:ROM-003)."""
+"""RomM Search resource mixin (CONCEPT:RO-OS.state.api-base-one-mixin)."""
 
 from typing import Any
 

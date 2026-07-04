@@ -55,7 +55,7 @@ archives, auto-renames ROMs via a known game-code registry, converts ISO/WBFS
 images to **CHD** (`chdman`) or **RVZ** (`dolphin-tool`), generates missing `.cue`
 sheets, and cleans up source files — in parallel.
 
-It also speaks to **[RomM](https://romm.app)** (`CONCEPT:ROM-003`) — a self-hosted
+It also speaks to **[RomM](https://romm.app)** (`CONCEPT:RO-OS.state.api-base-one-mixin`) — a self-hosted
 ROM *library server* — through a full REST client, so one `rom-manager` tool
 manages both the files on disk (local conversion) and the web library (RomM).
 
@@ -67,7 +67,7 @@ client is configured via `ROMM_*` environment variables.
 ## Key Features
 
 - **Real conversion pipeline:** parallel extract → rename → convert (CHD/RVZ) → cleanup.
-- **Full RomM REST client (`CONCEPT:ROM-003`):** complete coverage of the RomM API
+- **Full RomM REST client (`CONCEPT:RO-OS.state.api-base-one-mixin`):** complete coverage of the RomM API
   (roms, platforms, collections, saves, states, firmware, users, tasks, search,
   config, feeds, devices, …) with Basic/OAuth2 auth — one unified CLI and one
   action-routed MCP tool per resource group.
@@ -89,7 +89,7 @@ responsibility layers and shells out to external conversion binaries:
 flowchart LR
     subgraph Entry["Entry Surfaces"]
         CLI["CLI<br/>rom-manager"]
-        MCP["MCP Server<br/>rom-manager-mcp<br/>(CONCEPT:ROM-001/002)"]
+        MCP["MCP Server<br/>rom-manager-mcp<br/>(CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool/002)"]
         AGENT["A2A Agent<br/>rom-manager-agent"]
     end
 
@@ -141,7 +141,7 @@ rom-manager --directory "/games/PSX/" --iso chd --verbose
 
 Detailed API usage is in [docs/usage.md](docs/usage.md).
 
-### RomM web library (`CONCEPT:ROM-003`)
+### RomM web library (`CONCEPT:RO-OS.state.api-base-one-mixin`)
 
 The same `rom-manager` command manages a running RomM server. Set `ROMM_URL` and
 credentials (`ROMM_USERNAME`/`ROMM_PASSWORD` or `ROMM_TOKEN`), then use
@@ -177,8 +177,8 @@ The table below is auto-generated from the MCP server — do not edit by hand.
 
 | MCP Tool | Toggle Env Var | Description |
 |----------|----------------|-------------|
-| `rom_conversion` | `CONVERSIONTOOL` | Manage ROM conversion operations (CONCEPT:ROM-001). |
-| `rom_game_codes` | `GAME_CODESTOOL` | Manage ROM game code lookup and naming operations (CONCEPT:ROM-002). |
+| `rom_conversion` | `CONVERSIONTOOL` | Manage ROM conversion operations (CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool). |
+| `rom_game_codes` | `GAME_CODESTOOL` | Manage ROM game code lookup and naming operations (CONCEPT:RO-OS.governance.game-codes-naming-resolves). |
 | `romm_collections` | `ROMMTOOL` |  |
 | `romm_config` | `ROMMTOOL` |  |
 | `romm_devices` | `ROMMTOOL` |  |
@@ -201,13 +201,13 @@ The table below is auto-generated from the MCP server — do not edit by hand.
 
 | MCP Tool | Toggle Env Var | Description |
 |----------|----------------|-------------|
-| `rom_manager_convert` | `APITOOL` | Run the full parallel conversion pipeline over a directory (CONCEPT:ROM-001). |
+| `rom_manager_convert` | `APITOOL` | Run the full parallel conversion pipeline over a directory (CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool). |
 | `rom_manager_generate_cue` | `APITOOL` | Generate a missing ``.cue`` sheet for ``.bin`` tracks in a directory. |
 | `rom_manager_list_files` | `APITOOL` | List ROM/archive files under a directory matching extensions. |
 | `rom_manager_list_game_codes` | `APITOOL` | List known game codes, optionally filtered by a code prefix. |
 | `rom_manager_lookup_game_code` | `APITOOL` | Look up a single game code -> name in the PSX code registry. |
-| `rom_manager_process_directory` | `APITOOL` | Run the full parallel conversion pipeline over a directory (CONCEPT:ROM-001). |
-| `rom_manager_process_file` | `APITOOL` | Process a single ROM file through the conversion pipeline (CONCEPT:ROM-001). |
+| `rom_manager_process_directory` | `APITOOL` | Run the full parallel conversion pipeline over a directory (CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool). |
+| `rom_manager_process_file` | `APITOOL` | Process a single ROM file through the conversion pipeline (CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool). |
 | `rom_manager_rename_by_game_code` | `APITOOL` | Rename a file in-place using the embedded game code, if recognised. |
 
 </details>
@@ -369,15 +369,15 @@ no credentials. Copy [`.env.example`](.env.example) to `.env` to override.
 | `ROM_ISO_TYPE` | `chd` | Conversion target: `chd` (chdman) or `rvz` (dolphin-tool). |
 | `ROM_VERBOSE` | `False` | Emit verbose conversion output. |
 | `ROM_FORCE` | `False` | Force overwrite of existing converted files. |
-| `CONVERSIONTOOL` | `True` | Toggle registration of the **conversion** MCP tool domain (`CONCEPT:ROM-001`). |
-| `GAME_CODESTOOL` | `True` | Toggle registration of the **game-codes** MCP tool domain (`CONCEPT:ROM-002`). |
-| `ROMMTOOL` | `True` | Toggle registration of the **RomM** MCP tool domains (`CONCEPT:ROM-003`). |
+| `CONVERSIONTOOL` | `True` | Toggle registration of the **conversion** MCP tool domain (`CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool`). |
+| `GAME_CODESTOOL` | `True` | Toggle registration of the **game-codes** MCP tool domain (`CONCEPT:RO-OS.governance.game-codes-naming-resolves`). |
+| `ROMMTOOL` | `True` | Toggle registration of the **RomM** MCP tool domains (`CONCEPT:RO-OS.state.api-base-one-mixin`). |
 
 > CPU count and "delete originals" are exposed as CLI flags (`--cpu-count` /
 > `--delete`) and MCP action params (`cpu_count` / `clean_origin_files`) rather
 > than environment variables.
 
-### RomM Variables (`CONCEPT:ROM-003`)
+### RomM Variables (`CONCEPT:RO-OS.state.api-base-one-mixin`)
 
 Required only when using RomM (`roms`, `platforms`, … commands / `romm_*` tools).
 

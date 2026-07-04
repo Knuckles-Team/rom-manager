@@ -48,7 +48,7 @@ def _concepts_in_doc(path):
     return set(re.findall(r"CONCEPT:([A-Z]+-\d+(?:\.\d+)?)", content))
 
 
-@pytest.mark.concept("ROM-002")
+@pytest.mark.concept("RO-OS.governance.game-codes-naming-resolves")
 def test_rom_concepts_registered_in_concepts_doc():
     """All ROM-* concepts used in the codebase are documented in docs/concepts.md."""
     used = _scan_concepts(os.path.join(ROOT_DIR, "rom_manager"), prefixes=("ROM-",))
@@ -59,15 +59,15 @@ def test_rom_concepts_registered_in_concepts_doc():
     )
 
 
-@pytest.mark.concept("ROM-001")
+@pytest.mark.concept("RO-OS.identity.verifies-chdman-dolphin-tool")
 def test_expected_rom_concepts_present():
     """Sanity: the two canonical ROM domains are registered."""
     documented = _concepts_in_doc(CONCEPTS_DOC)
-    for cid in ("ROM-001", "ROM-002"):
+    for cid in ("RO-OS.identity.verifies-chdman-dolphin-tool", "RO-OS.governance.game-codes-naming-resolves"):
         assert cid in documented, f"{cid} not registered in docs/concepts.md"
 
 
-@pytest.mark.concept("ECO-4.0")
+@pytest.mark.concept("AU-ECO.messaging.native-backend-abstraction")
 def test_pillar_concept_parity():
     """agent-utilities pillar concepts used locally must exist in the master registry."""
     if not os.path.exists(MASTER_OVERVIEW_PATH):

@@ -1,7 +1,7 @@
 #!/usr/bin/python
 """Pydantic models for ROM Manager MCP tool inputs/outputs.
 
-CONCEPT:ROM-001, CONCEPT:ROM-002 — the model layer: request/response schemas for
+CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool, CONCEPT:RO-OS.governance.game-codes-naming-resolves — the model layer: request/response schemas for
 the conversion and game-codes tool domains.
 """
 

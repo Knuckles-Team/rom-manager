@@ -2,7 +2,7 @@
 
 The real implementation now lives in :mod:`rom_manager.core.conversion` (the
 domain layer). This shim preserves the historical ``rom_manager.conversion``
-import path. CONCEPT:ROM-001.
+import path. CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool.
 """
 
 from rom_manager.core.conversion import (

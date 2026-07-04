@@ -1,4 +1,4 @@
-"""RomM ROMs resource mixin (CONCEPT:ROM-003).
+"""RomM ROMs resource mixin (CONCEPT:RO-OS.state.api-base-one-mixin).
 
 Full CRUD plus search-by-hash/metadata-provider, downloads, file content,
 manuals, and per-ROM notes/user-properties.

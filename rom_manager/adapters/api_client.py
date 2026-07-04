@@ -44,7 +44,7 @@ class Api:
         verbose: bool = False,
         force: bool = False,
     ) -> None:
-        """Hold conversion defaults for the facade (CONCEPT:ROM-001)."""
+        """Hold conversion defaults for the facade (CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool)."""
         self.directory = directory
         self.iso_type = iso_type
         self.verbose = verbose
@@ -76,7 +76,7 @@ class Api:
         force: bool | None = None,
         clean_origin_files: bool = False,
     ) -> dict[str, Any]:
-        """Run the full parallel conversion pipeline over a directory (CONCEPT:ROM-001)."""
+        """Run the full parallel conversion pipeline over a directory (CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool)."""
         manager = self._build_manager(
             directory=directory,
             iso_type=iso_type,
@@ -106,7 +106,7 @@ class Api:
         verbose: bool | None = None,
         force: bool | None = None,
     ) -> dict[str, Any]:
-        """Process a single ROM file through the conversion pipeline (CONCEPT:ROM-001)."""
+        """Process a single ROM file through the conversion pipeline (CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool)."""
         manager = self._build_manager(iso_type=iso_type, verbose=verbose, force=force)
         manager.process_file(
             file=file,
