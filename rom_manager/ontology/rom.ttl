@@ -1,0 +1,132 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix : <http://knuckles.team/kg#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# ROM / retro-game-library ontology — games, systems, collections, and player assets
+# from a RomM (https://romm.app) library plus this package's local ROM conversion flow.
+# All classes and properties live in the shared `:` (kg#) namespace; only the owl:Ontology
+# node gets the per-package IRI. Backs the rom-manager MCP tool surface (romm_roms /
+# romm_platforms / romm_collections / romm_saves / romm_firmware / rom_conversion / …).
+# Cover art / box art and ROM binaries reuse the shared :MediaAsset / :Blob classes — they
+# are NOT redefined here.
+
+:Game a owl:Class ;
+    rdfs:label "Game" ;
+    rdfs:comment "A ROM / game title in the library, on a single system (romm_roms). Carries filesystem + external-provider metadata (IGDB, MobyGames, ScreenScraper, RetroAchievements)." .
+
+:GameSystem a owl:Class ;
+    rdfs:label "Game System" ;
+    rdfs:comment "A gaming platform / console the library organises games under, e.g. Nintendo 64, PlayStation, Game Boy Advance (romm_platforms)." .
+
+:GameCollection a owl:Class ;
+    rdfs:label "Game Collection" ;
+    rdfs:comment "A user or virtual/smart grouping of games, e.g. a franchise or a favourites list (romm_collections)." .
+
+:GameSave a owl:Class ;
+    rdfs:label "Game Save" ;
+    rdfs:comment "An in-game save file (battery/SRAM-style) attached to a Game (romm_saves)." .
+
+:GameState a owl:Class ;
+    rdfs:label "Game State" ;
+    rdfs:comment "An emulator save-state snapshot attached to a Game (romm_states)." .
+
+:Firmware a owl:Class ;
+    rdfs:label "Firmware" ;
+    rdfs:comment "A BIOS / firmware file required to run games on a GameSystem (romm_firmware)." .
+
+# --- links (owl:ObjectProperty) ---
+
+:onSystem a owl:ObjectProperty ;
+    rdfs:label "on system" ;
+    rdfs:comment "Links a Game (or Firmware) to the GameSystem it belongs to." ;
+    rdfs:range :GameSystem .
+
+:inCollection a owl:ObjectProperty ;
+    rdfs:label "in collection" ;
+    rdfs:comment "Links a Game to a GameCollection it is a member of." ;
+    rdfs:domain :Game ;
+    rdfs:range :GameCollection .
+
+:hasCover a owl:ObjectProperty ;
+    rdfs:label "has cover" ;
+    rdfs:comment "Links a Game to its cover / box-art image, stored as a shared :MediaAsset." ;
+    rdfs:domain :Game ;
+    rdfs:range :MediaAsset .
+
+:hasSave a owl:ObjectProperty ;
+    rdfs:label "has save" ;
+    rdfs:comment "Links a Game to one of its GameSave files." ;
+    rdfs:domain :Game ;
+    rdfs:range :GameSave .
+
+:hasState a owl:ObjectProperty ;
+    rdfs:label "has state" ;
+    rdfs:comment "Links a Game to one of its GameState snapshots." ;
+    rdfs:domain :Game ;
+    rdfs:range :GameState .
+
+:requiresFirmware a owl:ObjectProperty ;
+    rdfs:label "requires firmware" ;
+    rdfs:comment "Links a GameSystem to a Firmware file needed to emulate it." ;
+    rdfs:domain :GameSystem ;
+    rdfs:range :Firmware .
+
+# --- fields (owl:DatatypeProperty) ---
+
+:slug a owl:DatatypeProperty ;
+    rdfs:label "slug" ;
+    rdfs:comment "URL-safe short identifier of a Game or GameSystem." ;
+    rdfs:range xsd:string .
+
+:fsName a owl:DatatypeProperty ;
+    rdfs:label "filesystem name" ;
+    rdfs:comment "On-disk filename of a Game's ROM file (fs_name)." ;
+    rdfs:range xsd:string ;
+    rdfs:domain :Game .
+
+:fsSizeBytes a owl:DatatypeProperty ;
+    rdfs:label "filesystem size (bytes)" ;
+    rdfs:comment "Size in bytes of a ROM / firmware file (fs_size_bytes)." ;
+    rdfs:range xsd:long .
+
+:crcHash a owl:DatatypeProperty ;
+    rdfs:label "crc hash" ;
+    rdfs:comment "CRC32 checksum of a ROM file, used for dedup / identification." ;
+    rdfs:range xsd:string ;
+    rdfs:domain :Game .
+
+:md5Hash a owl:DatatypeProperty ;
+    rdfs:label "md5 hash" ;
+    rdfs:comment "MD5 checksum of a ROM file." ;
+    rdfs:range xsd:string ;
+    rdfs:domain :Game .
+
+:sha1Hash a owl:DatatypeProperty ;
+    rdfs:label "sha1 hash" ;
+    rdfs:comment "SHA1 checksum of a ROM file." ;
+    rdfs:range xsd:string ;
+    rdfs:domain :Game .
+
+:regions a owl:DatatypeProperty ;
+    rdfs:label "regions" ;
+    rdfs:comment "Release regions of a Game (e.g. USA, Europe, Japan)." ;
+    rdfs:range xsd:string ;
+    rdfs:domain :Game .
+
+:romCount a owl:DatatypeProperty ;
+    rdfs:label "rom count" ;
+    rdfs:comment "Number of games catalogued under a GameSystem (rom_count)." ;
+    rdfs:range xsd:integer ;
+    rdfs:domain :GameSystem .
+
+<http://knuckles.team/kg/rom> a owl:Ontology ;
+    rdfs:label "ROM Library Ontology" ;
+    rdfs:comment """Retro-game / ROM library model — games, gaming systems, collections,
+    save files, emulator save-states and firmware from a RomM library plus this package's
+    local ROM conversion flow. Cover art and ROM binaries reuse the shared :MediaAsset /
+    :Blob classes. Federated into the agent-utilities knowledge-graph hub.""" ;
+    owl:imports <http://knuckles.team/kg> .

@@ -1,0 +1,28 @@
+{
+  "_comment": "Tier-1 mcp_tool source presets for rom-manager (AU-KG.ingest.mcp-tool-connector). Syncs a RomM library into the KG as game/platform records via the rom-manager MCP server. Contributed presets win over the central MCP_TOOL_PRESETS.",
+  "rom-games": {
+    "server": "rom-manager-mcp",
+    "tool": "romm_roms",
+    "action": "list",
+    "records_path": "items",
+    "id_field": "id",
+    "title_field": "name",
+    "text_field": "summary",
+    "updated_field": "updated_at",
+    "pagination": "offset",
+    "page_param": "offset",
+    "page_size_param": "limit",
+    "doc_type": "game"
+  },
+  "rom-platforms": {
+    "server": "rom-manager-mcp",
+    "tool": "romm_platforms",
+    "action": "list",
+    "records_path": "data",
+    "id_field": "id",
+    "title_field": "display_name",
+    "text_field": "name",
+    "updated_field": "updated_at",
+    "doc_type": "game-system"
+  }
+}
