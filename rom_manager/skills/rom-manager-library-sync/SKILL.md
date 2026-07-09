@@ -1,5 +1,6 @@
 ---
 name: rom-manager-library-sync
+skill_type: skill
 description: >-
   Browse and sync a RomM (romm.app) game library via the rom-manager MCP server —
   list/search ROMs and platforms, browse collections, look up a ROM by hash, and

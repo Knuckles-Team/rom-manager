@@ -1,5 +1,6 @@
 ---
 name: rom-manager-conversion
+skill_type: skill
 description: >-
   Convert and organise ROM/disc images on local disk via the rom-manager MCP server —
   convert ISO/WBFS to space-efficient CHD (chdman) or RVZ (dolphin-tool), extract

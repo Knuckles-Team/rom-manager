@@ -1,5 +1,6 @@
 ---
 name: rom-manager-game-codes
+skill_type: skill
 description: >-
   Resolve game serial/product codes to clean titles and rename ROM files by their
   embedded code via the rom-manager MCP server — look up a code (e.g. SLUS-00594),
