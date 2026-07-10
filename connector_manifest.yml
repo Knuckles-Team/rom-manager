@@ -1,0 +1,220 @@
+connector: rom-manager
+ontology_source: rom
+schema_version: '1'
+resources:
+- name: Firmware
+  label: Firmware
+  id_prefix: firmware
+  relations: []
+- name: Game
+  label: Game
+  id_prefix: game
+  relations:
+  - name: hasCover
+    label: has cover
+    target: MediaAsset
+    lpg_rel_type: ''
+  - name: hasSave
+    label: has save
+    target: GameSave
+    lpg_rel_type: ''
+  - name: hasState
+    label: has state
+    target: GameState
+    lpg_rel_type: ''
+  - name: inCollection
+    label: in collection
+    target: GameCollection
+    lpg_rel_type: ''
+- name: GameCollection
+  label: Game Collection
+  id_prefix: gamecollection
+  relations: []
+- name: GameSave
+  label: Game Save
+  id_prefix: gamesave
+  relations: []
+- name: GameState
+  label: Game State
+  id_prefix: gamestate
+  relations: []
+- name: GameSystem
+  label: Game System
+  id_prefix: gamesystem
+  relations:
+  - name: requiresFirmware
+    label: requires firmware
+    target: Firmware
+    lpg_rel_type: ''
+actions: []
+events:
+- name: rom-games.updated
+  resource: game
+  description: "Watermark event for 'rom-games' \u2014 advances on updated_at (mcp_source_presets.json)."
+- name: rom-platforms.updated
+  resource: game-system
+  description: "Watermark event for 'rom-platforms' \u2014 advances on updated_at (mcp_source_presets.json)."
+identity:
+  id_field:
+    game: id
+    game-system: id
+  title_field:
+    game: name
+    game-system: display_name
+  text_field:
+    game: summary
+    game-system: name
+  updated_field:
+    game: updated_at
+    game-system: updated_at
+permissions:
+  acl_fields: []
+  tenant_field: null
+  read_roles: []
+schema_mappings:
+  Firmware:
+    ontology_class: null
+    fields:
+      crcHash: xsd:string
+      fsName: xsd:string
+      fsSizeBytes: xsd:long
+      md5Hash: xsd:string
+      regions: xsd:string
+      romCount: xsd:integer
+      sha1Hash: xsd:string
+      slug: xsd:string
+  Game:
+    ontology_class: null
+    fields:
+      crcHash: xsd:string
+      fsName: xsd:string
+      fsSizeBytes: xsd:long
+      md5Hash: xsd:string
+      regions: xsd:string
+      romCount: xsd:integer
+      sha1Hash: xsd:string
+      slug: xsd:string
+  GameCollection:
+    ontology_class: null
+    fields:
+      crcHash: xsd:string
+      fsName: xsd:string
+      fsSizeBytes: xsd:long
+      md5Hash: xsd:string
+      regions: xsd:string
+      romCount: xsd:integer
+      sha1Hash: xsd:string
+      slug: xsd:string
+  GameSave:
+    ontology_class: null
+    fields:
+      crcHash: xsd:string
+      fsName: xsd:string
+      fsSizeBytes: xsd:long
+      md5Hash: xsd:string
+      regions: xsd:string
+      romCount: xsd:integer
+      sha1Hash: xsd:string
+      slug: xsd:string
+  GameState:
+    ontology_class: null
+    fields:
+      crcHash: xsd:string
+      fsName: xsd:string
+      fsSizeBytes: xsd:long
+      md5Hash: xsd:string
+      regions: xsd:string
+      romCount: xsd:integer
+      sha1Hash: xsd:string
+      slug: xsd:string
+  GameSystem:
+    ontology_class: System
+    fields:
+      crcHash: xsd:string
+      fsName: xsd:string
+      fsSizeBytes: xsd:long
+      md5Hash: xsd:string
+      regions: xsd:string
+      romCount: xsd:integer
+      sha1Hash: xsd:string
+      slug: xsd:string
+sync:
+- preset: rom-games
+  server: rom-manager-mcp
+  tool: romm_roms
+  action: list
+  records_path: items
+  id_field: id
+  title_field: name
+  text_field: summary
+  updated_field: updated_at
+  pagination: offset
+  doc_type: game
+  raw:
+    server: rom-manager-mcp
+    tool: romm_roms
+    action: list
+    records_path: items
+    id_field: id
+    title_field: name
+    text_field: summary
+    updated_field: updated_at
+    pagination: offset
+    page_param: offset
+    page_size_param: limit
+    doc_type: game
+- preset: rom-platforms
+  server: rom-manager-mcp
+  tool: romm_platforms
+  action: list
+  records_path: data
+  id_field: id
+  title_field: display_name
+  text_field: name
+  updated_field: updated_at
+  pagination: null
+  doc_type: game-system
+  raw:
+    server: rom-manager-mcp
+    tool: romm_platforms
+    action: list
+    records_path: data
+    id_field: id
+    title_field: display_name
+    text_field: name
+    updated_field: updated_at
+    doc_type: game-system
+provenance:
+  generated_by: scripts/generate_connector_manifests.py
+  generated_at: '2026-07-09T00:00:00Z'
+  source_artifacts:
+  - rom_manager/connectors/mcp_source_presets.json
+  - rom_manager/ontology/rom.ttl
+  integrity:
+    algorithm: urdna2015-sha256
+    hash: ec4f5bb7fc6d6d1892e6cc96ea0e33abe57f606b893864f95c26df72b8b9ef29
+    triple_count: 67
+  signer: ontology-manifest-generator
+  signature: 53a4a5af9fa6c4928bf8330274ab7f9356462a048f1a812523800337633933e3
+policy:
+  pii_fields: {}
+  tenant_boundary: null
+  rls: []
+review_todos:
+- "policy.rls / policy.tenant_boundary are unset \u2014 no row-level-security predicate has been reviewed\
+  \ for this connector."
+- "relation 'onSystem' has no declared rdfs:domain resolving to a known resource in this connector's ontology\
+  \ \u2014 not attached to any resource; verify its true domain manually."
+- "schema_mappings.Firmware.ontology_class = None [UNRESOLVED \u2014 no crosswalk found by any heuristic]\
+  \ \u2014 verify manually before relying on this crosswalk for reasoning/joins."
+- "schema_mappings.Game.ontology_class = None [UNRESOLVED \u2014 no crosswalk found by any heuristic]\
+  \ \u2014 verify manually before relying on this crosswalk for reasoning/joins."
+- "schema_mappings.GameCollection.ontology_class = None [UNRESOLVED \u2014 no crosswalk found by any heuristic]\
+  \ \u2014 verify manually before relying on this crosswalk for reasoning/joins."
+- "schema_mappings.GameSave.ontology_class = None [UNRESOLVED \u2014 no crosswalk found by any heuristic]\
+  \ \u2014 verify manually before relying on this crosswalk for reasoning/joins."
+- "schema_mappings.GameState.ontology_class = None [UNRESOLVED \u2014 no crosswalk found by any heuristic]\
+  \ \u2014 verify manually before relying on this crosswalk for reasoning/joins."
+- "schema_mappings.GameSystem.ontology_class = 'System' [DRAFT \u2014 nearest hub-canonical-class-by-name\
+  \ heuristic (D16 residue; human sign-off required before use)] \u2014 verify manually before relying\
+  \ on this crosswalk for reasoning/joins."
