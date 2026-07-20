@@ -1,5 +1,6 @@
 ---
 name: rom-manager-operations
+skill_type: skill
 description: >-
   Operate rom-manager through its governed MCP and GraphOS capabilities, including rom manager conversion, rom manager game codes, rom manager library sync. Use when a request requires this provider's read, change, automation, ingestion, troubleshooting, or evidence workflows.
 ---
