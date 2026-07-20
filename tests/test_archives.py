@@ -5,6 +5,11 @@ index padding, and ``.cue`` sheet synthesis without requiring the native
 ``patool`` extension or the external conversion binaries.
 """
 
+import io
+import stat
+import tarfile
+import zipfile
+
 import pytest
 
 from rom_manager import archives
@@ -87,17 +92,52 @@ def test_cue_file_generator_idempotent(tmp_path):
 
 
 @pytest.mark.concept("RO-OS.identity.verifies-chdman-dolphin-tool")
-def test_extract_archive_missing_patool_raises(monkeypatch, tmp_path):
-    """Negative: extraction without the native extra raises a helpful ImportError."""
-    import builtins
+def test_extract_archive_rejects_parent_traversal(tmp_path):
+    archive = tmp_path / "malicious.zip"
+    with zipfile.ZipFile(archive, "w") as zf:
+        zf.writestr("../outside.txt", "owned")
+    output = tmp_path / "output"
+    with pytest.raises(archives.ArchiveSafetyError, match="extraction root"):
+        archives.extract_archive(str(archive), str(output))
+    assert not (tmp_path / "outside.txt").exists()
 
-    real_import = builtins.__import__
 
-    def fake_import(name, *args, **kwargs):
-        if name == "patoolib":
-            raise ImportError("no patool")
-        return real_import(name, *args, **kwargs)
+def test_extract_archive_rejects_zip_symlink(tmp_path):
+    archive = tmp_path / "link.zip"
+    member = zipfile.ZipInfo("link")
+    member.create_system = 3
+    member.external_attr = (stat.S_IFLNK | 0o777) << 16
+    with zipfile.ZipFile(archive, "w") as zf:
+        zf.writestr(member, "../../outside")
+    with pytest.raises(archives.ArchiveSafetyError, match="links"):
+        archives.extract_archive(str(archive), str(tmp_path / "output"))
 
-    monkeypatch.setattr(builtins, "__import__", fake_import)
-    with pytest.raises(ImportError, match="rom-manager\\[native\\]"):
-        archives.extract_archive("a.zip", str(tmp_path))
+
+def test_extract_archive_rejects_tar_link(tmp_path):
+    archive = tmp_path / "link.tar"
+    with tarfile.open(archive, "w") as tf:
+        member = tarfile.TarInfo("link")
+        member.type = tarfile.SYMTYPE
+        member.linkname = "../../outside"
+        tf.addfile(member)
+    with pytest.raises(archives.ArchiveSafetyError, match="links"):
+        archives.extract_archive(str(archive), str(tmp_path / "output"))
+
+
+def test_extract_archive_enforces_total_size_before_writing(monkeypatch, tmp_path):
+    archive = tmp_path / "large.tar"
+    payload = b"12345"
+    with tarfile.open(archive, "w") as tf:
+        member = tarfile.TarInfo("file.bin")
+        member.size = len(payload)
+        tf.addfile(member, io.BytesIO(payload))
+    monkeypatch.setenv("ROM_MANAGER_ARCHIVE_MAX_UNCOMPRESSED_BYTES", "4")
+    with pytest.raises(archives.ArchiveSafetyError, match="size limit"):
+        archives.extract_archive(str(archive), str(tmp_path / "output"))
+
+
+def test_extract_archive_rejects_opaque_external_formats(tmp_path):
+    archive = tmp_path / "game.7z"
+    archive.write_bytes(b"not relevant")
+    with pytest.raises(archives.ArchiveSafetyError, match="prevalidated"):
+        archives.extract_archive(str(archive), str(tmp_path / "output"))

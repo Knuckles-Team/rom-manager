@@ -11,7 +11,7 @@
 # All classes and properties live in the shared `:` (kg#) namespace; only the owl:Ontology
 # node gets the per-package IRI. Backs the rom-manager MCP tool surface (romm_roms /
 # romm_platforms / romm_collections / romm_saves / romm_firmware / rom_conversion / …).
-# Cover art / box art and ROM binaries reuse the shared :MediaAsset / :Blob classes — they
+# Cover art / box art and ROM binaries reuse the shared :AssetOccurrence / :Blob classes — they
 # are NOT redefined here.
 
 :Game a owl:Class ;
@@ -53,9 +53,9 @@
 
 :hasCover a owl:ObjectProperty ;
     rdfs:label "has cover" ;
-    rdfs:comment "Links a Game to its cover / box-art image, stored as a shared :MediaAsset." ;
+    rdfs:comment "Links a Game to its cover / box-art image, stored as a shared :AssetOccurrence." ;
     rdfs:domain :Game ;
-    rdfs:range :MediaAsset .
+    rdfs:range :AssetOccurrence .
 
 :hasSave a owl:ObjectProperty ;
     rdfs:label "has save" ;
@@ -127,6 +127,6 @@
     rdfs:label "ROM Library Ontology" ;
     rdfs:comment """Retro-game / ROM library model — games, gaming systems, collections,
     save files, emulator save-states and firmware from a RomM library plus this package's
-    local ROM conversion flow. Cover art and ROM binaries reuse the shared :MediaAsset /
+    local ROM conversion flow. Cover art and ROM binaries reuse the shared :AssetOccurrence /
     :Blob classes. Federated into the agent-utilities knowledge-graph hub.""" ;
     owl:imports <http://knuckles.team/kg> .

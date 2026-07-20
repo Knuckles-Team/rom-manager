@@ -61,7 +61,7 @@ def register_ingest_tools(mcp: FastMCP) -> None:
         try:
             kwargs = json.loads(params_json) if params_json else {}
         except Exception as e:  # noqa: BLE001
-            return {"error": f"Invalid params_json: {e}"}
+            return {"error": "Operation failed"}
         if ctx:
             await ctx.info("RomM ingest: listing ROMs")
         roms = _records(client.list_roms(**kwargs))
@@ -89,7 +89,7 @@ def register_ingest_tools(mcp: FastMCP) -> None:
         try:
             kwargs = json.loads(params_json) if params_json else {}
         except Exception as e:  # noqa: BLE001
-            return {"error": f"Invalid params_json: {e}"}
+            return {"error": "Operation failed"}
         if ctx:
             await ctx.info("RomM ingest: listing platforms")
         platforms = _records(client.list_platforms(**kwargs))
@@ -117,7 +117,7 @@ def register_ingest_tools(mcp: FastMCP) -> None:
         try:
             kwargs = json.loads(params_json) if params_json else {}
         except Exception as e:  # noqa: BLE001
-            return {"error": f"Invalid params_json: {e}"}
+            return {"error": "Operation failed"}
         if ctx:
             await ctx.info("RomM ingest: listing collections")
         collections = _records(client.list_collections(**kwargs))

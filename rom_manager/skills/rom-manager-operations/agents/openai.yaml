@@ -1,0 +1,4 @@
+interface:
+  display_name: "Rom Manager Operations"
+  short_description: "Help with Rom Manager Operations tasks"
+  default_prompt: "Use $rom-manager-operations to complete a governed provider workflow."

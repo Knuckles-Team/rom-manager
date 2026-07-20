@@ -12,7 +12,7 @@ resources:
   relations:
   - name: hasCover
     label: has cover
-    target: MediaAsset
+    target: AssetOccurrence
     lpg_rel_type: ''
   - name: hasSave
     label: has save
@@ -150,6 +150,7 @@ sync:
   updated_field: updated_at
   pagination: offset
   doc_type: game
+  tool_schema_sha256: 26df7b435310c56342c7d23037a82780c1fe70f1fa7bb44003d016a1be35bfec
   raw:
     server: rom-manager-mcp
     tool: romm_roms
@@ -174,6 +175,7 @@ sync:
   updated_field: updated_at
   pagination: null
   doc_type: game-system
+  tool_schema_sha256: 3cdb61be412d47c7d717b0593bf24360339b25f31b373c21731958ebbc66bdaa
   raw:
     server: rom-manager-mcp
     tool: romm_platforms
@@ -186,16 +188,19 @@ sync:
     doc_type: game-system
 provenance:
   generated_by: scripts/generate_connector_manifests.py
-  generated_at: '2026-07-09T00:00:00Z'
+  generated_at: '2026-07-18T00:00:00Z'
   source_artifacts:
   - rom_manager/connectors/mcp_source_presets.json
+  - rom_manager/connectors/tool_schema_fingerprints.json
   - rom_manager/ontology/rom.ttl
   integrity:
     algorithm: urdna2015-sha256
-    hash: ec4f5bb7fc6d6d1892e6cc96ea0e33abe57f606b893864f95c26df72b8b9ef29
+    hash: 24d739aa36412aff38c84bb1f525487ff77a25ffb854f7b7809746ecf32aa3df
     triple_count: 67
   signer: ontology-manifest-generator
-  signature: 53a4a5af9fa6c4928bf8330274ab7f9356462a048f1a812523800337633933e3
+  signature_algorithm: ed25519
+  signing_public_key: q0Cp7bmQMqJhbofGKKw8xXC6KbFzukBDDke0UYVi8y4
+  signature: XCAAdysI9GRpP7ESYNKK0LJQ9MDsyGyyt1ZB5G4DtpiJHLdGVe4j6wubYkUvEFolY-3lSJcKzVx772x55lI8DA
 policy:
   pii_fields: {}
   tenant_boundary: null

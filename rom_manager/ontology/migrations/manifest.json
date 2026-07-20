@@ -1,0 +1,6 @@
+{
+  "connector": "rom-manager",
+  "current_ontology_source": "rom",
+  "migrations": [],
+  "schema_version": "1"
+}

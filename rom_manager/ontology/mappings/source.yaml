@@ -1,0 +1,31 @@
+schema_version: '1'
+connector: rom-manager
+ontology_source: rom
+sync:
+- preset: rom-games
+  server: rom-manager-mcp
+  tool: romm_roms
+  action: list
+  records_path: items
+  id_field: id
+  title_field: name
+  text_field: summary
+  updated_field: updated_at
+  doc_type: game
+  tool_schema_sha256: 26df7b435310c56342c7d23037a82780c1fe70f1fa7bb44003d016a1be35bfec
+- preset: rom-platforms
+  server: rom-manager-mcp
+  tool: romm_platforms
+  action: list
+  records_path: data
+  id_field: id
+  title_field: display_name
+  text_field: name
+  updated_field: updated_at
+  doc_type: game-system
+  tool_schema_sha256: 3cdb61be412d47c7d717b0593bf24360339b25f31b373c21731958ebbc66bdaa
+governance:
+  default_acl: quarantine
+  identity: opaque-reference
+  tenant: required-at-materialization
+  provenance: required-at-materialization

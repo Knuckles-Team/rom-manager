@@ -17,12 +17,15 @@ from base64 import b64encode
 from typing import Any
 
 import requests
-import urllib3
 from agent_utilities.base_utilities import get_logger
 from agent_utilities.core.exceptions import (
     AuthError,
     MissingParameterError,
     UnauthorizedError,
+)
+from agent_utilities.core.transport_security import (
+    ResolvedTLSProfile,
+    resolve_configured_tls_profile,
 )
 
 logger = get_logger(__name__)
@@ -48,8 +51,7 @@ class RommApiBase:
         token: str | None = None,
         scopes: str | None = None,
         auth_mode: str | None = "basic",
-        verify: bool = True,
-        proxies: dict | None = None,
+        tls_profile: ResolvedTLSProfile | None = None,
         timeout: int = 60,
     ) -> None:
         """Configure the client; no network call is made here (CONCEPT:RO-OS.state.api-base-one-mixin)."""
@@ -61,15 +63,11 @@ class RommApiBase:
         self.password = password
         self.auth_mode = (auth_mode or "basic").lower()
         self.scopes = scopes if scopes is not None else DEFAULT_SCOPES
-        self.verify = verify
-        self.proxies = proxies
         self.timeout = timeout
         self.token = token
         self.refresh_token: str | None = None
-        self._session = requests.Session()
-
-        if verify is False:
-            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+        self.tls_profile = tls_profile or resolve_configured_tls_profile("romm")
+        self._session = self.tls_profile.configure_requests_session(requests.Session())
 
         if token:
             self.auth_mode = "oauth"
@@ -95,8 +93,6 @@ class RommApiBase:
         resp = self._session.post(
             url=f"{self.url}/token",
             data=data,
-            verify=self.verify,
-            proxies=self.proxies,
             timeout=self.timeout,
         )
         if resp.status_code in (401, 403):
@@ -118,8 +114,6 @@ class RommApiBase:
                 "grant_type": "refresh_token",
                 "refresh_token": self.refresh_token,
             },
-            verify=self.verify,
-            proxies=self.proxies,
             timeout=self.timeout,
         )
         resp.raise_for_status()
@@ -163,8 +157,6 @@ class RommApiBase:
             data=data,
             files=files,
             headers=req_headers,
-            verify=self.verify,
-            proxies=self.proxies,
             stream=stream,
             timeout=self.timeout,
         )
@@ -200,6 +192,11 @@ class RommApiBase:
             return resp.json()
         except ValueError:
             return {"status_code": resp.status_code, "text": resp.text}
+
+    def close(self) -> None:
+        """Release transport resources and runtime-only TLS material."""
+        self._session.close()
+        self.tls_profile.cleanup()
 
     def _get(self, path: str, **kw: Any) -> Any:
         return self._request("GET", path, **kw)

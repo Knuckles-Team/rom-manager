@@ -7,6 +7,7 @@ import path. CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool.
 
 from rom_manager.core.archives import (
     ARCHIVE_FORMATS,
+    ArchiveSafetyError,
     cue_file_generator,
     extract_archive,
     get_files,
@@ -16,6 +17,7 @@ from rom_manager.core.archives import (
 
 __all__ = [
     "ARCHIVE_FORMATS",
+    "ArchiveSafetyError",
     "cue_file_generator",
     "extract_archive",
     "get_files",

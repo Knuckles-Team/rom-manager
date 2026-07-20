@@ -13,7 +13,7 @@ import re
 import pytest
 
 ROOT_DIR = str(pathlib.Path(__file__).resolve().parent.parent)
-WORKSPACE_DIR = "/home/apps/workspace/agent-packages"
+WORKSPACE_DIR = os.path.dirname(os.path.dirname(ROOT_DIR))
 MASTER_OVERVIEW_PATH = os.path.join(
     WORKSPACE_DIR, "agent-utilities", "docs", "overview.md"
 )

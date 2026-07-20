@@ -91,7 +91,7 @@ class RomManager:
         if cpu_count > len(files):
             cpu_count = len(files)
         print(f"Parallel CPU(s) Engaged: {cpu_count}\nProcessing...\n")
-        self.logger.info(f"Total Files: {len(files)}\nFiles: {files}")
+        self.logger.info("Discovered files: file_count=%d", len(files))
         partial_process_file = partial(
             self.process_file,
             logger_name=f"{self.logger_name}",
@@ -140,7 +140,7 @@ class RomManager:
             game_directory = os.path.join(
                 os.path.dirname(file), os.path.splitext(os.path.basename(file))[0]
             )
-            logger.info(f"Creating parent directory for: {file}\n{game_directory}")
+            logger.info("Creating managed parent directory")
             os.makedirs(game_directory, exist_ok=True)
         else:
             game_directory = os.path.dirname(file)
@@ -158,18 +158,13 @@ class RomManager:
                 shutil.move(f"{file}", f"{new_file_path}")
                 file = new_file_path
             except Exception as e:
-                logger.error(
-                    f"Error moving ISO/GDI/Cue file: {file} to {new_file_path}\n"
-                    f"Error: {e}"
-                )
+                logger.error("Error moving configured image file: %s", type(e).__name__)
         elif file.lower().endswith(self.generative_types):
             new_file_path = os.path.join(str(game_directory), os.path.basename(file))
             try:
                 shutil.move(f"{file}", f"{new_file_path}")
             except Exception as e:
-                logger.error(
-                    f"Error moving file: {file} to {new_file_path}\nError: {e}"
-                )
+                logger.error("Error moving configured file: %s", type(e).__name__)
             logger.info("Generating any missing .cue file(s)")
             file = self.cue_file_generator(directory=game_directory)
 
@@ -229,7 +224,7 @@ class RomManager:
         self, game_directory, converted_file_path, archive_file=None
     ):
         """Delete the original archive + extracted dir post-conversion (CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool)."""
-        self.logger.info(f"Deleting original file {archive_file}...")
+        self.logger.info("Deleting original managed file")
         self.cleanup_archive(archive_file, logger=self.logger)
         self.cleanup_extracted_files(
             game_directory=game_directory,
@@ -240,12 +235,12 @@ class RomManager:
     @staticmethod
     def cleanup_archive(archive_file=None, logger=None):
         # Cleanup original files
-        logger.info(f"Deleting original file {archive_file}...")
+        logger.info("Deleting original managed file")
         if archive_file and os.path.exists(str(archive_file)):
             os.remove(archive_file)
-            logger.info(f"The original file {archive_file} has been deleted.")
+            logger.info("The original managed file was deleted")
         else:
-            logger.info(f"The original file {archive_file} does not exist.")
+            logger.info("The original managed file does not exist")
 
     @staticmethod
     def cleanup_extracted_files(
@@ -253,7 +248,7 @@ class RomManager:
     ):
         """Move the converted file up and remove the extraction dir (CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool)."""
         if game_directory and os.path.exists(game_directory):
-            logger.info(f"Cleaning {game_directory}...")
+            logger.info("Cleaning managed directory")
             parent_directory = os.path.dirname(os.path.dirname(converted_file_path))
             new_file_path = os.path.join(
                 parent_directory, os.path.basename(converted_file_path)
@@ -262,12 +257,9 @@ class RomManager:
                 shutil.move(f"{converted_file_path}", f"{new_file_path}")
                 shutil.rmtree(game_directory)
             except Exception as e:
-                logger.error(
-                    f"Error moving file: {converted_file_path} to {new_file_path}\n"
-                    f"Error: {e}"
-                )
+                logger.error("Error moving converted file: %s", type(e).__name__)
 
-            logger.info(f"Finished cleaning {game_directory}")
+            logger.info("Finished cleaning managed directory")
 
     def run_command(self, command, verbose=False, logger=None):
         """Run an external conversion command (delegates to the runner seam)."""
@@ -372,7 +364,7 @@ def usage():
         f"-x | --delete     [ Delete original files after processing ]\n"
         f"\n"
         f"Example: \n"
-        f'rom-manager --directory "C:/Users/default/Games/"\n'
+        'rom-manager --directory "${ROM_DIRECTORY}"\n'
         f"\n"
         f"RomM web library (CONCEPT:RO-OS.state.api-base-one-mixin):\n"
         f"  rom-manager <resource> <action> [args]   (resources: roms, platforms,\n"

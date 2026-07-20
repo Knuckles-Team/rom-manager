@@ -23,7 +23,7 @@
       "library": ["list/search ROMs and platforms", "browse collections", "read saves/states/firmware", "look up a ROM by CRC/MD5/SHA1 hash"],
       "conversion": ["convert ISO/WBFS disc images to CHD (chdman) or RVZ (dolphin-tool)", "extract archives", "generate .cue sheets for multi-track .bin sets"],
       "naming": ["resolve a game serial/code (e.g. SLUS-00594) to a clean title", "sanitize/rename ROM filenames"],
-      "kg": ["map ROMs->:Game, platforms->:GameSystem, collections->:GameCollection", "store cover art / ROM bytes as :MediaAsset blobs", "resolve :onSystem / :inCollection / :hasCover links"]
+      "kg": ["map ROMs->:Game, platforms->:GameSystem, collections->:GameCollection", "store cover art / ROM bytes as :AssetOccurrence blobs", "resolve :onSystem / :inCollection / :hasCover links"]
     },
     "workflow": [
       "scope the request to a concrete system (platform_id) or collection",

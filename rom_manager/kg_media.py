@@ -2,7 +2,7 @@
 
 CONCEPT:AU-KG.ingest.list-durable-media. When a live epistemic-graph engine is reachable,
 a game's cover / box art (or a ROM file itself) is stored as a content-addressed **blob**
-with a ``:MediaAsset`` graph node (carrying its RomM metadata) in ONE cross-modal ACID
+with a ``:AssetOccurrence`` graph node (carrying its RomM metadata) in ONE cross-modal ACID
 commit, via the agent-utilities ``MediaStore``. This makes the raw bytes — not just a
 RomM URL or filesystem path — durable, deduped, and queryable inside the knowledge graph.
 The stored asset links back to its ``:Game`` via the ``:hasCover`` property in ``rom.ttl``.
@@ -37,7 +37,7 @@ def _media_store() -> Any | None:
         if store is not None:
             return store
     except Exception as e:  # noqa: BLE001 — primitive absent -> direct build
-        logger.debug("KG media ingest: shared primitive unavailable: %s", e)
+        logger.debug("Operation failed: error_type=%s", type(e).__name__)
 
     try:
         from agent_utilities.knowledge_graph.core.graph_compute import (
@@ -45,7 +45,7 @@ def _media_store() -> Any | None:
         )
         from agent_utilities.knowledge_graph.memory.media_store import MediaStore
     except Exception as e:  # noqa: BLE001 — agent-utilities KG stack absent
-        logger.debug("KG media ingest unavailable (import): %s", e)
+        logger.debug("Operation failed: error_type=%s", type(e).__name__)
         return None
     try:
         engine = GraphComputeEngine()
@@ -54,7 +54,7 @@ def _media_store() -> Any | None:
             return None
         return MediaStore(engine)
     except Exception as e:  # noqa: BLE001 — no reachable engine
-        logger.debug("KG media ingest: engine unreachable: %s", e)
+        logger.debug("Operation failed: error_type=%s", type(e).__name__)
         return None
 
 
@@ -66,7 +66,7 @@ def ingest_cover(
     source: str = _SOURCE,
     media_store: Any | None = None,
 ) -> dict[str, Any] | None:
-    """Store a game's cover / box art as a blob + ``:MediaAsset`` in the knowledge graph.
+    """Store a game's cover / box art as a blob + ``:AssetOccurrence`` in the knowledge graph.
 
     ``rom`` is the RomM ROM record the art belongs to (used for the asset name +
     provenance ``extra`` so the asset can be linked to its ``rom:game:<id>`` node).
@@ -100,7 +100,7 @@ def ingest_cover(
             extra=extra,
         )
     except Exception as e:  # noqa: BLE001 — engine/store failure is non-fatal
-        logger.warning("KG media ingest: store_media failed: %s", e)
+        logger.warning("Operation failed: error_type=%s", type(e).__name__)
         return None
     if stored is None:
         return None
@@ -127,7 +127,7 @@ def ingest_rom_file(
     source: str = _SOURCE,
     media_store: Any | None = None,
 ) -> dict[str, Any] | None:
-    """Store a ROM binary as a content-addressed blob + ``:MediaAsset`` in the graph.
+    """Store a ROM binary as a content-addressed blob + ``:AssetOccurrence`` in the graph.
 
     Same contract as :func:`ingest_cover`, but for the ROM file bytes themselves
     (``media_type="file"``). Returns the stored-asset summary or ``None``.
@@ -165,7 +165,7 @@ def ingest_rom_file(
             extra=extra,
         )
     except Exception as e:  # noqa: BLE001 — engine/store failure is non-fatal
-        logger.warning("KG media ingest: store_media failed: %s", e)
+        logger.warning("Operation failed: error_type=%s", type(e).__name__)
         return None
     if stored is None:
         return None

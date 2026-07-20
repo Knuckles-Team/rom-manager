@@ -1,0 +1,36 @@
+{
+  "connector": "rom-manager",
+  "fixtures": [
+    {
+      "expected": {
+        "acl_state": "quarantine",
+        "id": "fixture-record",
+        "title": "Synthetic certification record"
+      },
+      "preset": "rom-games",
+      "record": {
+        "acl_public": false,
+        "id": "fixture-record",
+        "name": "Synthetic certification record",
+        "summary": "Synthetic content used only for contract validation.",
+        "updated_at": "2000-01-01T00:00:00Z"
+      }
+    },
+    {
+      "expected": {
+        "acl_state": "quarantine",
+        "id": "fixture-record",
+        "title": "Synthetic certification record"
+      },
+      "preset": "rom-platforms",
+      "record": {
+        "acl_public": false,
+        "display_name": "Synthetic certification record",
+        "id": "fixture-record",
+        "name": "Synthetic content used only for contract validation.",
+        "updated_at": "2000-01-01T00:00:00Z"
+      }
+    }
+  ],
+  "schema_version": "1"
+}

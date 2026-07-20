@@ -2,11 +2,14 @@
 
 Exercises the real ``ingest_entities`` / ``ingest_roms`` / ``ingest_platforms`` /
 ``ingest_collections`` seam with a fake engine client (no engine required), asserting the
-txn add_node/commit + edge calls and the RomM record -> :Game/:GameSystem mapping.
+single-transaction node/edge staging and commit and the RomM record -> :Game/:GameSystem mapping.
 CONCEPT:AU-KG.ingest.enterprise-source-extractor.
 """
 
 from __future__ import annotations
+
+import pytest
+from agent_utilities.knowledge_graph.memory.native_ingest import NativeIngestError
 
 from rom_manager.kg_ingest import (
     ingest_collections,
@@ -19,6 +22,7 @@ from rom_manager.kg_ingest import (
 class _FakeTxn:
     def __init__(self):
         self.nodes = {}
+        self.edges = []
         self.committed = False
 
     def begin(self, graph=None):
@@ -28,33 +32,27 @@ class _FakeTxn:
     def add_node(self, txn, node_id, props):
         self.nodes[node_id] = props
 
+    def add_edge(self, txn, source, target, props):
+        self.edges.append((source, target, props))
+
     def commit(self, txn):
         self.committed = True
         return True
 
 
-class _FakeEdges:
-    def __init__(self):
-        self.edges = []
-
-    def add(self, src, dst, props):
-        self.edges.append((src, dst, props))
-
-
 class _FakeClient:
     def __init__(self):
         self.txn = _FakeTxn()
-        self.edges = _FakeEdges()
 
 
 def test_ingest_entities_writes_nodes_and_edges():
     c = _FakeClient()
     res = ingest_entities(
         [
-            {"id": "a", "type": "Game", "name": "g"},
-            {"id": "b", "type": "GameSystem"},
+            {"id": "a", "node_type": "Game", "name": "g"},
+            {"id": "b", "node_type": "GameSystem"},
         ],
-        [{"source": "a", "target": "b", "type": "onSystem"}],
+        [{"source": "a", "target": "b", "relationship": "onSystem"}],
         client=c,
         graph="__commons__",
     )
@@ -64,7 +62,7 @@ def test_ingest_entities_writes_nodes_and_edges():
     # provenance is stamped
     assert c.txn.nodes["a"]["source"] == "rom-manager"
     assert c.txn.nodes["a"]["domain"] == "rom"
-    assert c.edges.edges == [("a", "b", {"type": "onSystem"})]
+    assert c.txn.edges == [("a", "b", {"relationship": "onSystem"})]
 
 
 def test_ingest_roms_maps_game_and_system():
@@ -88,14 +86,14 @@ def test_ingest_roms_maps_game_and_system():
     )
     assert res == {"nodes": 2, "edges": 1}
     game = c.txn.nodes["rom:game:7"]
-    assert game["type"] == "Game"
+    assert game["node_type"] == "Game"
     assert game["name"] == "Chrono Trigger"
     assert game["fsName"] == "Chrono Trigger.sfc"
     assert game["regions"] == "USA, Japan"
     assert game["externalToolId"] == "7"
-    assert c.txn.nodes["rom:system:3"]["type"] == "GameSystem"
+    assert c.txn.nodes["rom:system:3"]["node_type"] == "GameSystem"
     assert c.txn.nodes["rom:system:3"]["slug"] == "snes"
-    assert c.edges.edges == [("rom:game:7", "rom:system:3", {"type": "onSystem"})]
+    assert c.txn.edges == [("rom:game:7", "rom:system:3", {"relationship": "onSystem"})]
 
 
 def test_ingest_roms_dedups_shared_system():
@@ -130,7 +128,7 @@ def test_ingest_platforms_maps_system():
     )
     assert res == {"nodes": 1, "edges": 0}
     sys = c.txn.nodes["rom:system:3"]
-    assert sys["type"] == "GameSystem"
+    assert sys["node_type"] == "GameSystem"
     assert sys["name"] == "Super Nintendo"
     assert sys["romCount"] == 42
     assert sys["externalToolId"] == "3"
@@ -151,18 +149,16 @@ def test_ingest_collections_maps_collection_and_membership():
         graph="__commons__",
     )
     assert res == {"nodes": 1, "edges": 2}
-    assert c.txn.nodes["rom:collection:9"]["type"] == "GameCollection"
-    assert ("rom:game:1", "rom:collection:9", {"type": "inCollection"}) in c.edges.edges
-    assert ("rom:game:2", "rom:collection:9", {"type": "inCollection"}) in c.edges.edges
+    assert c.txn.nodes["rom:collection:9"]["node_type"] == "GameCollection"
+    assert ("rom:game:1", "rom:collection:9", {"relationship": "inCollection"}) in c.txn.edges
+    assert ("rom:game:2", "rom:collection:9", {"relationship": "inCollection"}) in c.txn.edges
 
 
-def test_ingest_noops_without_engine():
-    # No injected client + no reachable engine -> clean no-op.
-    assert ingest_entities([{"id": "a", "type": "Game"}]) is None
+def test_retired_structural_alias_is_rejected():
+    with pytest.raises(NativeIngestError, match="canonical node_type"):
+        ingest_entities([{"id": "a", "type": "Game"}], client=_FakeClient())
 
 
-def test_ingest_empty_is_noop():
-    assert ingest_entities([], client=_FakeClient()) is None
-    assert ingest_roms([], client=_FakeClient()) is None
-    assert ingest_platforms([], client=_FakeClient()) is None
-    assert ingest_collections([], client=_FakeClient()) is None
+def test_empty_native_ingest_is_rejected():
+    with pytest.raises(NativeIngestError, match="at least one entity"):
+        ingest_entities([], client=_FakeClient())

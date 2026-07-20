@@ -178,7 +178,7 @@ def run_romm_cli(argv: list[str]) -> int:
         client = get_romm_client()
         result = getattr(client, method_name)(**kwargs)
     except Exception as e:  # surface a clean error, not a traceback, to the CLI user
-        print(f"Error: {e}", file=sys.stderr)
+        print(f"Operation failed: {type(e).__name__}", file=sys.stderr)
         return 1
 
     print(json.dumps(result, default=str, indent=2))

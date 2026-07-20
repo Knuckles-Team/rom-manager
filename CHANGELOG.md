@@ -18,7 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     Covers **all 126** RomM operations (parity-guarded against the vendored
     `romm/openapi.json`).
   - `get_romm_client` factory reading `ROMM_URL`, `ROMM_USERNAME`/`ROMM_PASSWORD`
-    or `ROMM_TOKEN`, `ROMM_AUTH_MODE`, `ROMM_SCOPES`, `ROMM_SSL_VERIFY` (optional
+    or `ROMM_TOKEN`, `ROMM_AUTH_MODE`, `ROMM_SCOPES`, `ROMM_TLS_PROFILE`, and
+    `ROMM_TLS_PROFILE_REF` (optional
     OIDC delegation).
   - One action-routed MCP tool per RomM resource group (`romm_roms`,
     `romm_platforms`, …), gated by the `ROMMTOOL` flag.

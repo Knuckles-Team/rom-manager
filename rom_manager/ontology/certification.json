@@ -1,0 +1,36 @@
+{
+  "api_version": "graphos.io/v1",
+  "artifacts": {
+    "connector_manifest.yml": "506604a08f9ef58f0d6e9b2d171b5e2b57652309622785ea686a3dfd3fad8764",
+    "rom_manager/connectors/mcp_source_presets.json": "67d9b7bd5d67ded36310d59c75f8e2b1659180e65dbd2b40528c198af2d0eacc",
+    "rom_manager/connectors/tool_schema_fingerprints.json": "1896628dca1369429fb799eccf62c84a7a0737320cb77d38b6a1b319701dc3e9",
+    "rom_manager/ontology/fixtures/records.json": "16e329cbb3875df819f48c6c3c28a9a08c721486ba82cbe16afe8cf269af411e",
+    "rom_manager/ontology/mappings/source.yaml": "73fa61fedbbbecfdb538b6f86700d4cacedb0f5082f92342bd9a2637a4462d8a",
+    "rom_manager/ontology/migrations/manifest.json": "afbc56fc66f2965bc52b701dd3f1e745d619b596d21f6cc51471fa0e85214442",
+    "rom_manager/ontology/rom.ttl": "afebd0f3b236208d03414f905869ce6123cebe1f4aeef90450fbaadb54d615ea",
+    "rom_manager/ontology/shapes/connector.shacl.ttl": "1b58db9223470e06c72a8d1969a72ba0bbb4f0756115b7d5dcf98300a9b406e3"
+  },
+  "checks": {
+    "declared_tool_schema": "passed",
+    "manifest_integrity": "passed",
+    "privacy_contract": "passed",
+    "shacl_parse": "passed",
+    "synthetic_fixture_contract": "passed"
+  },
+  "compatibility": {
+    "agent_utilities": ">=1.27.1,<2",
+    "bundle_schema": "2",
+    "epistemic_graph": ">=2.23.1,<3"
+  },
+  "connector": "rom-manager",
+  "kind": "ConnectorSourceAttestation",
+  "live_certified": false,
+  "mode": "offline-source",
+  "schema_version": "2",
+  "signature": "tc-Scnv-j46Zp9j6Z4fLDV-jQQ58gsGeDiOBcg1d6Qa6Tngu2fDxPObWqF_Ut2uqwj4A7Zj32UOtxCytbnUiCQ",
+  "signature_algorithm": "ed25519",
+  "signer": "ontology-manifest-generator",
+  "signing_public_key": "q0Cp7bmQMqJhbofGKKw8xXC6KbFzukBDDke0UYVi8y4",
+  "status": "source-validated",
+  "validated_at": "2026-07-18T00:00:00Z"
+}
