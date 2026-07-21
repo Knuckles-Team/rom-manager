@@ -9,7 +9,7 @@ description = "ROM Converter/Organizer (CHD/RVZ) + MCP Server + A2A Agent"
 readme = "README.md"
 classifiers = [ "Development Status :: 5 - Production/Stable", "License :: Public Domain", "Environment :: Console", "Operating System :: POSIX :: Linux", "Programming Language :: Python :: 3",]
 requires-python = ">=3.11, <3.15"
-dependencies = [ "agent-utilities>=1.27.1,<2.0.0", "python-dotenv>=1.0.0", "tqdm>=4.66.0", "requests>=2.31.0",]
+dependencies = [ "agent-utilities>=1.27.1,<2.0.0", "python-dotenv>=1.2.2", "tqdm>=4.69.0", "requests>=2.34.2",]
 [[project.authors]]
 name = "Project Maintainers"
 email = "maintainers@users.noreply.github.com"
@@ -19,13 +19,13 @@ text = "MIT"
 
 [project.optional-dependencies]
 mcp = [ "agent-utilities[mcp]>=1.27.1,<2.0.0",]
-agent = [ "agent-utilities[agent-runtime,logfire]>=1.27.1,<2.0.0", "logfire>=2.0.0",]
-native = [ "patool>=2.1.1",]
-convert = [ "patool>=2.1.1",]
-otel = [ "opentelemetry-sdk>=1.27.0", "opentelemetry-exporter-otlp>=1.27.0",]
+agent = [ "agent-utilities[agent-runtime,logfire]>=1.27.1,<2.0.0", "logfire>=4.38.0",]
+native = [ "patool>=4.0.5",]
+convert = [ "patool>=4.0.5",]
+otel = [ "opentelemetry-sdk>=1.44.0", "opentelemetry-exporter-otlp>=1.44.0",]
 all = [ "rom-manager[mcp,agent,native,otel]>=2.0.0",]
 test = [
-    "pytest-xdist>=3.6.0", "pytest", "pytest-asyncio", "pytest-cov",]
+    "pytest-xdist>=3.8.0", "pytest>=9.1.1", "pytest-asyncio>=1.4.0", "pytest-cov>=7.1.0",]
 
 [project.scripts]
 rom-manager = "rom_manager.rom_manager:rom_manager"
