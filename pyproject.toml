@@ -24,9 +24,12 @@ native = [ "patool>=4.0.5",]
 convert = [ "patool>=4.0.5",]
 otel = [
     # CONCEPT:PHASE2-RECONCILE — capped under 1.44 (the modernize-bump floor
-    # collided with the fleet's opentelemetry-instrumentation-* pins).
+    # collided with the fleet's opentelemetry-instrumentation-* pins). The
+    # exporter must stay on the same major.minor as the SDK, and logfire==4.38.0
+    # (the only release available) caps opentelemetry-exporter-otlp-proto-http
+    # below 1.44.0 as well.
     "opentelemetry-sdk<1.44",
-    "opentelemetry-exporter-otlp>=1.44.0",
+    "opentelemetry-exporter-otlp<1.44",
 ]
 all = [ "rom-manager[mcp,agent,native,otel]>=2.0.0",]
 test = [
