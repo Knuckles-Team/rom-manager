@@ -22,7 +22,12 @@ mcp = [ "agent-utilities[mcp]>=1.27.1,<2.0.0",]
 agent = [ "agent-utilities[agent-runtime,logfire]>=1.27.1,<2.0.0", "logfire>=4.38.0",]
 native = [ "patool>=4.0.5",]
 convert = [ "patool>=4.0.5",]
-otel = [ "opentelemetry-sdk>=1.44.0", "opentelemetry-exporter-otlp>=1.44.0",]
+otel = [
+    # CONCEPT:PHASE2-RECONCILE — capped under 1.44 (the modernize-bump floor
+    # collided with the fleet's opentelemetry-instrumentation-* pins).
+    "opentelemetry-sdk<1.44",
+    "opentelemetry-exporter-otlp>=1.44.0",
+]
 all = [ "rom-manager[mcp,agent,native,otel]>=2.0.0",]
 test = [
     "pytest-xdist>=3.8.0", "pytest>=9.1.1", "pytest-asyncio>=1.4.0", "pytest-cov>=7.1.0",]
