@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://knuckles-team.github.io/rom-manager/deployment/">
       
       
-        <link rel="prev" href="../installation/">
+        <link rel="prev" href="../configuration/">
       
       
         <link rel="next" href="../usage/">
@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/material/templates/assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -31,7 +31,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -291,6 +291,25 @@
   
   
   
+  
+    <li class="md-tabs__item">
+      <a href="../configuration/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Configuration, trust, and privacy
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
     
   
   
@@ -482,6 +501,33 @@
       
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration, trust, and privacy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -557,10 +603,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-stdio-local-subprocess" class="md-nav__link">
+  <a href="#installed-stdio-process" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. stdio (local subprocess)
+        Installed stdio process
       
     </span>
   </a>
@@ -568,10 +614,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-streamable-http-local-process" class="md-nav__link">
+  <a href="#loopback-development-listener" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. Streamable-HTTP (local process)
+        Loopback development listener
       
     </span>
   </a>
@@ -579,10 +625,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3-local-container-uv" class="md-nav__link">
+  <a href="#least-privilege-local-container" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. Local container / uv
+        Least-privilege local container
       
     </span>
   </a>
@@ -590,10 +636,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#4-remote-url-deployed-behind-caddy" class="md-nav__link">
+  <a href="#remote-authenticated-https-endpoint" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4. Remote URL (deployed behind Caddy)
+        Remote authenticated HTTPS endpoint
       
     </span>
   </a>
@@ -756,10 +802,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-stdio-local-subprocess" class="md-nav__link">
+  <a href="#installed-stdio-process" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. stdio (local subprocess)
+        Installed stdio process
       
     </span>
   </a>
@@ -767,10 +813,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-streamable-http-local-process" class="md-nav__link">
+  <a href="#loopback-development-listener" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. Streamable-HTTP (local process)
+        Loopback development listener
       
     </span>
   </a>
@@ -778,10 +824,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3-local-container-uv" class="md-nav__link">
+  <a href="#least-privilege-local-container" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. Local container / uv
+        Least-privilege local container
       
     </span>
   </a>
@@ -789,10 +835,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#4-remote-url-deployed-behind-caddy" class="md-nav__link">
+  <a href="#remote-authenticated-https-endpoint" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4. Remote URL (deployed behind Caddy)
+        Remote authenticated HTTPS endpoint
       
     </span>
   </a>
@@ -877,135 +923,48 @@
 <h1 id="deployment">Deployment<a class="headerlink" href="#deployment" title="Permanent link">&para;</a></h1>
 <!-- BEGIN GENERATED: deployment-options -->
 <h2 id="deployment-options">Deployment Options<a class="headerlink" href="#deployment-options" title="Permanent link">&para;</a></h2>
-<p><code>rom-manager</code> exposes its MCP server (console script <code>rom-manager-mcp</code>) four ways. Pick the row that
-matches where the server runs relative to your MCP client, then copy the matching
-<code>mcp_config.json</code> below. Add the service-connection environment variables documented in the <strong>Configuration</strong> section.</p>
-<table>
-<thead>
-<tr>
-<th>#</th>
-<th>Option</th>
-<th>Transport</th>
-<th>Where it runs</th>
-<th><code>mcp_config.json</code> key</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td>stdio</td>
-<td><code>stdio</code></td>
-<td>client launches a subprocess</td>
-<td><code>command</code></td>
-</tr>
-<tr>
-<td>2</td>
-<td>Streamable-HTTP (local)</td>
-<td><code>streamable-http</code></td>
-<td>a local network port</td>
-<td><code>command</code> or <code>url</code></td>
-</tr>
-<tr>
-<td>3</td>
-<td>Local container / uv</td>
-<td><code>stdio</code> or <code>streamable-http</code></td>
-<td>Docker / Podman / uv on this host</td>
-<td><code>command</code> or <code>url</code></td>
-</tr>
-<tr>
-<td>4</td>
-<td>Remote URL</td>
-<td><code>streamable-http</code></td>
-<td>a remote host behind Caddy</td>
-<td><code>url</code></td>
-</tr>
-</tbody>
-</table>
-<h3 id="1-stdio-local-subprocess">1. stdio (local subprocess)<a class="headerlink" href="#1-stdio-local-subprocess" title="Permanent link">&para;</a></h3>
-<p>The client launches the server over stdio via <code>uvx</code> — best for local IDEs
-(Cursor, Claude Desktop, VS Code):</p>
+<p><code>rom-manager</code> supports local stdio, a loopback-only development listener, a
+least-privilege stdio container, and a remote authenticated HTTPS boundary.
+Provider endpoint, credential, selector, identity, and trust material are supplied
+at runtime through <code>AgentConfig</code>; none is stored in this repository.</p>
+<h3 id="installed-stdio-process">Installed stdio process<a class="headerlink" href="#installed-stdio-process" title="Permanent link">&para;</a></h3>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;mcpServers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;rom-manager-mcp&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">      </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uvx&quot;</span><span class="p">,</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">      </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;--from&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;rom-manager&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;rom-manager-mcp&quot;</span><span class="p">]</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">}</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;rom-manager&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">      </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;rom-manager-mcp&quot;</span><span class="p">,</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">      </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">      </span><span class="nt">&quot;env&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;MCP_TOOL_MODE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;intent&quot;</span><span class="p">}</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">}</span>
 </span></code></pre></div>
-<h3 id="2-streamable-http-local-process">2. Streamable-HTTP (local process)<a class="headerlink" href="#2-streamable-http-local-process" title="Permanent link">&para;</a></h3>
-<p>Run the server as a long-lived HTTP process:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>uvx<span class="w"> </span>--from<span class="w"> </span>rom-manager<span class="w"> </span>rom-manager-mcp<span class="w"> </span>--transport<span class="w"> </span>streamable-http<span class="w"> </span>--host<span class="w"> </span><span class="m">0</span>.0.0.0<span class="w"> </span>--port<span class="w"> </span><span class="m">8000</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>curl<span class="w"> </span>-s<span class="w"> </span>http://localhost:8000/health<span class="w">        </span><span class="c1"># {&quot;status&quot;:&quot;OK&quot;}</span>
+<h3 id="loopback-development-listener">Loopback development listener<a class="headerlink" href="#loopback-development-listener" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>rom-manager-mcp<span class="w"> </span>--transport<span class="w"> </span>streamable-http<span class="w"> </span>--host<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>--port<span class="w"> </span><span class="m">8000</span>
 </span></code></pre></div>
-<p>Then either let the client launch it:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;mcpServers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">&quot;rom-manager-mcp&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">      </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uvx&quot;</span><span class="p">,</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">      </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;--from&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;rom-manager&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;rom-manager-mcp&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;--transport&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;streamable-http&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;--port&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;8000&quot;</span><span class="p">],</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">      </span><span class="nt">&quot;env&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">        </span><span class="nt">&quot;TRANSPORT&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;streamable-http&quot;</span><span class="p">,</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">        </span><span class="nt">&quot;HOST&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0.0.0.0&quot;</span><span class="p">,</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">        </span><span class="nt">&quot;PORT&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;8000&quot;</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">      </span><span class="p">}</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="p">}</span>
+<p>Do not expose this listener beyond loopback. Network deployments require direct TLS
+or an explicitly trusted TLS-terminating ingress, configured authentication, exact
+<code>MCP_ALLOWED_HOSTS</code>, and an exact trusted-proxy CIDR policy.</p>
+<h3 id="least-privilege-local-container">Least-privilege local container<a class="headerlink" href="#least-privilege-local-container" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-i<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span>--read-only<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span>--cap-drop<span class="o">=</span>ALL<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span>--security-opt<span class="o">=</span>no-new-privileges<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span>--pids-limit<span class="o">=</span><span class="m">256</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span>--tmpfs<span class="w"> </span>/tmp:rw,noexec,nosuid,nodev,size<span class="o">=</span>64m<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">  </span>-e<span class="w"> </span><span class="nv">TRANSPORT</span><span class="o">=</span>stdio<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">  </span>registry.example.invalid/rom-manager@sha256:&lt;digest&gt;<span class="w"> </span>rom-manager-mcp
 </span></code></pre></div>
-<p>…or connect to the already-running process by URL:</p>
+<p>The operator projects the selected AgentConfig profile into the process at runtime;
+the image remains immutable and contains no environment connection profile.</p>
+<h3 id="remote-authenticated-https-endpoint">Remote authenticated HTTPS endpoint<a class="headerlink" href="#remote-authenticated-https-endpoint" title="Permanent link">&para;</a></h3>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&quot;mcpServers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">&quot;rom-manager-mcp&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://localhost:8000/mcp&quot;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">&quot;rom-manager&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://service.example.invalid/mcp&quot;</span><span class="p">}</span>
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span><span class="p">}</span>
 </span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="p">}</span>
 </span></code></pre></div>
-<h3 id="3-local-container-uv">3. Local container / uv<a class="headerlink" href="#3-local-container-uv" title="Permanent link">&para;</a></h3>
-<p><strong>(a) Launch a container directly from <code>mcp_config.json</code></strong> (stdio over the container —
-no ports to manage). Swap <code>docker</code> for <code>podman</code> for a daemonless runtime:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">{</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">&quot;mcpServers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="nt">&quot;rom-manager-mcp&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">      </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;docker&quot;</span><span class="p">,</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">      </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">        </span><span class="s2">&quot;run&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;-i&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;--rm&quot;</span><span class="p">,</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">        </span><span class="s2">&quot;-e&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;TRANSPORT=stdio&quot;</span><span class="p">,</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">        </span><span class="s2">&quot;knucklessg1/rom-manager:latest&quot;</span>
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">      </span><span class="p">]</span>
-</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="p">}</span>
-</span></code></pre></div>
-<p><strong>(b) Run a local streamable-http container, then connect by URL:</strong></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>rom-manager-mcp<span class="w"> </span>-p<span class="w"> </span><span class="m">8000</span>:8000<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span>-e<span class="w"> </span><span class="nv">TRANSPORT</span><span class="o">=</span>streamable-http<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span>-e<span class="w"> </span><span class="nv">PORT</span><span class="o">=</span><span class="m">8000</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">  </span>knucklessg1/rom-manager:latest
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># or, from a clone of this repo:</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>docker/mcp.compose.yml<span class="w"> </span>up<span class="w"> </span>-d
-</span></code></pre></div>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="p">{</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">&quot;mcpServers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="nt">&quot;rom-manager-mcp&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://localhost:8000/mcp&quot;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="p">}</span>
-</span></code></pre></div>
-<p><strong>(c) From a local checkout with <code>uv</code>:</strong></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>uv<span class="w"> </span>run<span class="w"> </span>rom-manager-mcp<span class="w"> </span>--transport<span class="w"> </span>streamable-http<span class="w"> </span>--port<span class="w"> </span><span class="m">8000</span>
-</span></code></pre></div>
-<h3 id="4-remote-url-deployed-behind-caddy">4. Remote URL (deployed behind Caddy)<a class="headerlink" href="#4-remote-url-deployed-behind-caddy" title="Permanent link">&para;</a></h3>
-<p>When the server is deployed remotely (e.g. as a Docker service) and published through
-Caddy on the internal <code>*.arpa</code> zone, connect with the <code>"url"</code> key — no local process or
-image required:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="p">{</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span><span class="nt">&quot;mcpServers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="nt">&quot;rom-manager-mcp&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://rom-manager-mcp.arpa/mcp&quot;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="p">}</span>
-</span></code></pre></div>
-<p>Caddy reverse-proxies <code>http://rom-manager-mcp.arpa</code> to the container's <code>:8000</code>
-streamable-http listener; <code>http://rom-manager-mcp.arpa/health</code> returns
-<code>{"status":"OK"}</code> when the service is live.</p>
+<p>Store the real remote URL, outbound identity reference, and TLS-profile reference in
+<code>AgentConfig</code>, not in MCP client JSON or documentation.</p>
 <!-- END GENERATED: deployment-options -->
 
 <h2 id="console-scripts">Console scripts<a class="headerlink" href="#console-scripts" title="Permanent link">&para;</a></h2>
@@ -1036,26 +995,26 @@ streamable-http listener; <code>http://rom-manager-mcp.arpa/health</code> return
 </tbody>
 </table>
 <h2 id="transports">Transports<a class="headerlink" href="#transports" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>rom-manager-mcp<span class="w">                                              </span><span class="c1"># stdio (default)</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>rom-manager-mcp<span class="w"> </span>--transport<span class="w"> </span>streamable-http<span class="w"> </span>--host<span class="w"> </span><span class="m">0</span>.0.0.0<span class="w"> </span>--port<span class="w"> </span><span class="m">8000</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>rom-manager-mcp<span class="w"> </span>--transport<span class="w"> </span>sse<span class="w"> </span>--host<span class="w"> </span><span class="m">0</span>.0.0.0<span class="w"> </span>--port<span class="w"> </span><span class="m">8000</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>rom-manager-mcp<span class="w">                                              </span><span class="c1"># stdio (default)</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>rom-manager-mcp<span class="w"> </span>--transport<span class="w"> </span>streamable-http<span class="w"> </span>--host<span class="w"> </span><span class="m">0</span>.0.0.0<span class="w"> </span>--port<span class="w"> </span><span class="m">8000</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>rom-manager-mcp<span class="w"> </span>--transport<span class="w"> </span>sse<span class="w"> </span>--host<span class="w"> </span><span class="m">0</span>.0.0.0<span class="w"> </span>--port<span class="w"> </span><span class="m">8000</span>
 </span></code></pre></div>
 <h2 id="docker">Docker<a class="headerlink" href="#docker" title="Permanent link">&para;</a></h2>
-<p>The prebuilt image <code>knucklessg1/rom-manager</code> ships with <code>chdman</code> (mame-tools)
+<p>The prebuilt image <code>example/rom-manager</code> ships with <code>chdman</code> (mame-tools)
 and <code>7z</code> (p7zip-full) so conversions work out of the box. Mount your ROM
 directory and set <code>ROM_DIRECTORY</code>.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-it<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span>-v<span class="w"> </span>/games:/games<span class="w"> </span>-e<span class="w"> </span><span class="nv">ROM_DIRECTORY</span><span class="o">=</span>/games<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">  </span>-p<span class="w"> </span><span class="m">8000</span>:8000<span class="w"> </span>-e<span class="w"> </span><span class="nv">TRANSPORT</span><span class="o">=</span>streamable-http<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">  </span>knucklessg1/rom-manager:latest
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-it<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span>-v<span class="w"> </span>/games:/games<span class="w"> </span>-e<span class="w"> </span><span class="nv">ROM_DIRECTORY</span><span class="o">=</span>/games<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span>-p<span class="w"> </span><span class="m">8000</span>:8000<span class="w"> </span>-e<span class="w"> </span><span class="nv">TRANSPORT</span><span class="o">=</span>streamable-http<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">  </span>example/rom-manager@sha256:&lt;digest&gt;
 </span></code></pre></div>
 <h3 id="docker-compose">Docker Compose<a class="headerlink" href="#docker-compose" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>docker/mcp.compose.yml<span class="w"> </span>up<span class="w"> </span>-d<span class="w">     </span><span class="c1"># MCP only</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>docker/agent.compose.yml<span class="w"> </span>up<span class="w"> </span>-d<span class="w">   </span><span class="c1"># MCP + agent</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>docker/mcp.compose.yml<span class="w"> </span>up<span class="w"> </span>-d<span class="w">     </span><span class="c1"># MCP only</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>docker/agent.compose.yml<span class="w"> </span>up<span class="w"> </span>-d<span class="w">   </span><span class="c1"># MCP + agent</span>
 </span></code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">RVZ output</p>
-<p><code>dolphin-tool</code> is not packaged in the slim image. Install it into the
+<p><code>dolphin-tool</code> is not packaged in the MCP-serving image. Install it into the
 container (or a derived image) if you need RVZ output.</p>
 </div>
 
@@ -1095,7 +1054,7 @@ container (or a derived image) if you need RVZ output.</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../installation/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Installation">
+          <a href="../configuration/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Configuration, trust, and privacy">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1105,7 +1064,7 @@ container (or a derived image) if you need RVZ output.</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Installation
+                Configuration, trust, and privacy
               </div>
             </div>
           </a>
@@ -1191,7 +1150,7 @@ container (or a derived image) if you need RVZ output.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.tracking", "navigation.instant", "navigation.instant.progress", "navigation.footer", "toc.follow", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.tooltips"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>
