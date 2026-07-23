@@ -17,7 +17,7 @@
 ![PyPI - Wheel](https://img.shields.io/pypi/wheel/rom-manager)
 ![PyPI - Implementation](https://img.shields.io/pypi/implementation/rom-manager)
 
-*Version: 2.0.1*
+*Version: 3.0.0*
 
 > **Documentation** — Installation, deployment, and usage across the API, CLI, and
 > MCP interfaces, plus the integrated A2A agent server, are maintained in the
