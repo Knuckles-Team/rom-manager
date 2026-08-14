@@ -17,7 +17,7 @@
 ![PyPI - Wheel](https://img.shields.io/pypi/wheel/rom-manager)
 ![PyPI - Implementation](https://img.shields.io/pypi/implementation/rom-manager)
 
-*Version: 3.0.0*
+*Version: 3.1.0*
 
 > **Documentation** — Installation, deployment, and usage across the API, CLI, and
 > MCP interfaces, plus the integrated A2A agent server, are maintained in the
@@ -309,8 +309,8 @@ rom-manager-agent --web
 | `TERM` | `dumb` | Force a dumb terminal so progress bars / colour codes do not corrupt stdio. |
 | `ENABLE_OTEL` | `True` |  |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | `http://localhost:8080/api/public/otel` |  |
-| `OTEL_EXPORTER_OTLP_PUBLIC_KEY` | `pk-...` |  |
-| `OTEL_EXPORTER_OTLP_SECRET_KEY` | `sk-...` |  |
+| `OTEL_EXPORTER_OTLP_PUBLIC_KEY` | secret-injected |  |
+| `OTEL_EXPORTER_OTLP_SECRET_KEY` | secret-injected |  |
 | `OTEL_EXPORTER_OTLP_PROTOCOL` | `http/protobuf` |  |
 | `EUNOMIA_TYPE` | `none` | options: none, embedded, remote |
 | `EUNOMIA_POLICY_FILE` | `mcp_policies.json` |  |
@@ -319,17 +319,17 @@ rom-manager-agent --web
 | `ROM_ISO_TYPE` | `chd` | Conversion target: chd (chdman) or rvz (dolphin-tool) |
 | `ROM_VERBOSE` | `False` |  |
 | `ROM_FORCE` | `False` |  |
-| `ROMM_URL` | `http://localhost:3000` | any RomM (`roms`, `platforms`, ...) command or MCP tool. |
+| `ROMM_URL` | `http://localhost:3000` | Base URL of the running RomM instance (e.g. http://host:3000). Required for any RomM (`roms`, `platforms`, ...) command or MCP tool. |
 | `ROMM_USERNAME` | `admin` | Credentials: Basic/OAuth username+password, or a pre-minted bearer token. |
-| `ROMM_PASSWORD` | `changeme` |  |
-| `ROMM_TOKEN` | — |  |
+| `ROMM_PASSWORD` | secret-injected |  |
+| `ROMM_TOKEN` | secret-injected |  |
 | `ROMM_AUTH_MODE` | `basic` | Auth mode: basic (default, no expiry) or oauth (password grant via /api/token). |
 | `ROMM_SCOPES` | `roms.read roms.write platforms.read` | Space-separated OAuth scopes (defaults to RomM's full read+write set). |
-| `ROMM_TLS_PROFILE` | — | Named runtime TLS profile |
-| `ROMM_TLS_PROFILE_REF` | — | Secret reference containing a TLS profile |
-| `AUDIENCE` | `http://localhost:3000` | Target audience for the exchanged token (defaults to ROMM_URL). |
+| `ROMM_TLS_PROFILE` | — | Optional named TLS profile or secret reference; peer and hostname verification are mandatory. |
+| `ROMM_TLS_PROFILE_REF` | — |  |
+| `AUDIENCE` | `http://localhost:3000` | Optional OIDC delegation (RFC 8693 token exchange) — used only when delegated auth is enabled and no ROMM_TOKEN is supplied. Target audience for the exchanged token (defaults to ROMM_URL). |
 | `DELEGATED_SCOPES` | `roms.read` | Scopes requested for the delegated token. |
-| `CONVERSIONTOOL` | `True` | MCP tools table (condensed action-routed surface). |
+| `CONVERSIONTOOL` | `True` | These names match the authoritative "Toggle Env Var" column in the README MCP tools table (condensed action-routed surface). |
 | `GAME_CODESTOOL` | `True` |  |
 | `ROMMTOOL` | `True` | Master switch for the RomM remote-library tools. |
 
@@ -337,14 +337,16 @@ rom-manager-agent --web
 
 | Variable | Example | Description |
 |----------|---------|-------------|
-| `MCP_TOOL_MODE` | `condensed` | Tool surface: `condensed` | `verbose` | `both` |
+| `MCP_TOOL_MODE` | `intent` | Tool surface: `intent` \| `condensed` \| `verbose` \| `both` |
 | `MCP_ENABLED_TOOLS` | — | Comma-separated tool allow-list |
 | `MCP_DISABLED_TOOLS` | — | Comma-separated tool deny-list |
 | `MCP_ENABLED_TAGS` | — | Comma-separated tag allow-list |
 | `MCP_DISABLED_TAGS` | — | Comma-separated tag deny-list |
-| `MCP_CLIENT_AUTH` | — | Outbound MCP auth (`oidc-client-credentials` for fleet calls) |
+| `MCP_CLIENT_AUTH` | — | Outbound MCP child auth: `oidc-client-credentials` \| `basic` \| `none` |
 | `OIDC_CLIENT_ID` | — | OIDC client id (service-account auth) |
-| `OIDC_CLIENT_SECRET` | — | OIDC client secret (service-account auth) |
+| `OIDC_CLIENT_SECRET_REF` | `secret://identity/oidc-client-secret` | Runtime secret reference for the OIDC service account |
+| `MCP_BASIC_AUTH_USERNAME` | — | HTTP Basic username (`MCP_CLIENT_AUTH=basic`) |
+| `MCP_BASIC_AUTH_PASSWORD_REF` | `secret://identity/mcp-basic-password` | Runtime secret reference for HTTP Basic auth (`MCP_CLIENT_AUTH=basic`) |
 | `DEBUG` | `False` | Verbose logging |
 | `PYTHONUNBUFFERED` | `1` | Unbuffered stdout (recommended in containers) |
 | `MCP_URL` | `http://localhost:8000/mcp` | URL of the MCP server the agent connects to |
@@ -352,7 +354,7 @@ rom-manager-agent --web
 | `MODEL_ID` | `gpt-4o` | Model id for the agent |
 | `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
 
-_31 package + 14 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
+_32 package + 16 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
 <!-- ENV-VARS-TABLE:END -->
 
 
