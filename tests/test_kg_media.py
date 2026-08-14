@@ -52,6 +52,7 @@ def test_ingest_rom_file_stores_file_blob():
         rom={"id": 7, "fs_name": "Chrono Trigger.sfc"},
         media_store=store,
     )
+    assert res is not None
     assert res["media_type"] == "file"
     _, kwargs = store.calls[0]
     assert kwargs["media_type"] == "file"

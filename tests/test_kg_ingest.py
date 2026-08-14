@@ -8,8 +8,14 @@ CONCEPT:AU-KG.ingest.enterprise-source-extractor.
 
 from __future__ import annotations
 
+from typing import Any
+
+import msgpack
 import pytest
 from agent_utilities.knowledge_graph.memory.native_ingest import NativeIngestError
+from agent_utilities.security.brain_context import ActorContext, use_actor
+from agent_utilities.models.company_brain import ActorType
+from agent_utilities.knowledge_graph.core.session import GraphSession, use_session
 
 from rom_manager.kg_ingest import (
     ingest_collections,
@@ -19,30 +25,92 @@ from rom_manager.kg_ingest import (
 )
 
 
-class _FakeTxn:
-    def __init__(self):
-        self.nodes = {}
-        self.edges = []
-        self.committed = False
+@pytest.fixture(autouse=True)
+def _governed_session():
+    actor = ActorContext(
+        actor_id="subject:opaque:synthetic",
+        actor_type=ActorType.AUTOMATED_SERVICE,
+        roles=(),
+        tenant_id="tenant:opaque:synthetic",
+        authenticated=True,
+    )
+    session = GraphSession(
+        actor=actor,
+        tenant=actor.tenant_id,
+        scopes=frozenset({"kg:write"}),
+        graph="graph:opaque:synthetic",
+        policy_version="policy:opaque:synthetic",
+        audience="epistemic-graph",
+    )
+    with use_actor(actor), use_session(session):
+        yield
 
-    def begin(self, graph=None):
-        self.graph = graph
-        return "txn-1"
 
-    def add_node(self, txn, node_id, props):
-        self.nodes[node_id] = props
+class _FakeNodes:
+    def __init__(self) -> None:
+        self.values: dict[str, dict[str, Any]] = {}
 
-    def add_edge(self, txn, source, target, props):
-        self.edges.append((source, target, props))
+    def properties(self, node_id: str) -> dict[str, Any] | None:
+        return self.values.get(node_id)
 
-    def commit(self, txn):
-        self.committed = True
-        return True
+    def list(self) -> list[tuple[str, dict[str, Any]]]:
+        return list(self.values.items())
+
+
+class _FakeChanges:
+    def __init__(self, nodes: _FakeNodes) -> None:
+        self.nodes = nodes
+        self.edges: list[tuple[str, str, dict[str, Any]]] = []
+        self.applied: list[dict[str, Any]] = []
+        self.records: dict[str, dict[str, Any]] = {}
+        self.versions: dict[str, dict[str, Any]] = {}
+
+    def get(self, envelope_id: str) -> dict[str, Any] | None:
+        return self.records.get(envelope_id)
+
+    def content_version(self, object_id: str) -> dict[str, Any] | None:
+        return self.versions.get(object_id)
+
+    def cursor(self, _source: str, _partition: str = "") -> None:
+        return None
+
+    def apply(self, envelope: dict[str, Any]) -> dict[str, Any]:
+        self.applied.append(envelope)
+        mutation = envelope["mutation"]
+        for operation in mutation["operations"]:
+            method = operation["method"]
+            params = method["params"]
+            properties = msgpack.unpackb(params["properties_msgpack"], raw=False)
+            if method["method"] == "AddNode":
+                self.nodes.values[params["node_id"]] = properties
+            elif method["method"] == "AddEdge":
+                self.edges.append(
+                    (params["source_id"], params["target_id"], properties)
+                )
+        version = envelope["content_version"]
+        self.versions[version["object_id"]] = version
+        self.records[envelope["envelope_id"]] = envelope
+        return {
+            "batch_id": mutation["batch_id"],
+            "replayed": False,
+            "projection_pending": False,
+        }
+
+
+class _FakeRdf:
+    def validate_shacl(self, _shapes: str, _data_graph: str) -> dict[str, Any]:
+        return {"conforms": True, "results": []}
 
 
 class _FakeClient:
-    def __init__(self):
-        self.txn = _FakeTxn()
+    def __init__(self) -> None:
+        self.nodes = _FakeNodes()
+        self.changes = _FakeChanges(self.nodes)
+        self.rdf = _FakeRdf()
+
+    @staticmethod
+    def supports(operation: str) -> bool:
+        return operation == "ApplyChangeEnvelope"
 
 
 def test_ingest_entities_writes_nodes_and_edges():
@@ -54,15 +122,14 @@ def test_ingest_entities_writes_nodes_and_edges():
         ],
         [{"source": "a", "target": "b", "relationship": "onSystem"}],
         client=c,
-        graph="__commons__",
     )
     assert res == {"nodes": 2, "edges": 1}
-    assert c.txn.committed is True
-    assert set(c.txn.nodes) == {"a", "b"}
+    assert len(c.changes.applied) == 1
+    assert set(c.nodes.values) == {"a", "b"}
     # provenance is stamped
-    assert c.txn.nodes["a"]["source"] == "rom-manager"
-    assert c.txn.nodes["a"]["domain"] == "rom"
-    assert c.txn.edges == [("a", "b", {"relationship": "onSystem"})]
+    assert c.nodes.values["a"]["source"] == "rom-manager"
+    assert c.nodes.values["a"]["domain"] == "rom"
+    assert c.changes.edges == [("a", "b", {"relationship": "onSystem"})]
 
 
 def test_ingest_roms_maps_game_and_system():
@@ -82,18 +149,17 @@ def test_ingest_roms_maps_game_and_system():
             }
         ],
         client=c,
-        graph="__commons__",
     )
     assert res == {"nodes": 2, "edges": 1}
-    game = c.txn.nodes["rom:game:7"]
+    game = c.nodes.values["rom:game:7"]
     assert game["node_type"] == "Game"
     assert game["name"] == "Chrono Trigger"
     assert game["fsName"] == "Chrono Trigger.sfc"
     assert game["regions"] == "USA, Japan"
     assert game["externalToolId"] == "7"
-    assert c.txn.nodes["rom:system:3"]["node_type"] == "GameSystem"
-    assert c.txn.nodes["rom:system:3"]["slug"] == "snes"
-    assert c.txn.edges == [("rom:game:7", "rom:system:3", {"relationship": "onSystem"})]
+    assert c.nodes.values["rom:system:3"]["node_type"] == "GameSystem"
+    assert c.nodes.values["rom:system:3"]["slug"] == "snes"
+    assert c.changes.edges == [("rom:game:7", "rom:system:3", {"relationship": "onSystem"})]
 
 
 def test_ingest_roms_dedups_shared_system():
@@ -104,11 +170,10 @@ def test_ingest_roms_dedups_shared_system():
             {"id": 2, "name": "B", "platform_id": 3, "platform_slug": "snes"},
         ],
         client=c,
-        graph="__commons__",
     )
     # 2 games + 1 shared system node, 2 onSystem edges
     assert res == {"nodes": 3, "edges": 2}
-    assert "rom:system:3" in c.txn.nodes
+    assert "rom:system:3" in c.nodes.values
 
 
 def test_ingest_platforms_maps_system():
@@ -124,10 +189,9 @@ def test_ingest_platforms_maps_system():
             }
         ],
         client=c,
-        graph="__commons__",
     )
     assert res == {"nodes": 1, "edges": 0}
-    sys = c.txn.nodes["rom:system:3"]
+    sys = c.nodes.values["rom:system:3"]
     assert sys["node_type"] == "GameSystem"
     assert sys["name"] == "Super Nintendo"
     assert sys["romCount"] == 42
@@ -146,12 +210,11 @@ def test_ingest_collections_maps_collection_and_membership():
             }
         ],
         client=c,
-        graph="__commons__",
     )
     assert res == {"nodes": 1, "edges": 2}
-    assert c.txn.nodes["rom:collection:9"]["node_type"] == "GameCollection"
-    assert ("rom:game:1", "rom:collection:9", {"relationship": "inCollection"}) in c.txn.edges
-    assert ("rom:game:2", "rom:collection:9", {"relationship": "inCollection"}) in c.txn.edges
+    assert c.nodes.values["rom:collection:9"]["node_type"] == "GameCollection"
+    assert ("rom:game:1", "rom:collection:9", {"relationship": "inCollection"}) in c.changes.edges
+    assert ("rom:game:2", "rom:collection:9", {"relationship": "inCollection"}) in c.changes.edges
 
 
 def test_retired_structural_alias_is_rejected():
