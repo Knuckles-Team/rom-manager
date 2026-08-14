@@ -7,17 +7,15 @@
         "rom-manager-mcp"
       ],
       "env": {
-        "MCP_TOOL_MODE": "condensed",
+        "MCP_TOOL_MODE": "intent",
         "AUDIENCE": "http://localhost:3000",
         "CONVERSIONTOOL": "True",
         "DELEGATED_SCOPES": "roms.read",
         "GAME_CODESTOOL": "True",
         "ROMMTOOL": "True",
         "ROMM_AUTH_MODE": "basic",
-        "ROMM_HOST": "",
         "ROMM_PASSWORD": "changeme",
         "ROMM_SCOPES": "roms.read roms.write platforms.read",
-        "ROMM_TOKEN": "",
         "ROMM_URL": "http://localhost:3000",
         "ROMM_USERNAME": "admin",
         "ROM_DIRECTORY": "./roms",
