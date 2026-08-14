@@ -14,7 +14,18 @@ import tarfile
 import tempfile
 import zipfile
 from pathlib import Path, PurePosixPath, PureWindowsPath
-from typing import BinaryIO
+from typing import Protocol
+
+
+class _BoundedSource(Protocol):
+    """Minimal read-only stream contract ``_copy_bounded`` needs.
+
+    ``zipfile``/``tarfile``/``gzip``/``bz2`` each hand back a different concrete
+    open-file type; only ``.read(n)`` is used here, so that is all we require.
+    """
+
+    def read(self, size: int = ..., /) -> bytes: ...
+
 
 # Archive names recognized by callers. Extraction itself intentionally supports
 # only formats whose complete member table can be validated before materializing
@@ -94,7 +105,7 @@ def _register_member(relative: Path, seen: set[str]) -> None:
     seen.add(folded)
 
 
-def _copy_bounded(source: BinaryIO, target: Path, maximum: int) -> int:
+def _copy_bounded(source: _BoundedSource, target: Path, maximum: int) -> int:
     written = 0
     target.parent.mkdir(parents=True, exist_ok=True)
     with target.open("xb") as output:
@@ -162,7 +173,9 @@ def _extract_tar(archive: Path, staging: Path) -> None:
             relative = _safe_member_path(member.name)
             _register_member(relative, seen)
             if not (member.isdir() or member.isreg()) or member.sparse is not None:
-                raise ArchiveSafetyError("Archive links and special files are not permitted")
+                raise ArchiveSafetyError(
+                    "Archive links and special files are not permitted"
+                )
             if member.isreg():
                 total += member.size
                 if total > max_bytes:
@@ -252,9 +265,7 @@ def cue_file_generator(directory, logger=None) -> str:
             "    INDEX 01 00:02:00\n"
         )
         track_counter += 1
-    cue_file_path = os.path.join(
-        directory, f"{os.path.splitext(first_file)[0]}.cue"
-    )
+    cue_file_path = os.path.join(directory, f"{os.path.splitext(first_file)[0]}.cue")
     if not os.path.exists(cue_file_path):
         with open(cue_file_path, "x", encoding="utf-8") as cue_file:
             cue_file.write(sheet)
