@@ -63,7 +63,9 @@ def get_romm_client(
             )
             logger.info("Using OIDC delegated token for RomM API")
     except Exception:  # delegation is best-effort; fall back to basic/token
-        logger.debug("RomM OIDC delegation unavailable", extra={"error": "Operation failed"})
+        logger.debug(
+            "RomM OIDC delegation unavailable", extra={"error": "Operation failed"}
+        )
 
     logger.info(
         "Creating RomM client",

@@ -24,6 +24,8 @@ logger = logging.getLogger("rom_manager.kg")
 
 _SOURCE = "rom-manager"
 _DOMAIN = "rom"
+
+
 def ingest_entities(
     entities: list[dict[str, Any]],
     relationships: list[dict[str, Any]] | None = None,
@@ -84,7 +86,11 @@ def _rom_record(rom: dict[str, Any]) -> tuple[dict[str, Any], list[dict[str, Any
             }
         )
         relationships.append(
-            {"source": game_id, "target": f"rom:system:{plat_id}", "relationship": "onSystem"}
+            {
+                "source": game_id,
+                "target": f"rom:system:{plat_id}",
+                "relationship": "onSystem",
+            }
         )
     return {"entities": entities, "relationships": relationships}, relationships
 

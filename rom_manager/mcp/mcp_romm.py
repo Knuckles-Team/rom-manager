@@ -268,7 +268,7 @@ def _make_romm_tool(
             await ctx.info(f"RomM {tool_name}: {action}")
         try:
             kwargs = json.loads(params_json) if params_json else {}
-        except Exception as e:
+        except Exception:
             return {"error": "Operation failed"}
         if not isinstance(kwargs, dict):
             return {"error": "params_json must be a JSON object"}
@@ -278,7 +278,9 @@ def _make_romm_tool(
             return {"error": f"Unknown action '{action}'. Valid actions: {action_list}"}
         return getattr(client, method)(**kwargs)
 
-    _romm_tool.__doc__ = f"{summary}\n\nActions: {action_list}. (CONCEPT:RO-OS.state.api-base-one-mixin)"
+    _romm_tool.__doc__ = (
+        f"{summary}\n\nActions: {action_list}. (CONCEPT:RO-OS.state.api-base-one-mixin)"
+    )
 
 
 def register_romm_tools(mcp: FastMCP) -> None:
