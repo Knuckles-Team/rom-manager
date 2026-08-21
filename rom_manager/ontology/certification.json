@@ -1,8 +1,7 @@
 {
   "api_version": "graphos.io/v1",
   "artifacts": {
-    "a2a.json": "4d62c0feb8d95b12e24907fb8b584ace114d5e1a426904aa8d8095b0a5fba2f3",
-    "connector_manifest.yml": "a94af26ff32db0573565180f13b9ada779895901d1cdc056f3e562a8ab7ef516",
+    "connector_manifest.yml": "3d29dfc0d28840fb4b127102cfd759704ca06a2890d7a5b3c5a93a75ceec5000",
     "rom_manager/connectors/mcp_source_presets.json": "67d9b7bd5d67ded36310d59c75f8e2b1659180e65dbd2b40528c198af2d0eacc",
     "rom_manager/connectors/tool_schema_fingerprints.json": "1896628dca1369429fb799eccf62c84a7a0737320cb77d38b6a1b319701dc3e9",
     "rom_manager/ontology/fixtures/records.json": "16e329cbb3875df819f48c6c3c28a9a08c721486ba82cbe16afe8cf269af411e",
@@ -19,19 +18,19 @@
     "synthetic_fixture_contract": "passed"
   },
   "compatibility": {
-    "agent_utilities": ">=2.1.0,<3",
+    "agent_utilities": ">=2.4.0,<3",
     "bundle_schema": "2",
-    "epistemic_graph": ">=2.23.0,<3"
+    "epistemic_graph": ">=2.26.0,<3"
   },
   "connector": "rom-manager",
   "kind": "ConnectorSourceAttestation",
   "live_certified": false,
   "mode": "offline-source",
   "schema_version": "2",
-  "signature": "ls6au1iw1Xdm4pN0c7EyVsV31gPm-M9Bu61CNEdUwnQZhOHw2xcplU-U0XcVl0J8Cw9paMdMRT-jO3vNo9MOBw",
-  "signature_algorithm": "ed25519",
-  "signer": "ontology-manifest-generator",
-  "signing_public_key": "QkigdPNpcUU7x7NcSkwCsUXIQpaFncMQbYSoiSgI2SY",
+  "signature": null,
+  "signature_algorithm": "none",
+  "signer": "UNSIGNED-PREVIEW",
+  "signing_public_key": "",
   "status": "source-validated",
-  "validated_at": "2026-07-31T04:00:00Z"
+  "validated_at": "2026-08-21T04:30:39Z"
 }
