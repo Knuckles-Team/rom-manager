@@ -1,7 +1,7 @@
 {
   "api_version": "graphos.io/v1",
   "artifacts": {
-    "connector_manifest.yml": "3d29dfc0d28840fb4b127102cfd759704ca06a2890d7a5b3c5a93a75ceec5000",
+    "connector_manifest.yml": "84a15e7f037bba749d4706085c2d47f28d8ae73971a756eb731e837cab3446ba",
     "rom_manager/connectors/mcp_source_presets.json": "67d9b7bd5d67ded36310d59c75f8e2b1659180e65dbd2b40528c198af2d0eacc",
     "rom_manager/connectors/tool_schema_fingerprints.json": "1896628dca1369429fb799eccf62c84a7a0737320cb77d38b6a1b319701dc3e9",
     "rom_manager/ontology/fixtures/records.json": "16e329cbb3875df819f48c6c3c28a9a08c721486ba82cbe16afe8cf269af411e",
@@ -18,9 +18,9 @@
     "synthetic_fixture_contract": "passed"
   },
   "compatibility": {
-    "agent_utilities": ">=2.4.0,<3",
+    "agent_utilities": ">=2.5.0,<3",
     "bundle_schema": "2",
-    "epistemic_graph": ">=2.26.0,<3"
+    "epistemic_graph": ">=2.27.0,<3"
   },
   "connector": "rom-manager",
   "kind": "ConnectorSourceAttestation",
@@ -32,5 +32,5 @@
   "signer": "UNSIGNED-PREVIEW",
   "signing_public_key": "",
   "status": "source-validated",
-  "validated_at": "2026-08-21T04:30:39Z"
+  "validated_at": "2026-08-26T13:42:55Z"
 }
