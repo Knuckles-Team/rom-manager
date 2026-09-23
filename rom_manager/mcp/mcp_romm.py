@@ -8,7 +8,7 @@ registers every tool from it.
 """
 
 import json
-from typing import Any
+from typing import Any, Literal
 
 from fastmcp import Context, FastMCP
 from fastmcp.dependencies import Depends
@@ -252,7 +252,6 @@ def _make_romm_tool(
     """Register one action-routed RomM tool (CONCEPT:RO-OS.state.api-base-one-mixin)."""
     action_list = ", ".join(f"'{a}'" for a in actions)
 
-    @mcp.tool(name=tool_name, tags={tag})
     async def _romm_tool(
         action: str = Field(description=f"Action to perform. One of: {action_list}."),
         params_json: str = Field(
@@ -281,6 +280,15 @@ def _make_romm_tool(
     _romm_tool.__doc__ = (
         f"{summary}\n\nActions: {action_list}. (CONCEPT:RO-OS.state.api-base-one-mixin)"
     )
+    # `_romm_tool` is a fresh closure per call (one real function object per
+    # registration), so its OWN `action` can carry this registration's real,
+    # closed set -- the dict keys `actions.get(action)` below can actually
+    # resolve -- rather than the single compiled-in `str` every registration
+    # would otherwise share. Bind it before `mcp.tool()` inspects the
+    # signature, since FastMCP builds the schema from the live annotations
+    # at registration time, not at function-definition time.
+    _romm_tool.__annotations__["action"] = Literal[tuple(actions)]
+    mcp.tool(name=tool_name, tags={tag})(_romm_tool)
 
 
 def register_romm_tools(mcp: FastMCP) -> None:

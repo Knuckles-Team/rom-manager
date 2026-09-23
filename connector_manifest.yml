@@ -158,7 +158,7 @@ sync:
   updated_field: updated_at
   pagination: offset
   doc_type: game
-  tool_schema_sha256: 26df7b435310c56342c7d23037a82780c1fe70f1fa7bb44003d016a1be35bfec
+  tool_schema_sha256: 36ed6864e2f7d6ccdad969c261f7b551f6881d55689895a860b9b42ad8049f16
   raw:
     server: rom-manager-mcp
     tool: romm_roms
@@ -183,7 +183,7 @@ sync:
   updated_field: updated_at
   pagination: null
   doc_type: game-system
-  tool_schema_sha256: 3cdb61be412d47c7d717b0593bf24360339b25f31b373c21731958ebbc66bdaa
+  tool_schema_sha256: 5fb8bfd6bef99ebf0d6df118631cf46a4fd06ec6e27980f382d6be8b68d98459
   raw:
     server: rom-manager-mcp
     tool: romm_platforms
