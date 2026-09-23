@@ -246,6 +246,42 @@ ROMM_TOOLS: list[tuple[str, str, str, dict[str, str]]] = [
 ]
 
 
+#: EH-217 tool annotations for the two tools synced by
+#: ``connectors/mcp_source_presets.json`` (the certified surface) --
+#: verified against each tool's own action map above, not defaulted. Every
+#: other RomM tool (collections, saves, etc.) is out of this pass's scope.
+_CERTIFIED_TOOL_ANNOTATIONS: dict[str, dict[str, Any]] = {
+    "romm_roms": {
+        "annotations": {
+            "readOnlyHint": False,
+            "destructiveHint": True,
+            "idempotentHint": False,
+            "openWorldHint": True,
+        },
+        "meta": {
+            "eg.annotations": {
+                "modalities_in": ["text"],
+                "modalities_out": ["text"],
+            }
+        },
+    },
+    "romm_platforms": {
+        "annotations": {
+            "readOnlyHint": False,
+            "destructiveHint": True,
+            "idempotentHint": False,
+            "openWorldHint": True,
+        },
+        "meta": {
+            "eg.annotations": {
+                "modalities_in": ["text"],
+                "modalities_out": ["text"],
+            }
+        },
+    },
+}
+
+
 def _make_romm_tool(
     mcp: FastMCP, tool_name: str, tag: str, summary: str, actions: dict[str, str]
 ) -> None:
@@ -288,7 +324,8 @@ def _make_romm_tool(
     # signature, since FastMCP builds the schema from the live annotations
     # at registration time, not at function-definition time.
     _romm_tool.__annotations__["action"] = Literal[tuple(actions)]
-    mcp.tool(name=tool_name, tags={tag})(_romm_tool)
+    extra_kwargs = _CERTIFIED_TOOL_ANNOTATIONS.get(tool_name, {})
+    mcp.tool(name=tool_name, tags={tag}, **extra_kwargs)(_romm_tool)
 
 
 def register_romm_tools(mcp: FastMCP) -> None:
