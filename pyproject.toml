@@ -19,17 +19,15 @@ text = "MIT"
 
 [project.optional-dependencies]
 mcp = [ "agent-utilities[mcp]>=2.0.0,<3.0.0",]
-agent = [ "agent-utilities[agent-runtime,logfire]>=2.0.0,<3.0.0",]
 native = [ "patool>=4.0.5",]
 convert = [ "patool>=4.0.5",]
-all = [ "rom-manager[mcp,agent,native]>=2.0.0",]
+all = [ "rom-manager[mcp,native]>=2.0.0",]
 test = [
     "pytest-xdist>=3.8.0", "pytest>=9.1.1", "pytest-asyncio>=1.4.0", "pytest-cov>=7.1.0",]
 
 [project.scripts]
 rom-manager = "rom_manager.rom_manager:rom_manager"
 rom-manager-mcp = "rom_manager.mcp_server:mcp_server"
-rom-manager-agent = "rom_manager.agent_server:agent_server"
 
 [project.entry-points."agent_utilities.skill_providers"]
 rom-manager = "rom_manager.skills"

@@ -16,7 +16,6 @@
     - `rom_manager/rom_manager.py`: The real ROM conversion pipeline (`RomManager`) + the **unified CLI** `rom_manager()` (legacy convert flags + `convert`/RomM subcommands).
     - `rom_manager/mcp_server.py`: MCP server entry point and tool registration.
     - `rom_manager/mcp/`: Action-routed MCP tool modules (`mcp_conversion.py`, `mcp_game_codes.py`, `mcp_romm.py`).
-    - `rom_manager/agent_server.py`: Pydantic-AI agent server.
     - `rom_manager/api_client.py`: Honest local facade (`Api`) over `RomManager`.
     - `rom_manager/auth.py`: Local/no-op config factory (`get_client`).
     - `rom_manager/romm/`: RomM remote-library integration (CONCEPT:RO-OS.state.api-base-one-mixin) — `api/` (base + one mixin per resource → `RommApi` facade), `auth.py` (`get_romm_client`), `cli.py` (RomM subcommands), `openapi.json` (vendored spec, parity guard).
@@ -63,17 +62,15 @@ pre-commit run --all-files
 # Execution Commands
 # rom-manager        -> CLI converter (rom_manager.rom_manager:rom_manager)
 # rom-manager-mcp    -> MCP server (rom_manager.mcp_server:mcp_server)
-# rom-manager-agent  -> A2A agent (rom_manager.agent_server:agent_server)
 
 ## Project Structure Quick Reference
 - CLI / Core Pipeline → `rom_manager/rom_manager.py`
 - MCP Entry Point → `rom_manager/mcp_server.py`
-- Agent Entry Point → `rom_manager/agent_server.py`
 - Source Code → `rom_manager/`
 
 ## Code Style & Conventions
 **Always:**
-- Use `agent-utilities` for common patterns (e.g., `create_mcp_server`, `create_agent_server`).
+- Use `agent-utilities` for common patterns (e.g., `create_mcp_server`).
 - Define input/output models using Pydantic (`rom_manager/models.py`).
 - Include descriptive docstrings for all tools (used as LLM tool descriptions), with the `CONCEPT:ROM-*` id.
 - Check for optional/native dependencies (e.g. `patool`) using `try/except ImportError` and emit an install hint.

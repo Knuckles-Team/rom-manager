@@ -12,7 +12,7 @@ services:
     cpus: ${MCP_CONTAINER_CPU_LIMIT:-1.0}
     tmpfs:
       - /tmp:rw,noexec,nosuid,nodev,size=64m
-    image: ${ROM_MANAGER_AGENT_IMAGE:?set ROM_MANAGER_AGENT_IMAGE to a repository or tag without a digest}@sha256:1e83509a9c7a0c241577067496560b6fe74c6033a3e851dbbc7a1981e476ec21
+    image: ${ROM_MANAGER_MCP_IMAGE:?set ROM_MANAGER_MCP_IMAGE to a repository or tag without a digest}@sha256:1e83509a9c7a0c241577067496560b6fe74c6033a3e851dbbc7a1981e476ec21
     container_name: rom-manager-mcp
     hostname: rom-manager-mcp
     restart: always
