@@ -18,11 +18,9 @@ Basic/token is the default path.
 
 import os
 
-from agent_utilities.base_utilities import get_logger
-from agent_utilities.core.transport_security import (
-    ResolvedTLSProfile,
-    resolve_configured_tls_profile,
-)
+from agent_connector_sdk.tls.profile import ResolvedTLSProfile
+from agent_connector_sdk.tls.resolve import resolve_tls_profile
+from agent_connector_sdk.utilities import get_logger
 
 from rom_manager.romm.api import RommApi
 
@@ -47,7 +45,7 @@ def get_romm_client(
     token = token if token is not None else os.getenv("ROMM_TOKEN")
     auth_mode = auth_mode or os.getenv("ROMM_AUTH_MODE", "basic")
     scopes = scopes if scopes is not None else os.getenv("ROMM_SCOPES")
-    profile = tls_profile or resolve_configured_tls_profile("romm")
+    profile = tls_profile or resolve_tls_profile("romm")
 
     # --- optional OIDC delegation (RFC 8693 token exchange) ---------------
     try:

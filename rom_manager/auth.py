@@ -14,8 +14,8 @@ as the default working directory when none is supplied.
 
 import os
 
-from agent_utilities.base_utilities import get_logger
-from agent_utilities.core.config import setting
+from agent_connector_sdk.config import setting
+from agent_connector_sdk.utilities import get_logger
 
 from rom_manager.api_client import Api
 

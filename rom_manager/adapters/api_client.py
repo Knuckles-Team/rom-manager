@@ -12,7 +12,7 @@ import logging
 import os
 from typing import Any
 
-from agent_utilities.base_utilities import get_logger
+from agent_connector_sdk.utilities import get_logger
 
 from rom_manager.game_codes import psx_codes
 from rom_manager.rom_manager import (
