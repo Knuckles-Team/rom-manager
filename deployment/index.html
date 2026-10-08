@@ -1001,7 +1001,7 @@ the image remains immutable and contains no environment connection profile.</p>
 </span></code></pre></div>
 <h2 id="docker">Docker<a class="headerlink" href="#docker" title="Permanent link">&para;</a></h2>
 <p>The prebuilt image <code>example/rom-manager</code> ships with <code>chdman</code> (mame-tools)
-and <code>7z</code> (p7zip-full) so conversions work out of the box. Mount your ROM
+and <code>7z</code> (p7zip-full) so conversions work by default. Mount the operator's ROM
 directory and set <code>ROM_DIRECTORY</code>.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-it<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span>-v<span class="w"> </span>/games:/games<span class="w"> </span>-e<span class="w"> </span><span class="nv">ROM_DIRECTORY</span><span class="o">=</span>/games<span class="w"> </span><span class="se">\</span>
@@ -1015,7 +1015,7 @@ directory and set <code>ROM_DIRECTORY</code>.</p>
 <div class="admonition note">
 <p class="admonition-title">RVZ output</p>
 <p><code>dolphin-tool</code> is not packaged in the MCP-serving image. Install it into the
-container (or a derived image) if you need RVZ output.</p>
+container (or a derived image) if the operator need RVZ output.</p>
 </div>
 
 
