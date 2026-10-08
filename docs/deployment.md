@@ -81,7 +81,7 @@ rom-manager-mcp --transport sse --host 0.0.0.0 --port 8000
 ## Docker
 
 The prebuilt image `example/rom-manager` ships with `chdman` (mame-tools)
-and `7z` (p7zip-full) so conversions work out of the box. Mount your ROM
+and `7z` (p7zip-full) so conversions work by default. Mount the operator's ROM
 directory and set `ROM_DIRECTORY`.
 
 ```bash
@@ -100,4 +100,4 @@ docker compose -f docker/agent.compose.yml up -d   # MCP + agent
 
 !!! note "RVZ output"
     `dolphin-tool` is not packaged in the MCP-serving image. Install it into the
-    container (or a derived image) if you need RVZ output.
+    container (or a derived image) if the operator need RVZ output.

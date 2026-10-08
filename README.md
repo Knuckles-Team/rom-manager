@@ -23,7 +23,7 @@
 > MCP interfaces, plus the integrated A2A agent server, are maintained in the
 > [official documentation](https://knuckles-team.github.io/rom-manager/).
 
-> ⚠️ **Back up your ROMs before working with this tool.** Conversion and the
+> ⚠️ **Back up the operator's ROMs before working with this tool.** Conversion and the
 > `--delete` / `clean_origin_files` options are destructive to source files.
 
 ---
@@ -74,7 +74,7 @@ client is configured via `ROMM_*` environment variables.
 - **Consolidated Action-Routed MCP Tools:** togglable domains (`conversion`,
   `game-codes`, `romm-*`) minimize token overhead and IDE tool bloat.
 - **Integrated Graph Agent:** built-in Pydantic-AI agent (AG-UI / ACP).
-- **Native Telemetry & Tracing:** OpenTelemetry exports out of the box.
+- **Native Telemetry & Tracing:** OpenTelemetry exports by default.
 - **Lazy native deps:** archive backends are optional extras, imported only when used.
 
 ---
@@ -164,7 +164,7 @@ Python, use `rom_manager.get_romm_client()` → `RommApi`.
 
 ## MCP
 
-This server utilizes dynamic Action-Routed tools to optimize token overhead and
+This server use dynamic Action-Routed tools to optimize token overhead and
 maximize IDE compatibility.
 
 ### Available MCP Tools
@@ -232,7 +232,7 @@ rom-manager-mcp --transport streamable-http --host 0.0.0.0 --port 8000
 
 > **Install the connector-focused `[mcp]` extra.** Examples use `rom-manager[mcp]` to add
 > FastMCP / FastAPI through `agent-utilities[mcp]`; the required Agent Utilities core
-> still carries `epistemic-graph[full]`. The `[agent]` extra additionally
+> still carries `epistemic-graph[full]`. The `[agent]` extra also
 > enables model orchestration.
 
 #### stdio client config
@@ -260,7 +260,7 @@ docker run --rm -it -v /games:/games -e ROM_DIRECTORY=/games \
 > `docker/Dockerfile --target mcp`, installing `rom-manager[mcp]`). The default
 > the immutable agent image is the **full agent image** (`--target agent`, `rom-manager[agent]`)
 > which also bundles the Pydantic AI agent and the epistemic-graph engine — use it
-> when you run `rom-manager-agent` (the agent), not just the MCP server. See
+> when the operator run `rom-manager-agent` (the agent), not just the MCP server. See
 > [Container images](#container-images-mcp-vs-agent).
 
 ---
@@ -406,8 +406,8 @@ Required only when using RomM (`roms`, `platforms`, … commands / `romm_*` tool
 
 ### Terminal Variables
 
-These are set automatically by the server to keep stdio transport clean; you do
-not normally set them yourself.
+These are set automatically by the server to keep stdio transport clean; the operator do
+not normally set them the operator.
 
 | Variable | Default | Description |
 |----------|---------|-------------|
@@ -440,14 +440,14 @@ without them):
 
 ## Installation
 
-Pick the extra that matches what you want to run:
+Pick the extra that matches what the operator want to run:
 
 | Extra | Installs | Use when |
 |-------|----------|----------|
-| `rom-manager` (core) | CLI converter + `Api` facade (no server tooling) | You only use the **CLI / Python API** |
-| `rom-manager[mcp]` | Connector-focused MCP server (`agent-utilities[mcp]` — FastMCP/FastAPI + `epistemic-graph[full]`) | You run the **MCP server** (smallest server install / image) |
-| `rom-manager[agent]` | Agent runtime (`agent-utilities[agent-runtime,logfire]` — model orchestration + `epistemic-graph[full]`) | You run the **integrated agent** |
-| `rom-manager[native]` | + `patool` (archive extraction backends) | You convert archived ROMs locally |
+| `rom-manager` (core) | CLI converter + `Api` facade (no server tooling) | The operator only use the **CLI / Python API** |
+| `rom-manager[mcp]` | Connector-focused MCP server (`agent-utilities[mcp]` — FastMCP/FastAPI + `epistemic-graph[full]`) | The operator run the **MCP server** (smallest server install / image) |
+| `rom-manager[agent]` | Agent runtime (`agent-utilities[agent-runtime,logfire]` — model orchestration + `epistemic-graph[full]`) | The operator run the **integrated agent** |
+| `rom-manager[native]` | + `patool` (archive extraction backends) | The operator convert archived ROMs locally |
 | `rom-manager[all]` | Everything (`mcp` + `agent` + `native` + `otel`) | Development / all surfaces |
 
 ```bash
@@ -479,7 +479,7 @@ agent (`immutable agent digest`) with a co-located `:mcp` sidecar.
 
 Both `[mcp]` and `[agent]` carry the **epistemic-graph** engine through the required
 Agent Utilities core dependency (`epistemic-graph[full]`). The `[mcp]` extra keeps
-the server connector-focused; `[agent]` additionally enables model orchestration. Local
+the server connector-focused; `[agent]` also enables model orchestration. Local
 deployments can use the bundled engine. For production or shared state, run
 **epistemic-graph as a dedicated database service** and configure the runtime to use it.
 Deployment recipes (single-node + Raft HA), connection configuration, and architecture

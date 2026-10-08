@@ -34,7 +34,7 @@ binaries.
 
 <div class="grid cards" markdown>
 
-- :material-rocket-launch: **[Installation](installation.md)** — pip, source, extras, external binaries, and Docker.
+- :material-rocket-start: **[Installation](installation.md)** — pip, source, extras, external binaries, and Docker.
 - :material-server-network: **[Deployment](deployment.md)** — run the MCP and agent servers, Docker Compose.
 - :material-console: **[Usage](usage.md)** — the MCP tools, the `Api` facade, and the CLI.
 - :material-sitemap: **[Overview](overview.md)** — the action-routed tool surface and architecture.

@@ -20,7 +20,7 @@ pip install -e ".[all]"
 ## External binaries (required for conversion)
 
 `rom-manager` shells out to native tools for the actual conversion. Install the
-ones you need:
+ones the operator need:
 
 - **`chdman`** (CHD output) — Ubuntu: `apt install mame-tools`; Windows: install
   MAME tools from <https://github.com/mamedev/mame/releases> and add to `PATH`.
