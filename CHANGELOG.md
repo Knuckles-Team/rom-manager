@@ -44,7 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Concept traceability: `concept` pytest marker plus `@pytest.mark.concept(...)`
   decorators and `CONCEPT:ROM-*` docstring markers across code, tests, and
   `docs/concepts.md`.
-- Comprehensive README Environment Variables table, architecture overview with a
+- Complete README Environment Variables table, architecture overview with a
   Mermaid diagram, Table of Contents, and `agent_server.py` deployment config.
 - Unit tests for the new archive, conversion, and naming layers (mocking the
   external-binary runner seam so no native tools are required).
