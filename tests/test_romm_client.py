@@ -59,7 +59,7 @@ def test_basic_auth_header_no_network():
 
 @pytest.mark.concept("RO-OS.state.api-base-one-mixin")
 def test_missing_url_raises():
-    from agent_utilities.core.exceptions import MissingParameterError
+    from agent_connector_sdk.exceptions import MissingParameterError
 
     with pytest.raises(MissingParameterError):
         RommApiBase(url=None)
@@ -119,7 +119,7 @@ def test_oauth_mint_and_refresh_on_401(monkeypatch):
 
 @pytest.mark.concept("RO-OS.state.api-base-one-mixin")
 def test_unauthorized_maps_to_exception():
-    from agent_utilities.core.exceptions import UnauthorizedError
+    from agent_connector_sdk.exceptions import UnauthorizedError
 
     client = RommApi(url="http://romm.test", username="u", password="p")
     setattr(client, "_session", FakeSession([FakeResponse(status_code=403, content=b"")]))

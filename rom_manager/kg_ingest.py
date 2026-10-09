@@ -6,8 +6,8 @@ the epistemic-graph knowledge graph as **typed OWL nodes** (``:Game``, ``:GameSy
 ``:GameCollection``, ``:GameSave``, ``:GameState``, ``:Firmware``) + links, matching the
 classes federated by ``rom_manager.ontology`` (``rom.ttl``).
 
-The write path is the required shared connector transaction primitive
-``agent_utilities.knowledge_graph.memory.native_ingest``. Engine failures are explicit and
+The write path goes through ``agent_connector_sdk.ingest`` -- the generated
+``SourceIngest`` client, not a local ingestion helper. Engine failures are explicit and
 partial writes are never acknowledged. Node ids follow ``rom:<class>:<externalId>``.
 """
 
@@ -16,36 +16,73 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from agent_utilities.knowledge_graph.memory.native_ingest import (
-    ingest_entities as _native_ingest_entities,
+from agent_connector_sdk.ingest import (
+    ChangeSet,
+    Entity,
+    EntityRef,
+    IngestBinding,
+    IngestError,
+    KnowledgeIngest,
+    Relationship,
+    current_ingest,
 )
 
 logger = logging.getLogger("rom_manager.kg")
 
-_SOURCE = "rom-manager"
-_DOMAIN = "rom"
+_BINDING = IngestBinding(connector="rom-manager", stream="rom")
+
+_ENTITY_RESERVED_KEYS = frozenset({"id", "node_type"})
+_RELATIONSHIP_RESERVED_KEYS = frozenset({"source", "target", "relationship"})
 
 
-def ingest_entities(
+def _to_entity(record: dict[str, Any]) -> Entity:
+    return Entity(
+        id=record.get("id"),
+        node_type=record.get("node_type"),
+        properties={
+            key: value
+            for key, value in record.items()
+            if key not in _ENTITY_RESERVED_KEYS
+        },
+    )
+
+
+def _to_relationship(record: dict[str, Any]) -> Relationship:
+    properties = {
+        key: value
+        for key, value in record.items()
+        if key not in _RELATIONSHIP_RESERVED_KEYS
+    }
+    return Relationship(
+        source=record["source"],
+        target=record["target"],
+        relationship=record["relationship"],
+        properties=properties or None,
+    )
+
+
+async def ingest_entities(
     entities: list[dict[str, Any]],
     relationships: list[dict[str, Any]] | None = None,
     *,
-    client: Any | None = None,
-    graph: str | None = None,
+    ingest: KnowledgeIngest | None = None,
 ) -> dict[str, int]:
-    """Write typed nodes (+ edges) into epistemic-graph.
+    """Write typed nodes (+ edges) into epistemic-graph via the SDK ingest facade.
 
-    Nodes use ``node_type`` and relationships use ``relationship``. ``client``/``graph``
-    may be injected for isolated validation.
+    Nodes use ``node_type`` and relationships use ``relationship``. ``ingest`` may be
+    injected for isolated validation.
     """
-    return _native_ingest_entities(
-        entities,
-        relationships,
-        source=_SOURCE,
-        domain=_DOMAIN,
-        client=client,
-        graph=graph,
+    if not entities:
+        raise IngestError("ingest_entities needs at least one entity")
+    change_set = ChangeSet(
+        entities=tuple(_to_entity(entity) for entity in entities),
+        relationships=tuple(
+            _to_relationship(relationship) for relationship in relationships or ()
+        ),
     )
+    service = ingest or current_ingest()
+    receipt = await service.submit(_BINDING, change_set)
+    return {"nodes": receipt.affected_count, "edges": receipt.relationship_count}
 
 
 def _rom_record(rom: dict[str, Any]) -> tuple[dict[str, Any], list[dict[str, Any]]]:
@@ -95,12 +132,11 @@ def _rom_record(rom: dict[str, Any]) -> tuple[dict[str, Any], list[dict[str, Any
     return {"entities": entities, "relationships": relationships}, relationships
 
 
-def ingest_roms(
+async def ingest_roms(
     roms: list[dict[str, Any]],
     *,
-    client: Any | None = None,
-    graph: str | None = None,
-) -> dict[str, int] | None:
+    ingest: KnowledgeIngest | None = None,
+) -> dict[str, int]:
     """Map RomM ROM records → ``:Game`` (+ ``:GameSystem``) nodes and ingest."""
     entities: list[dict[str, Any]] = []
     relationships: list[dict[str, Any]] = []
@@ -115,15 +151,14 @@ def ingest_roms(
             seen.add(ent["id"])
             entities.append(ent)
         relationships.extend(mapped["relationships"])
-    return ingest_entities(entities, relationships, client=client, graph=graph)
+    return await ingest_entities(entities, relationships, ingest=ingest)
 
 
-def ingest_platforms(
+async def ingest_platforms(
     platforms: list[dict[str, Any]],
     *,
-    client: Any | None = None,
-    graph: str | None = None,
-) -> dict[str, int] | None:
+    ingest: KnowledgeIngest | None = None,
+) -> dict[str, int]:
     """Map RomM platform records → ``:GameSystem`` nodes and ingest."""
     entities: list[dict[str, Any]] = []
     for plat in platforms or []:
@@ -145,15 +180,14 @@ def ingest_platforms(
                 "externalToolId": str(pid),
             }
         )
-    return ingest_entities(entities, None, client=client, graph=graph)
+    return await ingest_entities(entities, None, ingest=ingest)
 
 
-def ingest_collections(
+async def ingest_collections(
     collections: list[dict[str, Any]],
     *,
-    client: Any | None = None,
-    graph: str | None = None,
-) -> dict[str, int] | None:
+    ingest: KnowledgeIngest | None = None,
+) -> dict[str, int]:
     """Map RomM collection records → ``:GameCollection`` nodes (+ ``:inCollection`` edges)."""
     entities: list[dict[str, Any]] = []
     relationships: list[dict[str, Any]] = []
@@ -178,9 +212,12 @@ def ingest_collections(
                 continue
             relationships.append(
                 {
-                    "source": f"rom:game:{rid}",
+                    # The referenced :Game isn't in this change set (it was ingested
+                    # separately by ingest_roms), so the source needs an explicit
+                    # EntityRef carrying its node_type for the SDK's request builder.
+                    "source": EntityRef(id=f"rom:game:{rid}", node_type="Game"),
                     "target": coll_id,
                     "relationship": "inCollection",
                 }
             )
-    return ingest_entities(entities, relationships, client=client, graph=graph)
+    return await ingest_entities(entities, relationships, ingest=ingest)

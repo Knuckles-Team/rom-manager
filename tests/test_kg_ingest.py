@@ -1,21 +1,21 @@
-"""Native epistemic-graph typed-node ingestion — Wire-First coverage.
+"""Native epistemic-graph typed-node ingestion -- Wire-First coverage.
 
 Exercises the real ``ingest_entities`` / ``ingest_roms`` / ``ingest_platforms`` /
-``ingest_collections`` seam with a fake engine client (no engine required), asserting the
-single-transaction node/edge staging and commit and the RomM record -> :Game/:GameSystem mapping.
+``ingest_collections`` seam against a fake ``agent_connector_sdk.ingest`` transport (no
+engine required). The real SDK request builder (``agent_connector_sdk.ingest.request
+.build_request``) still runs, so a malformed change set is still caught by the SDK's own
+contract, not re-derived here; only the final network commit is faked.
 CONCEPT:AU-KG.ingest.enterprise-source-extractor.
 """
 
 from __future__ import annotations
 
+from types import SimpleNamespace
 from typing import Any
 
-import msgpack
 import pytest
-from agent_utilities.knowledge_graph.memory.native_ingest import NativeIngestError
-from agent_utilities.security.brain_context import ActorContext, use_actor
-from agent_utilities.security.actor_identity import ActorType
-from agent_utilities.knowledge_graph.core.session import GraphSession, use_session
+from agent_connector_sdk.ingest import IngestError, KnowledgeIngest
+from epistemic_graph.generated.source_ingestion import SourceIngestionRequest
 
 from rom_manager.kg_ingest import (
     ingest_collections,
@@ -25,116 +25,58 @@ from rom_manager.kg_ingest import (
 )
 
 
-@pytest.fixture(autouse=True)
-def _governed_session():
-    actor = ActorContext(
-        actor_id="subject:opaque:synthetic",
-        actor_type=ActorType.AUTOMATED_SERVICE,
-        roles=(),
-        tenant_id="tenant:opaque:synthetic",
-        authenticated=True,
-    )
-    session = GraphSession(
-        actor=actor,
-        tenant=actor.tenant_id,
-        scopes=frozenset({"kg:write"}),
-        graph="graph:opaque:synthetic",
-        policy_version="policy:opaque:synthetic",
-        audience="epistemic-graph",
-    )
-    with use_actor(actor), use_session(session):
-        yield
+class _FakeTransport:
+    """Records every submitted request; no epistemic-graph engine required."""
 
-
-class _FakeNodes:
     def __init__(self) -> None:
-        self.values: dict[str, dict[str, Any]] = {}
+        self.requests: list[SourceIngestionRequest] = []
 
-    def properties(self, node_id: str) -> dict[str, Any] | None:
-        return self.values.get(node_id)
+    async def source_status(self, _connector: str, _stream: str) -> Any:
+        return SimpleNamespace(accepted_checkpoint=None)
 
-    def list(self) -> list[tuple[str, dict[str, Any]]]:
-        return list(self.values.items())
+    async def submit(self, request: SourceIngestionRequest) -> Any:
+        self.requests.append(request)
+        return SimpleNamespace(
+            affected_count=len(request.records),
+            relationship_count=len(request.relationships),
+        )
 
-
-class _FakeChanges:
-    def __init__(self, nodes: _FakeNodes) -> None:
-        self.nodes = nodes
-        self.edges: list[tuple[str, str, dict[str, Any]]] = []
-        self.applied: list[dict[str, Any]] = []
-        self.records: dict[str, dict[str, Any]] = {}
-        self.versions: dict[str, dict[str, Any]] = {}
-
-    def get(self, envelope_id: str) -> dict[str, Any] | None:
-        return self.records.get(envelope_id)
-
-    def content_version(self, object_id: str) -> dict[str, Any] | None:
-        return self.versions.get(object_id)
-
-    def cursor(self, _source: str, _partition: str = "") -> None:
-        return None
-
-    def apply(self, envelope: dict[str, Any]) -> dict[str, Any]:
-        self.applied.append(envelope)
-        mutation = envelope["mutation"]
-        for operation in mutation["operations"]:
-            method = operation["method"]
-            params = method["params"]
-            properties = msgpack.unpackb(params["properties_msgpack"], raw=False)
-            if method["method"] == "AddNode":
-                self.nodes.values[params["node_id"]] = properties
-            elif method["method"] == "AddEdge":
-                self.edges.append(
-                    (params["source_id"], params["target_id"], properties)
-                )
-        version = envelope["content_version"]
-        self.versions[version["object_id"]] = version
-        self.records[envelope["envelope_id"]] = envelope
-        return {
-            "batch_id": mutation["batch_id"],
-            "replayed": False,
-            "projection_pending": False,
-        }
+    async def store_blob(self, _data: bytes) -> str:
+        raise AssertionError("rom-manager typed-node ingestion carries no media")
 
 
-class _FakeRdf:
-    def validate_shacl(self, _shapes: str, _data_graph: str) -> dict[str, Any]:
-        return {"conforms": True, "results": []}
+@pytest.fixture
+def ingest() -> tuple[KnowledgeIngest, _FakeTransport]:
+    transport = _FakeTransport()
+    return KnowledgeIngest(transport, loop=None), transport
 
 
-class _FakeClient:
-    def __init__(self) -> None:
-        self.nodes = _FakeNodes()
-        self.changes = _FakeChanges(self.nodes)
-        self.rdf = _FakeRdf()
-
-    @staticmethod
-    def supports(operation: str) -> bool:
-        return operation == "ApplyChangeEnvelope"
-
-
-def test_ingest_entities_writes_nodes_and_edges():
-    c = _FakeClient()
-    res = ingest_entities(
+@pytest.mark.asyncio
+async def test_ingest_entities_writes_nodes_and_edges(ingest):
+    service, transport = ingest
+    res = await ingest_entities(
         [
-            {"id": "a", "node_type": "Game", "name": "g"},
+            {"id": "a", "node_type": "Game", "name": "A"},
             {"id": "b", "node_type": "GameSystem"},
         ],
         [{"source": "a", "target": "b", "relationship": "onSystem"}],
-        client=c,
+        ingest=service,
     )
     assert res == {"nodes": 2, "edges": 1}
-    assert len(c.changes.applied) == 1
-    assert set(c.nodes.values) == {"a", "b"}
-    # provenance is stamped
-    assert c.nodes.values["a"]["source"] == "rom-manager"
-    assert c.nodes.values["a"]["domain"] == "rom"
-    assert c.changes.edges == [("a", "b", {"relationship": "onSystem"})]
+    request = transport.requests[0]
+    record_ids = {record.record_id for record in request.records}
+    assert record_ids == {"a", "b"}
+    a_record = next(r for r in request.records if r.record_id == "a")
+    assert a_record.payload["name"] == "A"
+    assert request.relationships[0].relation_reference.endswith(
+        "resources/Game/relations/onSystem"
+    )
 
 
-def test_ingest_roms_maps_game_and_system():
-    c = _FakeClient()
-    res = ingest_roms(
+@pytest.mark.asyncio
+async def test_ingest_roms_maps_game_and_system(ingest):
+    service, transport = ingest
+    res = await ingest_roms(
         [
             {
                 "id": 7,
@@ -148,37 +90,43 @@ def test_ingest_roms_maps_game_and_system():
                 "platform_slug": "snes",
             }
         ],
-        client=c,
+        ingest=service,
     )
     assert res == {"nodes": 2, "edges": 1}
-    game = c.nodes.values["rom:game:7"]
-    assert game["node_type"] == "Game"
-    assert game["name"] == "Chrono Trigger"
-    assert game["fsName"] == "Chrono Trigger.sfc"
-    assert game["regions"] == "USA, Japan"
-    assert game["externalToolId"] == "7"
-    assert c.nodes.values["rom:system:3"]["node_type"] == "GameSystem"
-    assert c.nodes.values["rom:system:3"]["slug"] == "snes"
-    assert c.changes.edges == [("rom:game:7", "rom:system:3", {"relationship": "onSystem"})]
+    request = transport.requests[0]
+    game = next(r for r in request.records if r.record_id == "rom:game:7")
+    assert game.payload["name"] == "Chrono Trigger"
+    assert game.payload["fsName"] == "Chrono Trigger.sfc"
+    assert game.payload["regions"] == "USA, Japan"
+    assert game.payload["externalToolId"] == "7"
+    system = next(r for r in request.records if r.record_id == "rom:system:3")
+    assert system.payload["slug"] == "snes"
+    assert request.relationships[0].relation_reference.endswith(
+        "resources/Game/relations/onSystem"
+    )
 
 
-def test_ingest_roms_dedups_shared_system():
-    c = _FakeClient()
-    res = ingest_roms(
+@pytest.mark.asyncio
+async def test_ingest_roms_dedups_shared_system(ingest):
+    service, transport = ingest
+    res = await ingest_roms(
         [
             {"id": 1, "name": "A", "platform_id": 3, "platform_slug": "snes"},
             {"id": 2, "name": "B", "platform_id": 3, "platform_slug": "snes"},
         ],
-        client=c,
+        ingest=service,
     )
     # 2 games + 1 shared system node, 2 onSystem edges
     assert res == {"nodes": 3, "edges": 2}
-    assert "rom:system:3" in c.nodes.values
+    request = transport.requests[0]
+    assert any(r.record_id == "rom:system:3" for r in request.records)
+    assert sum(1 for r in request.records if r.record_id == "rom:system:3") == 1
 
 
-def test_ingest_platforms_maps_system():
-    c = _FakeClient()
-    res = ingest_platforms(
+@pytest.mark.asyncio
+async def test_ingest_platforms_maps_system(ingest):
+    service, transport = ingest
+    res = await ingest_platforms(
         [
             {
                 "id": 3,
@@ -188,19 +136,20 @@ def test_ingest_platforms_maps_system():
                 "rom_count": 42,
             }
         ],
-        client=c,
+        ingest=service,
     )
     assert res == {"nodes": 1, "edges": 0}
-    sys = c.nodes.values["rom:system:3"]
-    assert sys["node_type"] == "GameSystem"
-    assert sys["name"] == "Super Nintendo"
-    assert sys["romCount"] == 42
-    assert sys["externalToolId"] == "3"
+    request = transport.requests[0]
+    system = next(r for r in request.records if r.record_id == "rom:system:3")
+    assert system.payload["name"] == "Super Nintendo"
+    assert system.payload["romCount"] == 42
+    assert system.payload["externalToolId"] == "3"
 
 
-def test_ingest_collections_maps_collection_and_membership():
-    c = _FakeClient()
-    res = ingest_collections(
+@pytest.mark.asyncio
+async def test_ingest_collections_maps_collection_and_membership(ingest):
+    service, transport = ingest
+    res = await ingest_collections(
         [
             {
                 "id": 9,
@@ -209,19 +158,27 @@ def test_ingest_collections_maps_collection_and_membership():
                 "roms": [{"id": 1}, {"id": 2}],
             }
         ],
-        client=c,
+        ingest=service,
     )
     assert res == {"nodes": 1, "edges": 2}
-    assert c.nodes.values["rom:collection:9"]["node_type"] == "GameCollection"
-    assert ("rom:game:1", "rom:collection:9", {"relationship": "inCollection"}) in c.changes.edges
-    assert ("rom:game:2", "rom:collection:9", {"relationship": "inCollection"}) in c.changes.edges
+    request = transport.requests[0]
+    assert next(r for r in request.records if r.record_id == "rom:collection:9")
+    relation_pairs = {
+        (rel.source.record_id, rel.target.record_id) for rel in request.relationships
+    }
+    assert ("rom:game:1", "rom:collection:9") in relation_pairs
+    assert ("rom:game:2", "rom:collection:9") in relation_pairs
 
 
-def test_retired_structural_alias_is_rejected():
-    with pytest.raises(NativeIngestError, match="canonical node_type"):
-        ingest_entities([{"id": "a", "type": "Game"}], client=_FakeClient())
+@pytest.mark.asyncio
+async def test_retired_structural_alias_is_rejected(ingest):
+    service, _transport = ingest
+    with pytest.raises(IngestError, match="node_type"):
+        await ingest_entities([{"id": "a", "type": "Game"}], ingest=service)
 
 
-def test_empty_native_ingest_is_rejected():
-    with pytest.raises(NativeIngestError, match="at least one entity"):
-        ingest_entities([], client=_FakeClient())
+@pytest.mark.asyncio
+async def test_empty_native_ingest_is_rejected(ingest):
+    service, _transport = ingest
+    with pytest.raises(IngestError, match="at least one entity"):
+        await ingest_entities([], ingest=service)

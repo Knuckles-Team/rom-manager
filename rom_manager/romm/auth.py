@@ -16,17 +16,15 @@ An optional OIDC-delegation branch lets the client slot into the fleet SSO later
 Basic/token is the default path.
 """
 
+import logging
 import os
 
-from agent_utilities.base_utilities import get_logger
-from agent_utilities.core.transport_security import (
-    ResolvedTLSProfile,
-    resolve_configured_tls_profile,
-)
+from agent_connector_sdk.tls.profile import ResolvedTLSProfile
+from agent_connector_sdk.tls.resolve import resolve_tls_profile
 
 from rom_manager.romm.api import RommApi
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def get_romm_client(
@@ -47,10 +45,18 @@ def get_romm_client(
     token = token if token is not None else os.getenv("ROMM_TOKEN")
     auth_mode = auth_mode or os.getenv("ROMM_AUTH_MODE", "basic")
     scopes = scopes if scopes is not None else os.getenv("ROMM_SCOPES")
-    profile = tls_profile or resolve_configured_tls_profile("romm")
+    profile = tls_profile or resolve_tls_profile("romm")
 
     # --- optional OIDC delegation (RFC 8693 token exchange) ---------------
     try:
+        # NOTE: intentionally still agent_utilities, like agent_server.py (see
+        # recipe Pitfall #1 and the RFC 8693 delegated-auth pitfall found by
+        # opensearch-mcp). agent_connector_sdk.auth.delegation exists, but
+        # agent_connector_sdk.mcp.server.create_mcp_server's own docstring
+        # states delegation middleware is deliberately left out of the ported
+        # server construction, and no fleet connector has yet proven that
+        # wiring end-to-end. This stays on the fleet-proven agent_utilities
+        # path pending that verification.
         from agent_utilities.mcp.delegated_auth import (
             get_delegated_token,
             is_delegation_enabled,
