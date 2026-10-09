@@ -2,13 +2,15 @@
 
 CONCEPT:AU-KG.ingest.list-durable-media. When a live epistemic-graph engine is reachable,
 a game's cover / box art (or a ROM file itself) is stored as a content-addressed **blob**
-with a ``:AssetOccurrence`` graph node (carrying its RomM metadata) in ONE cross-modal ACID
-commit, via the agent-utilities ``MediaStore``. This makes the raw bytes — not just a
-RomM URL or filesystem path — durable, deduped, and queryable inside the knowledge graph.
-The stored asset links back to its ``:Game`` via the ``:hasCover`` property in ``rom.ttl``.
+with a ``:MediaAsset`` graph node (carrying its RomM metadata) in ONE cross-modal ACID
+commit, via ``agent_connector_sdk.ingest``'s ``ChangeSet(media=(MediaAsset(...),))`` +
+``KnowledgeIngest.submit``. This makes the raw bytes — not just a RomM URL or filesystem
+path — durable, deduped, and queryable inside the knowledge graph. The stored asset id is
+``blob:<digest>``-derived (read back from the commit receipt's raw admissions), so it can
+be linked to its ``:Game`` via the ``:hasCover`` property in ``rom.ttl``.
 
-Entirely best-effort and dependency-guarded: if agent-utilities' KG stack or a live engine
-is not present, every entry point here **no-ops** (returns ``None``), so the connector keeps
+Entirely best-effort and dependency-/engine-guarded: if no KG stack or no reachable engine
+is present, every entry point here **no-ops** (returns ``None``), so the connector keeps
 working with zero KG infrastructure.
 """
 
@@ -17,69 +19,75 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from agent_connector_sdk.ingest import (
+    ChangeSet,
+    IngestBinding,
+    IngestError,
+    KnowledgeIngest,
+    MediaAsset,
+    current_ingest,
+)
+
 logger = logging.getLogger("rom_manager.kg.media")
 
-_SOURCE = "rom-manager"
+_BINDING = IngestBinding(connector="rom-manager", stream="rom")
 
 
-def _media_store() -> Any | None:
-    """Return a ``MediaStore`` over a live engine, or ``None`` when unavailable.
-
-    Prefers the shared ``native_ingest.media_store`` primitive; falls back to building a
-    ``MediaStore`` directly over the lightweight engine client when it is not installed.
-    """
-    try:
-        from agent_utilities.knowledge_graph.memory.native_ingest import (
-            media_store as _shared_media_store,
-        )
-
-        store = _shared_media_store()
-        if store is not None:
-            return store
-    except Exception as e:  # noqa: BLE001 — primitive absent -> direct build
-        logger.debug("Operation failed: error_type=%s", type(e).__name__)
-
-    try:
-        from agent_utilities.knowledge_graph.core.graph_compute import (
-            GraphComputeEngine,
-        )
-        from agent_utilities.knowledge_graph.memory.media_store import MediaStore
-    except Exception as e:  # noqa: BLE001 — agent-utilities KG stack absent
-        logger.debug("Operation failed: error_type=%s", type(e).__name__)
+async def _store(
+    data: bytes | None,
+    *,
+    media_type: str,
+    name: str,
+    extra: dict[str, Any],
+    mime_type: str,
+    ingest: KnowledgeIngest | None,
+) -> dict[str, Any] | None:
+    if not data:
         return None
+    asset = MediaAsset(data=data, mime_type=mime_type, name=name, properties=extra)
+    change_set = ChangeSet(media=(asset,))
     try:
-        engine = GraphComputeEngine()
-        if getattr(engine, "_client", None) is None:
-            logger.debug("KG media ingest: no live engine client")
-            return None
-        return MediaStore(engine)
-    except Exception as e:  # noqa: BLE001 — no reachable engine
-        logger.debug("Operation failed: error_type=%s", type(e).__name__)
+        service = ingest or current_ingest()
+        receipt = await service.submit(_BINDING, change_set)
+    except IngestError as exc:
+        logger.warning("KG media ingest failed (exception_type=%s)", type(exc).__name__)
         return None
 
+    admission = next(
+        (a for a in receipt.raw_admissions if a.record_id.startswith("blob:")), None
+    )
+    if admission is None:
+        return None
 
-def ingest_cover(
+    logger.info(
+        "KG media ingest: stored %s (%s bytes) as asset %s",
+        name,
+        len(data),
+        admission.record_id,
+    )
+    return {
+        "asset_id": admission.record_id,
+        "digest": admission.raw_digest,
+        "size_bytes": len(data),
+        "media_type": media_type,
+    }
+
+
+async def ingest_cover(
     data: bytes | None,
     *,
     rom: dict[str, Any] | None = None,
     mime_type: str = "image/png",
-    source: str = _SOURCE,
-    media_store: Any | None = None,
+    ingest: KnowledgeIngest | None = None,
 ) -> dict[str, Any] | None:
-    """Store a game's cover / box art as a blob + ``:AssetOccurrence`` in the knowledge graph.
+    """Store a game's cover / box art as a blob + ``:MediaAsset`` in the knowledge graph.
 
     ``rom`` is the RomM ROM record the art belongs to (used for the asset name +
     provenance ``extra`` so the asset can be linked to its ``rom:game:<id>`` node).
     Returns ``{asset_id, digest, size_bytes, media_type}`` on success, or ``None`` when
-    there is no engine, no bytes, or the store failed (never raises). ``media_store`` may
-    be injected (tests); otherwise one is built on demand.
+    there is no engine, no bytes, or the store failed (never raises). ``ingest`` may be
+    injected (tests); otherwise the process-installed facade is used.
     """
-    if not data:
-        return None
-    store = media_store if media_store is not None else _media_store()
-    if store is None:
-        return None
-
     rom = rom or {}
     name = rom.get("name") or rom.get("fs_name") or "cover"
     extra = {
@@ -90,54 +98,28 @@ def ingest_cover(
     if rom.get("id") is not None:
         extra["game_id"] = f"rom:game:{rom['id']}"
 
-    try:
-        stored = store.store_media(
-            data,
-            media_type="image",
-            mime_type=mime_type,
-            source=source,
-            name=f"{name} (cover)",
-            extra=extra,
-        )
-    except Exception as e:  # noqa: BLE001 — engine/store failure is non-fatal
-        logger.warning("Operation failed: error_type=%s", type(e).__name__)
-        return None
-    if stored is None:
-        return None
-
-    logger.info(
-        "KG media ingest: stored cover for %s (%s bytes) as asset %s",
-        name,
-        len(data),
-        getattr(stored, "asset_id", "?"),
+    return await _store(
+        data,
+        media_type="image",
+        name=f"{name} (cover)",
+        extra=extra,
+        mime_type=mime_type,
+        ingest=ingest,
     )
-    return {
-        "asset_id": stored.asset_id,
-        "digest": stored.digest,
-        "size_bytes": len(data),
-        "media_type": "image",
-    }
 
 
-def ingest_rom_file(
+async def ingest_rom_file(
     data: bytes | None,
     *,
     rom: dict[str, Any] | None = None,
     mime_type: str = "application/octet-stream",
-    source: str = _SOURCE,
-    media_store: Any | None = None,
+    ingest: KnowledgeIngest | None = None,
 ) -> dict[str, Any] | None:
-    """Store a ROM binary as a content-addressed blob + ``:AssetOccurrence`` in the graph.
+    """Store a ROM binary as a content-addressed blob + ``:MediaAsset`` in the graph.
 
     Same contract as :func:`ingest_cover`, but for the ROM file bytes themselves
     (``media_type="file"``). Returns the stored-asset summary or ``None``.
     """
-    if not data:
-        return None
-    store = media_store if media_store is not None else _media_store()
-    if store is None:
-        return None
-
     rom = rom or {}
     name = rom.get("fs_name") or rom.get("name") or "rom"
     extra = {
@@ -155,30 +137,11 @@ def ingest_rom_file(
     if rom.get("id") is not None:
         extra["game_id"] = f"rom:game:{rom['id']}"
 
-    try:
-        stored = store.store_media(
-            data,
-            media_type="file",
-            mime_type=mime_type,
-            source=source,
-            name=name,
-            extra=extra,
-        )
-    except Exception as e:  # noqa: BLE001 — engine/store failure is non-fatal
-        logger.warning("Operation failed: error_type=%s", type(e).__name__)
-        return None
-    if stored is None:
-        return None
-
-    logger.info(
-        "KG media ingest: stored ROM %s (%s bytes) as asset %s",
-        name,
-        len(data),
-        getattr(stored, "asset_id", "?"),
+    return await _store(
+        data,
+        media_type="file",
+        name=name,
+        extra=extra,
+        mime_type=mime_type,
+        ingest=ingest,
     )
-    return {
-        "asset_id": stored.asset_id,
-        "digest": stored.digest,
-        "size_bytes": len(data),
-        "media_type": "file",
-    }

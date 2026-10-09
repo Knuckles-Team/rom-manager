@@ -13,22 +13,20 @@ Authentication (RomM supports both):
 - **Bearer token** — a pre-minted ``access_token`` passed directly.
 """
 
+import logging
 from base64 import b64encode
 from typing import Any
 
 import requests
-from agent_utilities.base_utilities import get_logger
-from agent_utilities.core.exceptions import (
+from agent_connector_sdk.exceptions import (
     AuthError,
     MissingParameterError,
     UnauthorizedError,
 )
-from agent_utilities.core.transport_security import (
-    ResolvedTLSProfile,
-    resolve_configured_tls_profile,
-)
+from agent_connector_sdk.tls.profile import ResolvedTLSProfile
+from agent_connector_sdk.tls.resolve import resolve_tls_profile
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 # Full read+write scope set RomM advertises; requested when minting OAuth tokens so
 # the access token is not narrower than the user's role allows.
@@ -66,7 +64,7 @@ class RommApiBase:
         self.timeout = timeout
         self.token = token
         self.refresh_token: str | None = None
-        self.tls_profile = tls_profile or resolve_configured_tls_profile("romm")
+        self.tls_profile = tls_profile or resolve_tls_profile("romm")
         self._session = self.tls_profile.configure_requests_session(requests.Session())
 
         if token:

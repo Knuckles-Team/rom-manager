@@ -65,7 +65,7 @@ def register_ingest_tools(mcp: FastMCP) -> None:
         if ctx:
             await ctx.info("RomM ingest: listing ROMs")
         roms = _records(client.list_roms(**kwargs))
-        result = ingest_roms(roms)
+        result = await ingest_roms(roms)
         return {"listed": len(roms), "ingested": result}
 
     @mcp.tool(name="rom_ingest_platforms", tags={"ingest"})
@@ -93,7 +93,7 @@ def register_ingest_tools(mcp: FastMCP) -> None:
         if ctx:
             await ctx.info("RomM ingest: listing platforms")
         platforms = _records(client.list_platforms(**kwargs))
-        result = ingest_platforms(platforms)
+        result = await ingest_platforms(platforms)
         return {"listed": len(platforms), "ingested": result}
 
     @mcp.tool(name="rom_ingest_collections", tags={"ingest"})
@@ -121,7 +121,7 @@ def register_ingest_tools(mcp: FastMCP) -> None:
         if ctx:
             await ctx.info("RomM ingest: listing collections")
         collections = _records(client.list_collections(**kwargs))
-        result = ingest_collections(collections)
+        result = await ingest_collections(collections)
         return {"listed": len(collections), "ingested": result}
 
     return None
