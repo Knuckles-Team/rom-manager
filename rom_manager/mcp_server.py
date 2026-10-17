@@ -2,7 +2,7 @@
 """ROM Manager MCP server assembly.
 
 CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool, CONCEPT:RO-OS.governance.game-codes-naming-resolves — registers the conversion and game-codes tool
-domains. This server is the integration seam to agent-utilities:
+domains. This server is the integration seam to agent-connector-sdk:
 ``create_mcp_server`` wires the shared FastMCP middleware that implements the
 cross-project bridge capabilities — CONCEPT:AU-ECO.messaging.native-backend-abstraction (Unified Toolkit Ingestion),
 CONCEPT:AU-OS.config.secrets-authentication (Prompt Injection Defense), CONCEPT:AU-OS.governance.reactive-multi-axis-budget (Guardrail Engine) and
@@ -69,7 +69,7 @@ def get_mcp_instance() -> tuple[Any, Any, Any, Any]:
     """Initialize and return the ROM Manager MCP instance, args, and middlewares.
 
     CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool, CONCEPT:RO-OS.governance.game-codes-naming-resolves — registers both tool domains and attaches
-    the agent-utilities middleware stack (CONCEPT:AU-ECO.messaging.native-backend-abstraction).
+    the agent-connector-sdk middleware stack (CONCEPT:AU-ECO.messaging.native-backend-abstraction).
     """
     load_config()
     os.environ["FASTMCP_LOG_LEVEL"] = "ERROR"

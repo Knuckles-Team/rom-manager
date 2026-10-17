@@ -231,7 +231,7 @@ rom-manager-mcp --transport streamable-http --host 0.0.0.0 --port 8000
 ```
 
 > **Install the connector-focused `[mcp]` extra.** Examples use `rom-manager[mcp]` to add
-> FastMCP / FastAPI through `agent-utilities[mcp]`; the required Agent Utilities core
+> FastMCP / FastAPI through `agent-connector-sdk`; the required Agent Connector SDK core
 > still carries `epistemic-graph[full]`. The `[agent]` extra also
 > enables model orchestration.
 
@@ -333,7 +333,7 @@ rom-manager-agent --web
 | `GAME_CODESTOOL` | `True` |  |
 | `ROMMTOOL` | `True` | Master switch for the RomM remote-library tools. |
 
-#### Inherited agent-utilities variables (apply to every connector)
+#### Inherited agent-connector-sdk variables (apply to every connector)
 
 | Variable | Example | Description |
 |----------|---------|-------------|
@@ -354,7 +354,7 @@ rom-manager-agent --web
 | `MODEL_ID` | `gpt-4o` | Model id for the agent |
 | `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
 
-_32 package + 16 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
+_32 package + 16 inherited variable(s). Auto-generated from `.env.example` + the shared agent-connector-sdk set — do not edit._
 <!-- ENV-VARS-TABLE:END -->
 
 
@@ -391,7 +391,7 @@ Required only when using RomM (`roms`, `platforms`, … commands / `romm_*` tool
 | `ROMM_TLS_PROFILE` | — | Named TLS profile for private PKI, mTLS, or proxy policy. |
 | `ROMM_TLS_PROFILE_REF` | — | Secret reference containing the TLS profile. |
 
-### MCP / Framework Variables (agent-utilities)
+### MCP / Framework Variables (agent-connector-sdk)
 
 | Variable | Default | Description |
 |----------|---------|-------------|
@@ -419,7 +419,7 @@ not normally set them the operator.
 ## Security & Governance
 
 - **No credentials:** ROM Manager is a local tool with no service URL/token.
-- **Eunomia policies & OpenTelemetry:** inherited from the `agent-utilities`
+- **Eunomia policies & OpenTelemetry:** inherited from the `agent-connector-sdk`
   middleware (see `.env.example`).
 - **Destructive-op safety:** the agent recommends backing up ROMs before
   `clean_origin_files`/delete operations.
@@ -445,8 +445,8 @@ Pick the extra that matches what the operator want to run:
 | Extra | Installs | Use when |
 |-------|----------|----------|
 | `rom-manager` (core) | CLI converter + `Api` facade (no server tooling) | The operator only use the **CLI / Python API** |
-| `rom-manager[mcp]` | Connector-focused MCP server (`agent-utilities[mcp]` — FastMCP/FastAPI + `epistemic-graph[full]`) | The operator run the **MCP server** (smallest server install / image) |
-| `rom-manager[agent]` | Agent runtime (`agent-utilities[agent-runtime,logfire]` — model orchestration + `epistemic-graph[full]`) | The operator run the **integrated agent** |
+| `rom-manager[mcp]` | Connector-focused MCP server (`agent-connector-sdk` — FastMCP/FastAPI + `epistemic-graph[full]`) | The operator run the **MCP server** (smallest server install / image) |
+| `rom-manager[agent]` | Agent runtime (`agent-connector-sdk` — model orchestration + `epistemic-graph[full]`) | The operator run the **integrated agent** |
 | `rom-manager[native]` | + `patool` (archive extraction backends) | The operator convert archived ROMs locally |
 | `rom-manager[all]` | Everything (`mcp` + `agent` + `native` + `otel`) | Development / all surfaces |
 
@@ -478,7 +478,7 @@ agent (`immutable agent digest`) with a co-located `:mcp` sidecar.
 ### Knowledge-graph database (`epistemic-graph`)
 
 Both `[mcp]` and `[agent]` carry the **epistemic-graph** engine through the required
-Agent Utilities core dependency (`epistemic-graph[full]`). The `[mcp]` extra keeps
+Agent Connector SDK core dependency (`epistemic-graph[full]`). The `[mcp]` extra keeps
 the server connector-focused; `[agent]` also enables model orchestration. Local
 deployments can use the bundled engine. For production or shared state, run
 **epistemic-graph as a dedicated database service** and configure the runtime to use it.
@@ -547,15 +547,15 @@ Preserve the real conversion pipeline — wrap `RomManager`, do not break it.
 MIT © Knuckles-Team
 
 
-<!-- BEGIN agent-utilities-deployment (generated; do not edit between markers) -->
+<!-- BEGIN agent-connector-sdk-deployment (generated; do not edit between markers) -->
 
-## Deploy with `agent-utilities-deployment`
+## Deploy with `agent-connector-sdk-deployment`
 
-Provision this package with the consolidated **`agent-utilities-deployment`**
+Provision this package with the consolidated **`agent-connector-sdk-deployment`**
 workflow. It selects an installed-package, editable-source, or immutable-container
 path; records only runtime secret and TLS-profile references in `AgentConfig`; and
 runs doctor, registration, policy, observability, and rollback gates. Ask your agent
-to **"deploy `rom-manager` with agent-utilities-deployment"**.
+to **"deploy `rom-manager` with agent-connector-sdk-deployment"**.
 
 | Install mode | Command |
 |------|---------|
@@ -567,7 +567,7 @@ The repository embeds no deployment profile, credential value, certificate path,
 environment-specific endpoint. Supply those at runtime through `AgentConfig` and the
 configured secret provider.
 
-<!-- END agent-utilities-deployment -->
+<!-- END agent-connector-sdk-deployment -->
 
 <!-- GOVERNED-CAPABILITY:START -->
 ## Governed capability contract

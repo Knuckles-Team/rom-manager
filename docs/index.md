@@ -1,6 +1,6 @@
 # rom-manager
 
-**ROM Converter/Organizer + MCP Server + A2A Agent** for the agent-utilities
+**ROM Converter/Organizer + MCP Server + A2A Agent** for the agent-connector-sdk
 ecosystem — convert game ROMs to CHD/RVZ, extract archives, auto-rename via known
 game codes, and generate cue sheets.
 

@@ -49,18 +49,16 @@ def get_romm_client(
 
     # --- optional OIDC delegation (RFC 8693 token exchange) ---------------
     try:
-        # NOTE: intentionally still agent_utilities, like agent_server.py (see
+        # NOTE: intentionally still agent_connector_sdk, like agent_server.py (see
         # recipe Pitfall #1 and the RFC 8693 delegated-auth pitfall found by
         # opensearch-mcp). agent_connector_sdk.auth.delegation exists, but
         # agent_connector_sdk.mcp.server.create_mcp_server's own docstring
         # states delegation middleware is deliberately left out of the ported
         # server construction, and no fleet connector has yet proven that
-        # wiring end-to-end. This stays on the fleet-proven agent_utilities
+        # wiring end-to-end. This stays on the fleet-proven agent_connector_sdk
         # path pending that verification.
-        from agent_utilities.mcp.delegated_auth import (
-            get_delegated_token,
-            is_delegation_enabled,
-        )
+        from agent_connector_sdk.auth.delegation import get_delegated_token
+        from agent_connector_sdk.auth.delegation import is_delegation_enabled
 
         if not token and is_delegation_enabled():
             token = get_delegated_token(
