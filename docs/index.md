@@ -1,6 +1,5 @@
 # rom-manager
 
-**ROM Converter/Organizer + MCP Server + A2A Agent** for the agent-connector-sdk
 ecosystem — convert game ROMs to CHD/RVZ, extract archives, auto-rename via known
 game codes, and generate cue sheets.
 
@@ -16,15 +15,12 @@ game codes, and generate cue sheets.
 ## Overview
 
 `rom-manager` wraps a local ROM conversion pipeline with typed, deterministic MCP
-tools and an optional Pydantic-AI agent server. It provides:
 
 - **`RomManager`** — the real conversion pipeline (`rom_manager.rom_manager`):
   extract archives → rename via game codes → convert ISO/WBFS to CHD/RVZ via
   `chdman`/`dolphin-tool` → cleanup.
 - **Action-routed MCP tools** — two consolidated, togglable domains
   (`conversion`, `game-codes`) that minimize token overhead in LLM contexts.
-- **An A2A agent server** — a Pydantic-AI agent (console script `rom-manager-agent`)
-  that calls the MCP tool surface and exposes an AG-UI web interface.
 
 This is a **local tool**: there is no service URL and no credentials. Conversion
 actions require the external `chdman` (mame-tools), `dolphin-tool`, and `7z`
@@ -35,7 +31,6 @@ binaries.
 <div class="grid cards" markdown>
 
 - :material-rocket-start: **[Installation](installation.md)** — pip, source, extras, external binaries, and Docker.
-- :material-server-network: **[Deployment](deployment.md)** — run the MCP and agent servers, Docker Compose.
 - :material-console: **[Usage](usage.md)** — the MCP tools, the `Api` facade, and the CLI.
 - :material-sitemap: **[Overview](overview.md)** — the action-routed tool surface and architecture.
 - :material-tag-multiple: **[Concepts](concepts.md)** — the `CONCEPT:ROM-*` registry.
