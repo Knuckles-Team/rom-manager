@@ -11,7 +11,7 @@ overrides = [{ name = "fastmcp-slim", extras = ["client", "server"], specifier =
 
 [[package]]
 name = "agent-connector-sdk"
-version = "0.3.0"
+version = "0.3.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyio" },
@@ -23,8 +23,9 @@ dependencies = [
     { name = "pydantic" },
     { name = "pyyaml" },
 ]
+sdist = { url = "https://files.pythonhosted.org/packages/db/d3/e84a0e4bd1cba76895f6b86f584d290213e77e42d8ac441e9eee3735c6bf/agent_connector_sdk-0.3.5.tar.gz", hash = "sha256:e7398e06643968ceae73f5866dd8bc60c6d566f7652de544dcc35c93d9e7dc74", size = 728175, upload-time = "2026-10-18T12:32:06.648Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/43/67/0bd17fcf77c53560aeda1a7801920e6783a8f2575080da72158e14833657/agent_connector_sdk-0.3.0-py3-none-any.whl", hash = "sha256:4bbbf66a04bff9b80dfa48d3cbb1c8697ebc78b562f1b8e3a859f9336943c18c", size = 714783, upload-time = "2026-10-18T05:05:24.058Z" },
+    { url = "https://files.pythonhosted.org/packages/2c/e1/21c71b55ca7296d01d02a08e910fe5e40a98fc7a52c303d495f2d3dd508f/agent_connector_sdk-0.3.5-py3-none-any.whl", hash = "sha256:99f781f3450f2a58824750da03459ed3e5b7f294ad8ba199a82cc46ef074f387", size = 731146, upload-time = "2026-10-18T12:32:07.765Z" },
 ]
 
 [package.optional-dependencies]
@@ -1443,7 +1444,7 @@ wheels = [
 
 [[package]]
 name = "rom-manager"
-version = "3.3.1"
+version = "3.3.2"
 source = { editable = "." }
 dependencies = [
     { name = "agent-connector-sdk", extra = ["mcp"] },
@@ -1480,8 +1481,8 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "agent-connector-sdk", extras = ["mcp"], specifier = ">=0.3.0,<1.0.0" },
-    { name = "agent-connector-sdk", extras = ["mcp"], marker = "extra == 'mcp'", specifier = ">=0.3.0,<1.0.0" },
+    { name = "agent-connector-sdk", extras = ["mcp"], specifier = ">=0.3.5,<1.0.0" },
+    { name = "agent-connector-sdk", extras = ["mcp"], marker = "extra == 'mcp'", specifier = ">=0.3.5,<1.0.0" },
     { name = "patool", marker = "extra == 'convert'", specifier = ">=4.1.0" },
     { name = "patool", marker = "extra == 'native'", specifier = ">=4.1.0" },
     { name = "pytest", marker = "extra == 'test'", specifier = ">=9.1.1" },
