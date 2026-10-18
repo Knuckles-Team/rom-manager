@@ -1443,7 +1443,7 @@ wheels = [
 
 [[package]]
 name = "rom-manager"
-version = "3.2.0"
+version = "3.2.1"
 source = { editable = "." }
 dependencies = [
     { name = "agent-connector-sdk", extra = ["mcp"] },
