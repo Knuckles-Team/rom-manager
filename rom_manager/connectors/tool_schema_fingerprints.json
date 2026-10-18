@@ -3,7 +3,7 @@
   "connector": "rom-manager",
   "schema_version": "1",
   "tools": {
-    "romm_platforms": "c001b97dfc19a6d8e73da0842a4ca8be37343b014b3729ff3e87a76d775e44d4",
-    "romm_roms": "497f31f812190b8dd22406250bff77f0cd4cdd827ea058ebf8554b4c3ff2ae7e"
+    "romm_list_platforms": "1e1d60bb79222aa9b40130a6def179f8df377f2137c74627010e859d66faa554",
+    "romm_list_roms": "90e1bf1a4dfd282f400dd4b5b7f0e90a03381189fcc8d1c1127a29c9b236eaf9"
   }
 }

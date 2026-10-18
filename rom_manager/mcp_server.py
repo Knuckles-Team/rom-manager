@@ -39,8 +39,9 @@ from agent_connector_sdk.mcp.tool_surface import register_tool_surface
 from rom_manager import mcp as rom_tools
 from rom_manager.api_client import Api
 from rom_manager.auth import get_client
+from rom_manager.romm import RommApi, get_romm_client
 
-__version__ = "3.3.0"
+__version__ = "3.3.1"
 print(f"ROM Manager MCP v{__version__}", file=sys.stderr)
 
 logger = get_logger(name="mcp_server")
@@ -88,6 +89,9 @@ def get_mcp_instance() -> tuple[Any, Any, Any, Any]:
         get_client=get_client,
         service="rom-manager",
         tools_module=rom_tools,
+        verbose_targets=[
+            {"client_cls": RommApi, "get_client": get_romm_client, "prefix": "romm"}
+        ],
     )
 
     register_prompts(mcp)

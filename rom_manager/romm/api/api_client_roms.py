@@ -10,14 +10,36 @@ from rom_manager.romm.api.api_client_base import RommApiBase
 
 
 class RommApiRoms(RommApiBase):
-    def list_roms(self, **filters: Any) -> Any:
+    def list_roms(
+        self,
+        search_term: str | None = None,
+        platform_ids: list[int] | int | None = None,
+        collection_id: int | None = None,
+        favorite: bool | None = None,
+        order_by: str | None = None,
+        order_dir: str | None = None,
+        limit: int | None = None,
+        offset: int | None = None,
+        **filters: Any,
+    ) -> Any:
         """List ROMs with search/filter/sort/pagination query params.
 
         Accepts any ``GET /api/roms`` query param verbatim, e.g. ``search_term``,
         ``platform_ids``, ``collection_id``, ``favorite``, ``order_by``,
         ``order_dir``, ``limit``, ``offset``.
         """
-        return self._get("/api/roms", params=filters)
+        named = {
+            "search_term": search_term,
+            "platform_ids": platform_ids,
+            "collection_id": collection_id,
+            "favorite": favorite,
+            "order_by": order_by,
+            "order_dir": order_dir,
+            "limit": limit,
+            "offset": offset,
+        }
+        params = {**{k: v for k, v in named.items() if v is not None}, **filters}
+        return self._get("/api/roms", params=params)
 
     def get_rom(self, id: int) -> Any:
         """Get a single ROM by id."""
@@ -41,9 +63,31 @@ class RommApiRoms(RommApiBase):
             },
         )
 
-    def get_rom_by_metadata_provider(self, **provider_ids: Any) -> Any:
+    def get_rom_by_metadata_provider(
+        self,
+        igdb_id: int | None = None,
+        moby_id: int | None = None,
+        ss_id: int | None = None,
+        ra_id: int | None = None,
+        launchbox_id: int | None = None,
+        hasheous_id: int | None = None,
+        tgdb_id: int | None = None,
+        flashpoint_id: str | None = None,
+        **provider_ids: Any,
+    ) -> Any:
         """Look up a ROM by an external provider id (igdb_id, moby_id, ss_id, ...)."""
-        return self._get("/api/roms/by-metadata-provider", params=provider_ids)
+        named = {
+            "igdb_id": igdb_id,
+            "moby_id": moby_id,
+            "ss_id": ss_id,
+            "ra_id": ra_id,
+            "launchbox_id": launchbox_id,
+            "hasheous_id": hasheous_id,
+            "tgdb_id": tgdb_id,
+            "flashpoint_id": flashpoint_id,
+        }
+        params = {**{k: v for k, v in named.items() if v is not None}, **provider_ids}
+        return self._get("/api/roms/by-metadata-provider", params=params)
 
     def get_rom_filters(self) -> Any:
         """Get the available filter values for the ROM collection."""
