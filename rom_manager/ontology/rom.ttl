@@ -128,5 +128,5 @@
     rdfs:comment """Retro-game / ROM library model — games, gaming systems, collections,
     save files, emulator save-states and firmware from a RomM library plus this package's
     local ROM conversion flow. Cover art and ROM binaries reuse the shared :AssetOccurrence /
-    :Blob classes. Federated into the agent-utilities knowledge-graph hub.""" ;
+    :Blob classes. Federated into the agent-connector-sdk knowledge-graph hub.""" ;
     owl:imports <http://knuckles.team/kg> .

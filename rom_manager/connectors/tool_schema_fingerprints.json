@@ -1,9 +1,9 @@
 {
-  "algorithm": "agent-utilities:mcp-tool-schema-compat:v1",
+  "algorithm": "agent-connector-sdk:mcp-tool-contract-compat:v2",
   "connector": "rom-manager",
   "schema_version": "1",
   "tools": {
-    "romm_platforms": "3cdb61be412d47c7d717b0593bf24360339b25f31b373c21731958ebbc66bdaa",
-    "romm_roms": "26df7b435310c56342c7d23037a82780c1fe70f1fa7bb44003d016a1be35bfec"
+    "romm_platforms": "c001b97dfc19a6d8e73da0842a4ca8be37343b014b3729ff3e87a76d775e44d4",
+    "romm_roms": "497f31f812190b8dd22406250bff77f0cd4cdd827ea058ebf8554b4c3ff2ae7e"
   }
 }

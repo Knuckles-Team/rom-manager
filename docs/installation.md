@@ -5,7 +5,6 @@
 ```bash
 pip install rom-manager            # core CLI + Api facade
 pip install "rom-manager[mcp]"     # + MCP server (rom-manager-mcp)
-pip install "rom-manager[agent]"   # + A2A agent server (rom-manager-agent)
 pip install "rom-manager[native]"  # + patool (archive extraction)
 pip install "rom-manager[all]"     # everything
 ```

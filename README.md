@@ -1,5 +1,5 @@
 # ROM Manager
-## CLI or API | MCP | Agent
+## CLI or API | MCP
 
 ![PyPI - Version](https://img.shields.io/pypi/v/rom-manager)
 ![MCP Server](https://badge.mcpx.dev?type=server 'MCP Server')
@@ -17,10 +17,9 @@
 ![PyPI - Wheel](https://img.shields.io/pypi/wheel/rom-manager)
 ![PyPI - Implementation](https://img.shields.io/pypi/implementation/rom-manager)
 
-*Version: 3.1.0*
+*Version: 3.2.0*
 
 > **Documentation** — Installation, deployment, and usage across the API, CLI, and
-> MCP interfaces, plus the integrated A2A agent server, are maintained in the
 > [official documentation](https://knuckles-team.github.io/rom-manager/).
 
 > ⚠️ **Back up the operator's ROMs before working with this tool.** Conversion and the
@@ -35,12 +34,10 @@
 - [Architecture](#architecture)
 - [Usage (CLI or API)](#usage-cli-or-api)
 - [MCP](#mcp)
-- [Agent](#agent)
 - [Environment Variables](#environment-variables)
 - [Security & Governance](#security--governance)
 - [External Binary Dependencies](#external-binary-dependencies)
 - [Installation](#installation)
-- [Deployment (agent_server.py)](#deployment-agent_serverpy)
 - [Documentation](#documentation)
 - [Contributing](#contributing)
 - [License](#license)
@@ -50,7 +47,6 @@
 ## Overview
 
 **ROM Manager** is a production-grade ROM converter/organizer with an integrated
-Model Context Protocol (MCP) server and Agent-to-Agent (A2A) agent. It extracts
 archives, auto-renames ROMs via a known game-code registry, converts ISO/WBFS
 images to **CHD** (`chdman`) or **RVZ** (`dolphin-tool`), generates missing `.cue`
 sheets, and cleans up source files — in parallel.
@@ -73,7 +69,6 @@ client is configured via `ROMM_*` environment variables.
   action-routed MCP tool per resource group.
 - **Consolidated Action-Routed MCP Tools:** togglable domains (`conversion`,
   `game-codes`, `romm-*`) minimize token overhead and IDE tool bloat.
-- **Integrated Graph Agent:** built-in Pydantic-AI agent (AG-UI / ACP).
 - **Native Telemetry & Tracing:** OpenTelemetry exports by default.
 - **Lazy native deps:** archive backends are optional extras, imported only when used.
 
@@ -82,33 +77,7 @@ client is configured via `ROMM_*` environment variables.
 ## Architecture
 
 ROM Manager keeps a single, well-factored pipeline behind three entry surfaces
-(CLI, MCP server, A2A agent). The orchestrator (`RomManager`) composes focused
 responsibility layers and shells out to external conversion binaries:
-
-```mermaid
-flowchart LR
-    subgraph Entry["Entry Surfaces"]
-        CLI["CLI<br/>rom-manager"]
-        MCP["MCP Server<br/>rom-manager-mcp<br/>(CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool/002)"]
-        AGENT["A2A Agent<br/>rom-manager-agent"]
-    end
-
-    CLI --> RM
-    MCP --> API["api_client.Api<br/>(facade)"]
-    AGENT --> MCP
-    API --> RM
-
-    subgraph Pipeline["RomManager orchestrator"]
-        RM["RomManager"] --> ARCH["archives.py<br/>extract + cue"]
-        RM --> NAME["naming.py<br/>game-code rename"]
-        RM --> CONV["conversion.py<br/>command + runner seam"]
-    end
-
-    ARCH --> P7Z["7z / patool"]
-    CONV --> CHDMAN["chdman (CHD)"]
-    CONV --> DOLPHIN["dolphin-tool (RVZ)"]
-    NAME --> CODES["game_codes.py<br/>(PSX registry, DATA)"]
-```
 
 | Layer | Module | Responsibility |
 |-------|--------|----------------|
@@ -231,8 +200,7 @@ rom-manager-mcp --transport streamable-http --host 0.0.0.0 --port 8000
 ```
 
 > **Install the connector-focused `[mcp]` extra.** Examples use `rom-manager[mcp]` to add
-> FastMCP / FastAPI through `agent-utilities[mcp]`; the required Agent Utilities core
-> still carries `epistemic-graph[full]`. The `[agent]` extra also
+> FastMCP / FastAPI through `agent-connector-sdk`; the required Agent Connector SDK core
 > enables model orchestration.
 
 #### stdio client config
@@ -258,8 +226,6 @@ docker run --rm -it -v /games:/games -e ROM_DIRECTORY=/games \
 
 > The `:mcp` tag is the **MCP-serving image** (built from
 > `docker/Dockerfile --target mcp`, installing `rom-manager[mcp]`). The default
-> the immutable agent image is the **full agent image** (`--target agent`, `rom-manager[agent]`)
-> which also bundles the Pydantic AI agent and the epistemic-graph engine — use it
 > when the operator run `rom-manager-agent` (the agent), not just the MCP server. See
 > [Container images](#container-images-mcp-vs-agent).
 
@@ -282,13 +248,7 @@ the detailed transport contract.
 
 ## Agent
 
-ROM Manager ships a Pydantic-AI agent (`rom-manager-agent`) that calls the MCP
-tool surface and exposes an AG-UI web interface. Its identity lives in
 `rom_manager/agent_data/IDENTITY.md`.
-
-```bash
-rom-manager-agent --web
-```
 
 ---
 
@@ -333,7 +293,7 @@ rom-manager-agent --web
 | `GAME_CODESTOOL` | `True` |  |
 | `ROMMTOOL` | `True` | Master switch for the RomM remote-library tools. |
 
-#### Inherited agent-utilities variables (apply to every connector)
+#### Inherited agent-connector-sdk variables (apply to every connector)
 
 | Variable | Example | Description |
 |----------|---------|-------------|
@@ -352,11 +312,9 @@ rom-manager-agent --web
 | `MCP_URL` | `http://localhost:8000/mcp` | URL of the MCP server the agent connects to |
 | `PROVIDER` | `openai` | LLM provider for the agent |
 | `MODEL_ID` | `gpt-4o` | Model id for the agent |
-| `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
 
-_32 package + 16 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
+_32 package + 16 inherited variable(s). Auto-generated from `.env.example` + the shared agent-connector-sdk set — do not edit._
 <!-- ENV-VARS-TABLE:END -->
-
 
 All settings are optional — ROM Manager runs with sensible defaults and requires
 no credentials. Copy [`.env.example`](.env.example) to `.env` to override.
@@ -391,7 +349,7 @@ Required only when using RomM (`roms`, `platforms`, … commands / `romm_*` tool
 | `ROMM_TLS_PROFILE` | — | Named TLS profile for private PKI, mTLS, or proxy policy. |
 | `ROMM_TLS_PROFILE_REF` | — | Secret reference containing the TLS profile. |
 
-### MCP / Framework Variables (agent-utilities)
+### MCP / Framework Variables (agent-connector-sdk)
 
 | Variable | Default | Description |
 |----------|---------|-------------|
@@ -419,7 +377,7 @@ not normally set them the operator.
 ## Security & Governance
 
 - **No credentials:** ROM Manager is a local tool with no service URL/token.
-- **Eunomia policies & OpenTelemetry:** inherited from the `agent-utilities`
+- **Eunomia policies & OpenTelemetry:** inherited from the `agent-connector-sdk`
   middleware (see `.env.example`).
 - **Destructive-op safety:** the agent recommends backing up ROMs before
   `clean_origin_files`/delete operations.
@@ -445,41 +403,34 @@ Pick the extra that matches what the operator want to run:
 | Extra | Installs | Use when |
 |-------|----------|----------|
 | `rom-manager` (core) | CLI converter + `Api` facade (no server tooling) | The operator only use the **CLI / Python API** |
-| `rom-manager[mcp]` | Connector-focused MCP server (`agent-utilities[mcp]` — FastMCP/FastAPI + `epistemic-graph[full]`) | The operator run the **MCP server** (smallest server install / image) |
-| `rom-manager[agent]` | Agent runtime (`agent-utilities[agent-runtime,logfire]` — model orchestration + `epistemic-graph[full]`) | The operator run the **integrated agent** |
+| `rom-manager[mcp]` | Connector-focused MCP server (`agent-connector-sdk` — FastMCP/FastAPI + `epistemic-graph[full]`) | The operator run the **MCP server** (smallest server install / image) |
 | `rom-manager[native]` | + `patool` (archive extraction backends) | The operator convert archived ROMs locally |
 | `rom-manager[all]` | Everything (`mcp` + `agent` + `native` + `otel`) | Development / all surfaces |
 
 ```bash
 pip install rom-manager            # core CLI + Api
 pip install "rom-manager[mcp]"     # + MCP server
-pip install "rom-manager[agent]"   # + A2A agent (Pydantic AI + epistemic-graph engine)
 pip install "rom-manager[native]"  # + patool (archive extraction)
 pip install "rom-manager[all]"     # everything
 ```
 
-### Container images (`:mcp` vs `:agent`)
+### Container images (`:mcp`)
 
-One multi-stage `docker/Dockerfile` builds two right-sized images, selected by `--target`:
+One multi-stage `docker/Dockerfile` builds the MCP-only image (`--target mcp`):
 
 | Image tag | Build target | Contents | Entrypoint |
 |-----------|--------------|----------|------------|
 | `example/rom-manager:mcp` | `--target mcp` | `rom-manager[mcp]` — **connector-focused**, includes `epistemic-graph[full]`; no model-orchestration stack | `rom-manager-mcp` |
-| `example/rom-manager@sha256:<digest>` | `--target agent` (default) | `rom-manager[agent]` — **agent runtime**, model orchestration + `epistemic-graph[full]` | `rom-manager-agent` |
 
 ```bash
 docker build --target mcp   -t example/rom-manager:mcp    docker/   # connector-focused MCP server
-docker build --target agent -t example/rom-manager:agent-local docker/   # agent runtime
 ```
 
-`docker/mcp.compose.yml` runs the connector-focused `:mcp` server; `docker/agent.compose.yml` runs the
 agent (`immutable agent digest`) with a co-located `:mcp` sidecar.
 
 ### Knowledge-graph database (`epistemic-graph`)
 
-Both `[mcp]` and `[agent]` carry the **epistemic-graph** engine through the required
-Agent Utilities core dependency (`epistemic-graph[full]`). The `[mcp]` extra keeps
-the server connector-focused; `[agent]` also enables model orchestration. Local
+Agent Connector SDK core dependency (`epistemic-graph[full]`). The `[mcp]` extra keeps
 deployments can use the bundled engine. For production or shared state, run
 **epistemic-graph as a dedicated database service** and configure the runtime to use it.
 Deployment recipes (single-node + Raft HA), connection configuration, and architecture
@@ -490,37 +441,7 @@ diagrams are documented in the
 
 ## Deployment (agent_server.py)
 
-`rom-manager-agent` (entry point `rom_manager.agent_server:agent_server`) starts a
-Pydantic-AI A2A agent that auto-discovers the MCP tool surface from
-`mcp_config.json` and can expose an AG-UI web interface.
-
-```bash
-# Local: web UI on the default host/port, OTEL enabled
-rom-manager-agent --web --otel \
-  --provider openai --model-id gpt-4o-mini \
-  --host 0.0.0.0 --port 8080
-```
-
 Container deployment (compose):
-
-```yaml
-# docker/agent.compose.yml (excerpt)
-services:
-  rom-manager-agent:
-    image: example/rom-manager@sha256:<digest>
-    command: ["rom-manager-agent", "--web"]
-    environment:
-      ROM_DIRECTORY: /games
-      TRANSPORT: streamable-http
-      HOST: 0.0.0.0
-      PORT: 8080
-      ENABLE_OTEL: "True"
-      AUTH_TYPE: none
-    volumes:
-      - /srv/roms:/games
-    ports:
-      - "8080:8080"
-```
 
 The MCP server (`rom-manager-mcp`) deploys the same way; see
 [docs/deployment.md](docs/deployment.md) for the full compose/Swarm recipes.
@@ -546,28 +467,26 @@ Preserve the real conversion pipeline — wrap `RomManager`, do not break it.
 
 MIT © Knuckles-Team
 
+<!-- BEGIN agent-connector-sdk-deployment (generated; do not edit between markers) -->
 
-<!-- BEGIN agent-utilities-deployment (generated; do not edit between markers) -->
+## Deploy with `agent-connector-sdk-deployment`
 
-## Deploy with `agent-utilities-deployment`
-
-Provision this package with the consolidated **`agent-utilities-deployment`**
+Provision this package with the consolidated **`agent-connector-sdk-deployment`**
 workflow. It selects an installed-package, editable-source, or immutable-container
 path; records only runtime secret and TLS-profile references in `AgentConfig`; and
 runs doctor, registration, policy, observability, and rollback gates. Ask your agent
-to **"deploy `rom-manager` with agent-utilities-deployment"**.
+to **"deploy `rom-manager` with agent-connector-sdk-deployment"**.
 
 | Install mode | Command |
 |------|---------|
 | Installed package | `uv tool install "rom-manager[mcp]"`, then run `rom-manager-mcp` |
-| Editable source | `uv pip install -e ".[agent]"`, then run `rom-manager-mcp` |
 | Immutable container | deploy `registry.example.invalid/rom-manager@sha256:<digest>` through the operator-selected orchestrator |
 
 The repository embeds no deployment profile, credential value, certificate path, or
 environment-specific endpoint. Supply those at runtime through `AgentConfig` and the
 configured secret provider.
 
-<!-- END agent-utilities-deployment -->
+<!-- END agent-connector-sdk-deployment -->
 
 <!-- GOVERNED-CAPABILITY:START -->
 ## Governed capability contract
@@ -582,5 +501,5 @@ historical per-task skill wrappers.
 Runtime endpoints, credentials, certificate trust, tenant identity, retention,
 and observability policy are deployment inputs and are never packaged values.
 See [Configuration, trust, and privacy](docs/configuration.md) before enabling a
-network transport, connector ingestion, GraphOS delegation, or trace export.
+network transport, connector ingestion, Arbora delegation, or trace export.
 <!-- GOVERNED-CAPABILITY:END -->

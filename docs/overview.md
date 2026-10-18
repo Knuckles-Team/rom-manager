@@ -1,20 +1,8 @@
 # Overview
 
 `rom-manager` exposes a local ROM conversion pipeline through three surfaces: a
-CLI, an action-routed MCP server, and a Pydantic-AI agent.
 
 ## Architecture
-
-```mermaid
-graph TD
-    User([User/A2A]) --> Agent[Pydantic AI Agent]
-    User --> CLI[CLI: rom-manager]
-    Agent --> MCP[MCP Server / FastMCP]
-    MCP --> Client[Api Facade]
-    CLI --> Core[RomManager Pipeline]
-    Client --> Core
-    Core --> Bins([chdman / dolphin-tool / patool])
-```
 
 ## Action-routed tool surface
 

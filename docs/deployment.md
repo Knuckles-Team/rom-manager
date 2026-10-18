@@ -68,7 +68,6 @@ Store the real remote URL, outbound identity reference, and TLS-profile referenc
 |--------|------------|---------|
 | `rom-manager` | `rom_manager.rom_manager:rom_manager` | Local CLI converter |
 | `rom-manager-mcp` | `rom_manager.mcp_server:mcp_server` | MCP server |
-| `rom-manager-agent` | `rom_manager.agent_server:agent_server` | A2A agent server |
 
 ## Transports
 
@@ -95,7 +94,6 @@ docker run --rm -it \
 
 ```bash
 docker compose -f docker/mcp.compose.yml up -d     # MCP only
-docker compose -f docker/agent.compose.yml up -d   # MCP + agent
 ```
 
 !!! note "RVZ output"
