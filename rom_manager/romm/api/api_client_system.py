@@ -53,8 +53,9 @@ class RommApiSystem(RommApiBase):
         return self._stream_to_path(resp, dest)
 
     # --- auth / session ---------------------------------------------------
-    def login(self, **body: Any) -> Any:
+    def login(self, body: dict[str, Any] | None = None, **extra: Any) -> Any:
         """Create a session using the configured credentials."""
+        body = {**(body or {}), **extra}
         return self._post("/api/login", json=body or None)
 
     def login_via_openid(self) -> Any:
@@ -78,10 +79,12 @@ class RommApiSystem(RommApiBase):
         """Complete the OpenID OAuth callback."""
         return self._get("/api/oauth/openid")
 
-    def forgot_password(self, **body: Any) -> Any:
+    def forgot_password(self, body: dict[str, Any] | None = None, **extra: Any) -> Any:
         """Request a password reset email."""
+        body = {**(body or {}), **extra}
         return self._post("/api/forgot-password", json=body)
 
-    def reset_password(self, **body: Any) -> Any:
+    def reset_password(self, body: dict[str, Any] | None = None, **extra: Any) -> Any:
         """Reset a password using a reset token."""
+        body = {**(body or {}), **extra}
         return self._post("/api/reset-password", json=body)

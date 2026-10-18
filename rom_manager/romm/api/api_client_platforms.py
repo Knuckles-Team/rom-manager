@@ -22,8 +22,9 @@ class RommApiPlatforms(RommApiBase):
         """Get a single platform by id."""
         return self._get(f"/api/platforms/{id}")
 
-    def add_platform(self, **body: Any) -> Any:
+    def add_platform(self, body: dict[str, Any] | None = None, **extra: Any) -> Any:
         """Create a new platform."""
+        body = {**(body or {}), **extra}
         return self._post("/api/platforms", json=body)
 
     def update_platform(self, id: int, **body: Any) -> Any:

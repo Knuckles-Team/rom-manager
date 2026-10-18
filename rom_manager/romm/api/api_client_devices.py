@@ -14,8 +14,9 @@ class RommApiDevices(RommApiBase):
         """Get a single device by id."""
         return self._get(f"/api/devices/{device_id}")
 
-    def register_device(self, **body: Any) -> Any:
+    def register_device(self, body: dict[str, Any] | None = None, **extra: Any) -> Any:
         """Register a new device."""
+        body = {**(body or {}), **extra}
         return self._post("/api/devices", json=body)
 
     def update_device(self, device_id: int, **body: Any) -> Any:

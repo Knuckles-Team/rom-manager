@@ -149,8 +149,8 @@ schema_mappings:
 sync:
 - preset: rom-games
   server: rom-manager-mcp
-  tool: romm_roms
-  action: list
+  tool: romm_list_roms
+  action: null
   records_path: items
   id_field: id
   title_field: name
@@ -158,11 +158,11 @@ sync:
   updated_field: updated_at
   pagination: offset
   doc_type: game
-  tool_schema_sha256: 497f31f812190b8dd22406250bff77f0cd4cdd827ea058ebf8554b4c3ff2ae7e
+  tool_schema_sha256: 90e1bf1a4dfd282f400dd4b5b7f0e90a03381189fcc8d1c1127a29c9b236eaf9
   raw:
     server: rom-manager-mcp
-    tool: romm_roms
-    action: list
+    tool: romm_list_roms
+    params_style: args
     records_path: items
     id_field: id
     title_field: name
@@ -174,8 +174,8 @@ sync:
     doc_type: game
 - preset: rom-platforms
   server: rom-manager-mcp
-  tool: romm_platforms
-  action: list
+  tool: romm_list_platforms
+  action: null
   records_path: data
   id_field: id
   title_field: display_name
@@ -183,11 +183,11 @@ sync:
   updated_field: updated_at
   pagination: null
   doc_type: game-system
-  tool_schema_sha256: c001b97dfc19a6d8e73da0842a4ca8be37343b014b3729ff3e87a76d775e44d4
+  tool_schema_sha256: 1e1d60bb79222aa9b40130a6def179f8df377f2137c74627010e859d66faa554
   raw:
     server: rom-manager-mcp
-    tool: romm_platforms
-    action: list
+    tool: romm_list_platforms
+    params_style: args
     records_path: data
     id_field: id
     title_field: display_name

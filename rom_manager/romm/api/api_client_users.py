@@ -22,8 +22,9 @@ class RommApiUsers(RommApiBase):
         """Get a single user by id."""
         return self._get(f"/api/users/{id}")
 
-    def add_user(self, **body: Any) -> Any:
+    def add_user(self, body: dict[str, Any] | None = None, **extra: Any) -> Any:
         """Create a new user (admin)."""
+        body = {**(body or {}), **extra}
         return self._post("/api/users", json=body)
 
     def update_user(self, id: int, data: dict | None = None) -> Any:
@@ -38,8 +39,11 @@ class RommApiUsers(RommApiBase):
         """Create an invite link for a given role (admin)."""
         return self._post("/api/users/invite-link", params={"role": role})
 
-    def register_user_from_invite(self, **body: Any) -> Any:
+    def register_user_from_invite(
+        self, body: dict[str, Any] | None = None, **extra: Any
+    ) -> Any:
         """Register a new user from an invite token."""
+        body = {**(body or {}), **extra}
         return self._post("/api/users/register", json=body)
 
     def refresh_retro_achievements(self, id: int, **body: Any) -> Any:

@@ -11,24 +11,31 @@ class RommApiConfig(RommApiBase):
         """Get the system configuration (exclusions, bindings, versions)."""
         return self._get("/api/config")
 
-    def add_exclusion(self, **body: Any) -> Any:
+    def add_exclusion(self, body: dict[str, Any] | None = None, **extra: Any) -> Any:
         """Add a filesystem exclusion (by type/value)."""
+        body = {**(body or {}), **extra}
         return self._post("/api/config/exclude", json=body)
 
     def delete_exclusion(self, exclusion_type: str, exclusion_value: str) -> Any:
         """Remove a filesystem exclusion."""
         return self._delete(f"/api/config/exclude/{exclusion_type}/{exclusion_value}")
 
-    def add_platform_binding(self, **body: Any) -> Any:
+    def add_platform_binding(
+        self, body: dict[str, Any] | None = None, **extra: Any
+    ) -> Any:
         """Bind a filesystem slug to a platform."""
+        body = {**(body or {}), **extra}
         return self._post("/api/config/system/platforms", json=body)
 
     def delete_platform_binding(self, fs_slug: str) -> Any:
         """Remove a platform binding by filesystem slug."""
         return self._delete(f"/api/config/system/platforms/{fs_slug}")
 
-    def add_platform_version(self, **body: Any) -> Any:
+    def add_platform_version(
+        self, body: dict[str, Any] | None = None, **extra: Any
+    ) -> Any:
         """Add a platform version mapping."""
+        body = {**(body or {}), **extra}
         return self._post("/api/config/system/versions", json=body)
 
     def delete_platform_version(self, fs_slug: str) -> Any:
