@@ -7,7 +7,6 @@
         "rom-manager-mcp"
       ],
       "env": {
-        "MCP_TOOL_MODE": "intent",
         "AUDIENCE": "http://localhost:3000",
         "CONVERSIONTOOL": "True",
         "DELEGATED_SCOPES": "roms.read",
