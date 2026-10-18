@@ -6,8 +6,6 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="ROM Converter/Organizer (CHD/RVZ) + MCP Server + A2A Agent for the agent-utilities ecosystem.">
-      
       
       
         <link rel="canonical" href="https://knuckles-team.github.io/rom-manager/overview/">
@@ -765,17 +763,8 @@
 
 
 <h1 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h1>
-<p><code>rom-manager</code> exposes a local ROM conversion pipeline through three surfaces: a
-CLI, an action-routed MCP server, and a Pydantic-AI agent.</p>
+<p><code>rom-manager</code> exposes a local ROM conversion pipeline through three surfaces: a</p>
 <h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
-<pre class="mermaid"><code>graph TD
-    User([User/A2A]) --&gt; Agent[Pydantic AI Agent]
-    User --&gt; CLI[CLI: rom-manager]
-    Agent --&gt; MCP[MCP Server / FastMCP]
-    MCP --&gt; Client[Api Facade]
-    CLI --&gt; Core[RomManager Pipeline]
-    Client --&gt; Core
-    Core --&gt; Bins([chdman / dolphin-tool / patool])</code></pre>
 <h2 id="action-routed-tool-surface">Action-routed tool surface<a class="headerlink" href="#action-routed-tool-surface" title="Permanent link">&para;</a></h2>
 <p>Instead of one MCP tool per operation, <code>rom-manager</code> groups operations into two
 consolidated, togglable domains. Each is a single tool that routes on an

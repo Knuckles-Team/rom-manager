@@ -6,8 +6,6 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="ROM Converter/Organizer (CHD/RVZ) + MCP Server + A2A Agent for the agent-utilities ecosystem.">
-      
       
       
         <link rel="canonical" href="https://knuckles-team.github.io/rom-manager/">
@@ -763,8 +761,7 @@
 
 
 <h1 id="rom-manager">rom-manager<a class="headerlink" href="#rom-manager" title="Permanent link">&para;</a></h1>
-<p><strong>ROM Converter/Organizer + MCP Server + A2A Agent</strong> for the agent-utilities
-ecosystem — convert game ROMs to CHD/RVZ, extract archives, auto-rename via known
+<p>ecosystem — convert game ROMs to CHD/RVZ, extract archives, auto-rename via known
 game codes, and generate cue sheets.</p>
 <div class="admonition info">
 <p class="admonition-title">Official documentation</p>
@@ -776,16 +773,13 @@ release.</p>
 <a href="https://github.com/Knuckles-Team/rom-manager/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/pypi/l/rom-manager" /></a>
 <a href="https://github.com/Knuckles-Team/rom-manager"><img alt="GitHub" src="https://img.shields.io/badge/source-GitHub-181717?logo=github" /></a></p>
 <h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
-<p><code>rom-manager</code> wraps a local ROM conversion pipeline with typed, deterministic MCP
-tools and an optional Pydantic-AI agent server. It provides:</p>
+<p><code>rom-manager</code> wraps a local ROM conversion pipeline with typed, deterministic MCP</p>
 <ul>
 <li><strong><code>RomManager</code></strong> — the real conversion pipeline (<code>rom_manager.rom_manager</code>):
   extract archives → rename via game codes → convert ISO/WBFS to CHD/RVZ via
   <code>chdman</code>/<code>dolphin-tool</code> → cleanup.</li>
 <li><strong>Action-routed MCP tools</strong> — two consolidated, togglable domains
   (<code>conversion</code>, <code>game-codes</code>) that minimize token overhead in LLM contexts.</li>
-<li><strong>An A2A agent server</strong> — a Pydantic-AI agent (console script <code>rom-manager-agent</code>)
-  that calls the MCP tool surface and exposes an AG-UI web interface.</li>
 </ul>
 <p>This is a <strong>local tool</strong>: there is no service URL and no credentials. Conversion
 actions require the external <code>chdman</code> (mame-tools), <code>dolphin-tool</code>, and <code>7z</code>
@@ -794,7 +788,6 @@ binaries.</p>
 <div class="grid cards">
 <ul>
 <li>:material-rocket-start: <strong><a href="installation/">Installation</a></strong> — pip, source, extras, external binaries, and Docker.</li>
-<li><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 19h1a1 1 0 0 1 1 1h7v2h-7a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1H2v-2h7a1 1 0 0 1 1-1h1v-2H4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-7zM4 3h16a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1m5 4h1V5H9zm0 8h1v-2H9zM5 5v2h2V5zm0 8v2h2v-2z"/></svg></span> <strong><a href="deployment/">Deployment</a></strong> — run the MCP and agent servers, Docker Compose.</li>
 <li><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 19V7H4v12zm0-16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm-7 14v-2h5v2zm-3.42-4L5.57 9H8.4l3.3 3.3c.39.39.39 1.03 0 1.42L8.42 17H5.59z"/></svg></span> <strong><a href="usage/">Usage</a></strong> — the MCP tools, the <code>Api</code> facade, and the CLI.</li>
 <li><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 2v6h2v3H5c-1.11 0-2 .89-2 2v3H1v6h6v-6H5v-3h6v3H9v6h6v-6h-2v-3h6v3h-2v6h6v-6h-2v-3c0-1.11-.89-2-2-2h-6V8h2V2z"/></svg></span> <strong><a href="overview/">Overview</a></strong> — the action-routed tool surface and architecture.</li>
 <li><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.5 9A1.5 1.5 0 0 0 7 7.5 1.5 1.5 0 0 0 5.5 6 1.5 1.5 0 0 0 4 7.5 1.5 1.5 0 0 0 5.5 9m11.91 2.58c.36.36.59.86.59 1.42 0 .55-.22 1.05-.59 1.41l-5 5a1.996 1.996 0 0 1-2.83 0l-6.99-6.99C2.22 12.05 2 11.55 2 11V6c0-1.11.89-2 2-2h5c.55 0 1.05.22 1.41.58zm-3.87-5.87 1-1 6.87 6.87c.37.36.59.87.59 1.42s-.22 1.05-.58 1.41l-5.38 5.38-1-1L20.75 13z"/></svg></span> <strong><a href="concepts/">Concepts</a></strong> — the <code>CONCEPT:ROM-*</code> registry.</li>
