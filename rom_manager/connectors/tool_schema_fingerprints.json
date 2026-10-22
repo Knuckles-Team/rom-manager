@@ -1,6 +1,6 @@
 {
   "algorithm": "agent-connector-sdk:mcp-tool-contract-compat:v2",
-  "connector": "rom-manager",
+  "connector": "rom-manager-mcp",
   "schema_version": "1",
   "tools": {
     "romm_list_platforms": "1e1d60bb79222aa9b40130a6def179f8df377f2137c74627010e859d66faa554",

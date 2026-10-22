@@ -1,4 +1,4 @@
-connector: rom-manager
+connector: rom-manager-mcp
 ontology_source: rom
 schema_version: '1'
 resources:

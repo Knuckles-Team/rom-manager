@@ -29,7 +29,7 @@ from agent_connector_sdk.ingest import (
 
 logger = logging.getLogger("rom_manager.kg")
 
-_BINDING = IngestBinding(connector="rom-manager", stream="rom")
+_BINDING = IngestBinding(connector="rom-manager-mcp", stream="rom")
 
 _ENTITY_RESERVED_KEYS = frozenset({"id", "node_type"})
 _RELATIONSHIP_RESERVED_KEYS = frozenset({"source", "target", "relationship"})

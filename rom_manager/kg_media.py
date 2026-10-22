@@ -30,7 +30,7 @@ from agent_connector_sdk.ingest import (
 
 logger = logging.getLogger("rom_manager.kg.media")
 
-_BINDING = IngestBinding(connector="rom-manager", stream="rom")
+_BINDING = IngestBinding(connector="rom-manager-mcp", stream="rom")
 
 
 async def _store(
