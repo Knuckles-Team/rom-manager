@@ -1,5 +1,5 @@
 #!/usr/bin/env python
 
-__version__ = "3.3.4"
+__version__ = "3.3.5"
 __author__ = "Project Maintainers"
 __credits__ = "Project Maintainers"
