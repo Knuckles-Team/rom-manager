@@ -17,7 +17,7 @@
 ![PyPI - Wheel](https://img.shields.io/pypi/wheel/rom-manager)
 ![PyPI - Implementation](https://img.shields.io/pypi/implementation/rom-manager)
 
-*Version: 3.3.3*
+*Version: 3.3.4*
 
 > **Documentation** — Installation, deployment, and usage across the API, CLI, and
 > [official documentation](https://knuckles-team.github.io/rom-manager/).
