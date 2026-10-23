@@ -4,12 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rom-manager"
-version = "3.3.3"
+version = "3.3.4"
 description = "ROM Converter/Organizer (CHD/RVZ) + MCP Server"
 readme = "README.md"
 classifiers = [ "Development Status :: 5 - Production/Stable", "License :: Public Domain", "Environment :: Console", "Operating System :: POSIX :: Linux", "Programming Language :: Python :: 3",]
 requires-python = ">=3.12, <3.15"
-dependencies = [ "agent-connector-sdk[mcp]>=0.3.11,<1.0.0", "python-dotenv>=1.2.4", "tqdm>=4.70.1", "requests>=2.34.2",]
+dependencies = [ "agent-connector-sdk[mcp]>=0.3.18,<1.0.0", "python-dotenv>=1.2.4", "tqdm>=4.70.1", "requests>=2.34.2",]
 [[project.authors]]
 name = "Project Maintainers"
 email = "maintainers@users.noreply.github.com"
@@ -18,7 +18,7 @@ email = "maintainers@users.noreply.github.com"
 text = "MIT"
 
 [project.optional-dependencies]
-mcp = [ "agent-connector-sdk[mcp]>=0.3.11,<1.0.0",]
+mcp = [ "agent-connector-sdk[mcp]>=0.3.18,<1.0.0",]
 native = [ "patool>=4.1.0",]
 convert = [ "patool>=4.1.0",]
 all = [ "rom-manager[mcp,native]>=2.0.0",]
