@@ -69,7 +69,7 @@ async def test_ingest_entities_writes_nodes_and_edges(ingest):
     a_record = next(r for r in request.records if r.record_id == "a")
     assert a_record.payload["name"] == "A"
     assert request.relationships[0].relation_reference.endswith(
-        "resources/Game/relations/onSystem"
+        "relations/Game/onSystem"
     )
 
 
@@ -102,7 +102,7 @@ async def test_ingest_roms_maps_game_and_system(ingest):
     system = next(r for r in request.records if r.record_id == "rom:system:3")
     assert system.payload["slug"] == "snes"
     assert request.relationships[0].relation_reference.endswith(
-        "resources/Game/relations/onSystem"
+        "relations/Game/onSystem"
     )
 
 
