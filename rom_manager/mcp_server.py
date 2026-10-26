@@ -40,8 +40,8 @@ from rom_manager import mcp as rom_tools
 from rom_manager.api_client import Api
 from rom_manager.auth import get_client
 from rom_manager.romm import RommApi, get_romm_client
+from rom_manager.version import __version__
 
-__version__ = "3.3.5"
 print(f"ROM Manager MCP v{__version__}", file=sys.stderr)
 
 logger = get_logger(name="mcp_server")

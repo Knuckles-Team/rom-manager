@@ -57,8 +57,10 @@ def get_romm_client(
         # server construction, and no fleet connector has yet proven that
         # wiring end-to-end. This stays on the fleet-proven agent_connector_sdk
         # path pending that verification.
-        from agent_connector_sdk.auth.delegation import get_delegated_token
-        from agent_connector_sdk.auth.delegation import is_delegation_enabled
+        from agent_connector_sdk.auth.delegation import (
+            get_delegated_token,
+            is_delegation_enabled,
+        )
 
         if not token and is_delegation_enabled():
             token = get_delegated_token(
