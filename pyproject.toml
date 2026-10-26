@@ -4,12 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rom-manager"
-version = "3.3.6"
+version = "3.3.7"
 description = "ROM Converter/Organizer (CHD/RVZ) + MCP Server"
 readme = "README.md"
 classifiers = [ "Development Status :: 5 - Production/Stable", "License :: Public Domain", "Environment :: Console", "Operating System :: POSIX :: Linux", "Programming Language :: Python :: 3",]
 requires-python = ">=3.12, <3.15"
-dependencies = [ "agent-connector-sdk[mcp]>=0.4.1,<1.0.0", "python-dotenv>=1.2.4", "tqdm>=4.70.1", "requests>=2.34.2",]
+dependencies = [ "scion-sdk[mcp]>=0.5.6,<1.0.0", "python-dotenv>=1.2.4", "tqdm>=4.70.1", "requests>=2.34.2",]
 [[project.authors]]
 name = "Repository Maintainers"
 email = "maintainers@knuckles.team"
@@ -18,7 +18,7 @@ email = "maintainers@knuckles.team"
 text = "MIT"
 
 [project.optional-dependencies]
-mcp = [ "agent-connector-sdk[mcp]>=0.4.1,<1.0.0",]
+mcp = [ "scion-sdk[mcp]>=0.5.6,<1.0.0",]
 native = [ "patool>=4.1.0",]
 convert = [ "patool>=4.1.0",]
 all = [ "rom-manager[mcp,native]>=2.0.0",]
@@ -29,18 +29,12 @@ test = [
 rom-manager = "rom_manager.rom_manager:rom_manager"
 rom-manager-mcp = "rom_manager.mcp_server:mcp_server"
 
-[project.entry-points."agent_connector_sdk.skill_providers"]
-rom-manager = "rom_manager.skills"
-
-[project.entry-points."agent_connector_sdk.ontology_providers"]
-rom-manager = "rom_manager.ontology"
-
 [project.entry-points."agent_connector_sdk.prompt_providers"]
 rom-manager = "rom_manager.prompts"
 
 # The one declared connector identity: the fleet name (SDK-CONNECTOR-CONTROL-R071).
 [project.entry-points."agent_connector_sdk.connector"]
-rom-manager-mcp = "rom_manager"
+rom-manager-mcp = "rom_manager:connector"
 
 [tool.uv.workspace]
 members = ["."]
@@ -91,3 +85,6 @@ ignore_words = ["aggresive", "assasin", "bootup", "covert", "lightyear", "marz",
 
 [tool.pipelines.api_integration]
 baseline = 7.4
+
+[tool.setuptools.exclude-package-data]
+"*" = ["**/__pycache__/**", "**/*.pyc"]

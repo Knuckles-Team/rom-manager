@@ -33,7 +33,7 @@ import sys
 from typing import Any
 
 from agent_connector_sdk.config import load_config, setting
-from agent_connector_sdk.mcp.server import create_mcp_server
+from agent_connector_sdk.connector import build_server
 from agent_connector_sdk.mcp.tool_surface import register_tool_surface
 
 from rom_manager import mcp as rom_tools
@@ -66,7 +66,7 @@ def register_prompts(mcp: FastMCP):
     return None
 
 
-def get_mcp_instance() -> tuple[Any, Any, Any, Any]:
+def get_mcp_instance(*, command_args=None) -> tuple[Any, Any, Any, Any]:
     """Initialize and return the ROM Manager MCP instance, args, and middlewares.
 
     CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool, CONCEPT:RO-OS.governance.game-codes-naming-resolves — registers both tool domains and attaches
@@ -77,12 +77,12 @@ def get_mcp_instance() -> tuple[Any, Any, Any, Any]:
     os.environ["TERM"] = "dumb"
     os.environ["NO_COLOR"] = "1"
 
-    args, mcp, middlewares = create_mcp_server(
-        name="ROM Manager",
-        version=__version__,
-        instructions="ROM Manager MCP Server - Convert ROMs to CHD/RVZ, extract archives, generate cue sheets, and resolve game codes.",
-    )
+    args, mcp = build_server("rom_manager", command_args=command_args)
+    return mcp, args, list(mcp.middleware), mcp._rom_registered_tags
 
+
+def register_server_surface(mcp: FastMCP) -> list[str]:
+    """Register both existing tool domains and prompts once through the SDK."""
     registered_tags = register_tool_surface(
         mcp,
         client_cls=Api,
@@ -96,10 +96,7 @@ def get_mcp_instance() -> tuple[Any, Any, Any, Any]:
 
     register_prompts(mcp)
 
-    for mw in middlewares:
-        mcp.add_middleware(mw)
-
-    return mcp, args, middlewares, registered_tags
+    return registered_tags
 
 
 def mcp_server() -> None:
