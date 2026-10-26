@@ -30,3 +30,21 @@ __all__ = [
     "__author__",
     "__credits__",
 ]
+
+
+from agent_connector_sdk.connector import Connector
+from agent_connector_sdk.connector_hooks import RegistrationContext
+
+
+def _register_legacy_surface(context: RegistrationContext) -> None:
+    from rom_manager.mcp_server import register_server_surface
+
+    vars(context.server)["_rom_registered_tags"] = register_server_surface(
+        context.server
+    )
+
+
+connector = Connector(
+    instructions="ROM Manager MCP Server - Convert ROMs to CHD/RVZ, extract archives, generate cue sheets, and resolve game codes.",
+    extra_registrations=(_register_legacy_surface,),
+)
