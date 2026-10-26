@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
-__version__ = "3.3.5"
+from importlib.metadata import version as _distribution_version
+
+__version__ = _distribution_version("rom-manager")
 __author__ = "Project Maintainers"
 __credits__ = "Project Maintainers"

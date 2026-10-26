@@ -33,7 +33,7 @@ def test_lookup_unknown_code_returns_none():
     "raw,expected",
     [
         ("CLEAN TITLE", "CLEAN TITLE"),
-        ('BAD:NAME/HERE', "BADNAMEHERE"),
+        ("BAD:NAME/HERE", "BADNAMEHERE"),
         ("a<b>c|d?e", "abcde"),
     ],
 )

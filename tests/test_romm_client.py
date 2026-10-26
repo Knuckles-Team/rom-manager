@@ -69,7 +69,7 @@ def test_missing_url_raises():
 def test_get_builds_correct_url_and_params():
     client = RommApi(url="http://romm.test", username="u", password="p")
     session = FakeSession([FakeResponse(json_data={"roms": []})])
-    setattr(client, "_session", session)
+    client._session = session
     out = client.list_roms(platform_ids=7, limit=50, unused=None)
     assert out == {"roms": []}
     call = session.calls[0]
@@ -83,7 +83,7 @@ def test_get_builds_correct_url_and_params():
 def test_post_json_body():
     client = RommApi(url="http://romm.test", username="u", password="p")
     session = FakeSession([FakeResponse(json_data={"id": 3})])
-    setattr(client, "_session", session)
+    client._session = session
     out = client.delete_roms(roms=[1, 2])
     assert out == {"id": 3}
     call = session.calls[0]
@@ -122,6 +122,6 @@ def test_unauthorized_maps_to_exception():
     from agent_connector_sdk.exceptions import UnauthorizedError
 
     client = RommApi(url="http://romm.test", username="u", password="p")
-    setattr(client, "_session", FakeSession([FakeResponse(status_code=403, content=b"")]))
+    client._session = FakeSession([FakeResponse(status_code=403, content=b"")])
     with pytest.raises(UnauthorizedError):
         client.list_platforms()

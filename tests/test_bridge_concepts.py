@@ -30,22 +30,22 @@ def test_eco_4_0_unified_toolkit_ingestion():
 @pytest.mark.concept("AU-OS.config.secrets-authentication")
 def test_os_5_1_prompt_injection_defense():
     """OS-5.1 — guardrail/prompt-injection middleware is wired in the MCP server."""
-    assert "CONCEPT:AU-OS.config.secrets-authentication" in _module_source("rom_manager.mcp_server")
+    assert "CONCEPT:AU-OS.config.secrets-authentication" in _module_source(
+        "rom_manager.mcp_server"
+    )
 
 
 @pytest.mark.concept("AU-OS.governance.reactive-multi-axis-budget")
 def test_os_5_3_guardrail_engine():
     """OS-5.3 — guardrail engine is wired via the shared middleware."""
-    assert "CONCEPT:AU-OS.governance.reactive-multi-axis-budget" in _module_source("rom_manager.mcp_server")
+    assert "CONCEPT:AU-OS.governance.reactive-multi-axis-budget" in _module_source(
+        "rom_manager.mcp_server"
+    )
 
 
 @pytest.mark.concept("AU-OS.governance.wasm-micro-agent-sandbox")
 def test_os_5_4_audit_logging():
     """OS-5.4 — audit-logging middleware is wired in the MCP server."""
-    assert "CONCEPT:AU-OS.governance.wasm-micro-agent-sandbox" in _module_source("rom_manager.mcp_server")
-
-
-
-
-
-
+    assert "CONCEPT:AU-OS.governance.wasm-micro-agent-sandbox" in _module_source(
+        "rom_manager.mcp_server"
+    )

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rom-manager"
-version = "3.3.5"
+version = "3.3.6"
 description = "ROM Converter/Organizer (CHD/RVZ) + MCP Server"
 readme = "README.md"
 classifiers = [ "Development Status :: 5 - Production/Stable", "License :: Public Domain", "Environment :: Console", "Operating System :: POSIX :: Linux", "Programming Language :: Python :: 3",]
@@ -85,3 +85,9 @@ ignore_names = ["request", "config"]
 
 [tool.pipelines_hooks.ste]
 exempt = ["specs/*", "specs/**/*"]
+
+[tool.pipelines.codespell]
+ignore_words = ["aggresive", "assasin", "bootup", "covert", "lightyear", "marz", "mater", "nwo", "technic", "wille"]
+
+[tool.pipelines.api_integration]
+baseline = 7.4
