@@ -23,7 +23,9 @@ class _FakeTransport:
         self.requests: list[Any] = []
 
     async def source_status(self, _connector: str, _stream: str) -> Any:
-        return SimpleNamespace(accepted_checkpoint=None)
+        return SimpleNamespace(
+            connector=_connector, stream=_stream, accepted_checkpoint=None
+        )
 
     async def store_blob(self, data: bytes) -> str:
         self.stored_blobs.append(data)
