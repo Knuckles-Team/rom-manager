@@ -199,7 +199,7 @@ rom-manager-mcp --transport streamable-http --host 0.0.0.0 --port 8000
 ```
 
 > **Install the connector-focused `[mcp]` extra.** Examples use `rom-manager[mcp]` to add
-> FastMCP / FastAPI through `agent-connector-sdk`; the required Agent Connector SDK core
+> FastMCP / FastAPI through `scion-sdk`; the required Scion SDK core
 > enables model orchestration.
 
 #### stdio client config
@@ -292,7 +292,7 @@ the detailed transport contract.
 | `GAME_CODESTOOL` | `True` |  |
 | `ROMMTOOL` | `True` | Master switch for the RomM remote-library tools. |
 
-#### Inherited agent-connector-sdk variables (apply to every connector)
+#### Inherited scion-sdk variables (apply to every connector)
 
 | Variable | Example | Description |
 |----------|---------|-------------|
@@ -312,7 +312,7 @@ the detailed transport contract.
 | `PROVIDER` | `openai` | LLM provider for the agent |
 | `MODEL_ID` | `gpt-4o` | Model id for the agent |
 
-_32 package + 16 inherited variable(s). Auto-generated from `.env.example` + the shared agent-connector-sdk set — do not edit._
+_32 package + 16 inherited variable(s). Auto-generated from `.env.example` + the shared scion-sdk set — do not edit._
 <!-- ENV-VARS-TABLE:END -->
 
 All settings are optional — ROM Manager runs with sensible defaults and requires
@@ -348,7 +348,7 @@ Required only when using RomM (`roms`, `platforms`, … commands / `romm_*` tool
 | `ROMM_TLS_PROFILE` | — | Named TLS profile for private PKI, mTLS, or proxy policy. |
 | `ROMM_TLS_PROFILE_REF` | — | Secret reference containing the TLS profile. |
 
-### MCP / Framework Variables (agent-connector-sdk)
+### MCP / Framework Variables (scion-sdk)
 
 | Variable | Default | Description |
 |----------|---------|-------------|
@@ -376,7 +376,7 @@ not normally set them the operator.
 ## Security & Governance
 
 - **No credentials:** ROM Manager is a local tool with no service URL/token.
-- **Eunomia policies & OpenTelemetry:** inherited from the `agent-connector-sdk`
+- **Eunomia policies & OpenTelemetry:** inherited from the `scion-sdk`
   middleware (see `.env.example`).
 - **Destructive-op safety:** the agent recommends backing up ROMs before
   `clean_origin_files`/delete operations.
@@ -402,7 +402,7 @@ Pick the extra that matches what the operator want to run:
 | Extra | Installs | Use when |
 |-------|----------|----------|
 | `rom-manager` (core) | CLI converter + `Api` facade (no server tooling) | The operator only use the **CLI / Python API** |
-| `rom-manager[mcp]` | Connector-focused MCP server (`agent-connector-sdk` — FastMCP/FastAPI + `epistemic-graph[full]`) | The operator run the **MCP server** (smallest server install / image) |
+| `rom-manager[mcp]` | Connector-focused MCP server (`scion-sdk` — FastMCP/FastAPI + `epistemic-graph[full]`) | The operator run the **MCP server** (smallest server install / image) |
 | `rom-manager[native]` | + `patool` (archive extraction backends) | The operator convert archived ROMs locally |
 | `rom-manager[all]` | Everything (`mcp` + `agent` + `native` + `otel`) | Development / all surfaces |
 
@@ -429,7 +429,7 @@ agent (`immutable agent digest`) with a co-located `:mcp` sidecar.
 
 ### Knowledge-graph database (`epistemic-graph`)
 
-Agent Connector SDK core dependency (`epistemic-graph[full]`). The `[mcp]` extra keeps
+Scion SDK core dependency (`epistemic-graph[full]`). The `[mcp]` extra keeps
 deployments can use the bundled engine. For production or shared state, run
 **epistemic-graph as a dedicated database service** and configure the runtime to use it.
 Deployment recipes (single-node + Raft HA), connection configuration, and architecture
@@ -466,15 +466,15 @@ Preserve the real conversion pipeline — wrap `RomManager`, do not break it.
 
 MIT © Knuckles-Team
 
-<!-- BEGIN agent-connector-sdk-deployment (generated; do not edit between markers) -->
+<!-- BEGIN scion-sdk-deployment (generated; do not edit between markers) -->
 
-## Deploy with `agent-connector-sdk-deployment`
+## Deploy with `scion-sdk-deployment`
 
-Provision this package with the consolidated **`agent-connector-sdk-deployment`**
+Provision this package with the consolidated **`scion-sdk-deployment`**
 workflow. It selects an installed-package, editable-source, or immutable-container
 path; records only runtime secret and TLS-profile references in `AgentConfig`; and
 runs doctor, registration, policy, observability, and rollback gates. Ask your agent
-to **"deploy `rom-manager` with agent-connector-sdk-deployment"**.
+to **"deploy `rom-manager` with scion-sdk-deployment"**.
 
 | Install mode | Command |
 |------|---------|
@@ -485,7 +485,7 @@ The repository embeds no deployment profile, credential value, certificate path,
 environment-specific endpoint. Supply those at runtime through `AgentConfig` and the
 configured secret provider.
 
-<!-- END agent-connector-sdk-deployment -->
+<!-- END scion-sdk-deployment -->
 
 <!-- GOVERNED-CAPABILITY:START -->
 ## Governed capability contract

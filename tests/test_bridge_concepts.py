@@ -1,6 +1,6 @@
 """Cross-project bridge-concept wiring tests.
 
-These tests assert that the agent-connector-sdk *bridge* capabilities referenced in
+These tests assert that the scion-sdk *bridge* capabilities referenced in
 ``docs/concepts.md`` are genuinely wired into rom-manager's integration seams
 (the MCP server and the A2A agent server), not merely name-dropped in docs. Each
 test is tagged with the bridge CONCEPT id so the traceability scanner can link
@@ -21,7 +21,7 @@ def _module_source(dotted: str) -> str:
 
 @pytest.mark.concept("AU-ECO.messaging.native-backend-abstraction")
 def test_eco_4_0_unified_toolkit_ingestion():
-    """ECO-4.0 — MCP server registers tools via agent-connector-sdk create_mcp_server."""
+    """ECO-4.0 — MCP server registers tools via scion-sdk create_mcp_server."""
     src = _module_source("rom_manager.mcp_server")
     assert "create_mcp_server" in src
     assert "CONCEPT:AU-ECO.messaging.native-backend-abstraction" in src

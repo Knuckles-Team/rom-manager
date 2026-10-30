@@ -3,7 +3,7 @@
 CONCEPT:AU-KG.ingest.list-durable-media. When a live epistemic-graph engine is reachable,
 a game's cover / box art (or a ROM file itself) is stored as a content-addressed **blob**
 with a ``:MediaAsset`` graph node (carrying its RomM metadata) in ONE cross-modal ACID
-commit, via ``agent_connector_sdk.ingest``'s ``ChangeSet(media=(MediaAsset(...),))`` +
+commit, via ``scion_sdk.ingest``'s ``ChangeSet(media=(MediaAsset(...),))`` +
 ``KnowledgeIngest.submit``. This makes the raw bytes — not just a RomM URL or filesystem
 path — durable, deduped, and queryable inside the knowledge graph. The stored asset id is
 ``blob:<digest>``-derived (read back from the commit receipt's raw admissions), so it can
@@ -19,7 +19,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from agent_connector_sdk.ingest import (
+from scion_sdk.ingest import (
     ChangeSet,
     IngestBinding,
     IngestError,
