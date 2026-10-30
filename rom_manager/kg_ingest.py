@@ -6,7 +6,7 @@ the epistemic-graph knowledge graph as **typed OWL nodes** (``:Game``, ``:GameSy
 ``:GameCollection``, ``:GameSave``, ``:GameState``, ``:Firmware``) + links, matching the
 classes federated by ``rom_manager.ontology`` (``rom.ttl``).
 
-The write path goes through ``agent_connector_sdk.ingest`` -- the generated
+The write path goes through ``scion_sdk.ingest`` -- the generated
 ``SourceIngest`` client, not a local ingestion helper. Engine failures are explicit and
 partial writes are never acknowledged. Node ids follow ``rom:<class>:<externalId>``.
 """
@@ -16,7 +16,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from agent_connector_sdk.ingest import (
+from scion_sdk.ingest import (
     ChangeSet,
     Entity,
     EntityRef,

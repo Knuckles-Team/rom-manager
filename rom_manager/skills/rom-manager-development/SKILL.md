@@ -10,7 +10,7 @@ license: MIT
 tags: [rom-manager, development, connector, test, gates]
 tier: repository
 metadata:
-  author: Genius
+  author: Knuckles-Team
   version: '0.1.0'
 ---
 
@@ -18,7 +18,7 @@ metadata:
 
 This repository owns local ROM conversion, RomM library calls, their MCP tools,
 packaged connector content, and the rom-manager agent entry points. Shared
-connector contracts and transports belong to `agent-connector-sdk`; admission,
+connector contracts and transports belong to `scion-sdk`; admission,
 serving, and durable graph state belong to their owning repositories. Read
 `AGENTS.md` before changing code and keep provider credentials, ROM paths, and
 endpoints out of source, logs, and skill content.

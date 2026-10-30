@@ -1,6 +1,6 @@
 """Native epistemic-graph blob ingestion (cover art / ROM bytes) — Wire-First coverage.
 
-Exercises ``ingest_cover`` / ``ingest_rom_file`` against a fake ``agent_connector_sdk.ingest``
+Exercises ``ingest_cover`` / ``ingest_rom_file`` against a fake ``scion_sdk.ingest``
 transport (no engine required), asserting the stored media asset's bytes, provenance
 ``extra``, and that missing bytes / no reachable engine both no-op cleanly.
 CONCEPT:AU-KG.ingest.list-durable-media.
@@ -12,7 +12,7 @@ from types import SimpleNamespace
 from typing import Any
 
 import pytest
-from agent_connector_sdk.ingest import KnowledgeIngest
+from scion_sdk.ingest import KnowledgeIngest
 
 from rom_manager.kg_media import ingest_cover, ingest_rom_file
 

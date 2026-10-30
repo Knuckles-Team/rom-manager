@@ -2,7 +2,7 @@
 """ROM Manager MCP server assembly.
 
 CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool, CONCEPT:RO-OS.governance.game-codes-naming-resolves — registers the conversion and game-codes tool
-domains. This server is the integration seam to agent-connector-sdk:
+domains. This server is the integration seam to scion-sdk:
 ``create_mcp_server`` wires the shared FastMCP middleware that implements the
 cross-project bridge capabilities — CONCEPT:AU-ECO.messaging.native-backend-abstraction (Unified Toolkit Ingestion),
 CONCEPT:AU-OS.config.secrets-authentication (Prompt Injection Defense), CONCEPT:AU-OS.governance.reactive-multi-axis-budget (Guardrail Engine) and
@@ -32,9 +32,9 @@ import os
 import sys
 from typing import Any
 
-from agent_connector_sdk.config import load_config, setting
-from agent_connector_sdk.connector import build_server
-from agent_connector_sdk.mcp.tool_surface import register_tool_surface
+from scion_sdk.config import load_config, setting
+from scion_sdk.connector import build_server
+from scion_sdk.mcp.tool_surface import register_tool_surface
 
 from rom_manager import mcp as rom_tools
 from rom_manager.api_client import Api
@@ -70,7 +70,7 @@ def get_mcp_instance(*, command_args=None) -> tuple[Any, Any, Any, Any]:
     """Initialize and return the ROM Manager MCP instance, args, and middlewares.
 
     CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool, CONCEPT:RO-OS.governance.game-codes-naming-resolves — registers both tool domains and attaches
-    the agent-connector-sdk middleware stack (CONCEPT:AU-ECO.messaging.native-backend-abstraction).
+    the scion-sdk middleware stack (CONCEPT:AU-ECO.messaging.native-backend-abstraction).
     """
     load_config()
     os.environ["FASTMCP_LOG_LEVEL"] = "ERROR"

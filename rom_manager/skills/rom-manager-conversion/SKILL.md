@@ -11,7 +11,7 @@ description: >-
 license: MIT
 tags: [rom-manager, conversion, chd, rvz, roms, mcp]
 metadata:
-  author: Genius
+  author: Knuckles-Team
   version: '0.1.0'
 ---
 # ROM Manager — Conversion & Organising

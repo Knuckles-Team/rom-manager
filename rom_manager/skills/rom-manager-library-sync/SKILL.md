@@ -12,7 +12,7 @@ description: >-
 license: MIT
 tags: [rom-manager, romm, games, library, mcp, knowledge-graph]
 metadata:
-  author: Genius
+  author: Knuckles-Team
   version: '0.1.0'
 ---
 # ROM Manager — Library Sync

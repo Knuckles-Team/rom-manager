@@ -15,7 +15,7 @@ as the default working directory when none is supplied.
 import logging
 import os
 
-from agent_connector_sdk.config import setting
+from scion_sdk.config import setting
 
 from rom_manager.api_client import Api
 
