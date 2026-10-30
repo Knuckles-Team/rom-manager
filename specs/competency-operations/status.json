@@ -1,0 +1,18 @@
+{
+  "schema_version": 2,
+  "spec_id": "CONN-ROM-MANAGER-COMPETENCY-OPERATIONS",
+  "owner_repo": "rom-manager",
+  "delivery_state": "SPECIFIED",
+  "requirement_ids": [
+    "CONN-ROM-MANAGER-COMPETENCY-OPERATIONS-R001"
+  ],
+  "requirements": [
+    {
+      "id": "CONN-ROM-MANAGER-COMPETENCY-OPERATIONS-R001",
+      "title": "The connector must serve a `romm_roms` verify action that returns a checksum verdict for each ROM against its reference set. Proving test: `tests/test_romm_verify.py`",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    }
+  ]
+}
