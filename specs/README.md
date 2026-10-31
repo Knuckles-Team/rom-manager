@@ -14,3 +14,4 @@ Read the existing specs first. Extend the spec that owns the behavior. Create a 
 
 - [`connector-content`](connector-content/spec.md): `CONN-ROM-MANAGER-CONNECTOR-CONTENT`, the connector serves its packaged content.
 - [`connector-identity`](connector-identity/spec.md): `CONN-ROM-MANAGER-CONNECTOR-IDENTITY`, the connector is filed under its fleet name.
+- [`CONN-ROM-MANAGER-COMPETENCY-OPERATIONS`](competency-operations/spec.md) — Reference-set verification.
