@@ -9,7 +9,7 @@ description = "ROM Converter/Organizer (CHD/RVZ) + MCP Server"
 readme = "README.md"
 classifiers = [ "Development Status :: 5 - Production/Stable", "License :: Public Domain", "Environment :: Console", "Operating System :: POSIX :: Linux", "Programming Language :: Python :: 3",]
 requires-python = ">=3.12, <3.15"
-dependencies = [ "scion-sdk[mcp]>=0.6.4,<0.7.0", "python-dotenv>=1.2.4", "tqdm>=4.70.1", "requests>=2.34.2",]
+dependencies = [ "medulla>=3.0.0", "scion-sdk[mcp]>=0.6.4,<0.7.0", "python-dotenv>=1.2.4", "tqdm>=4.70.1", "requests>=2.34.2",]
 [[project.authors]]
 name = "Repository Maintainers"
 email = "maintainers@knuckles.team"

@@ -14,7 +14,7 @@ from types import SimpleNamespace
 from typing import Any
 
 import pytest
-from epistemic_graph.generated.source_ingestion import SourceIngestionRequest
+from medulla.generated.source_ingestion import SourceIngestionRequest
 from scion_sdk.ingest import IngestError, KnowledgeIngest
 
 from rom_manager.kg_ingest import (
