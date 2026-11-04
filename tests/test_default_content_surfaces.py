@@ -90,8 +90,8 @@ def test_sdk_floor_supports_content_identity_and_current_pack_protocol() -> None
         floor = max(
             Version(s.version) for s in requirement.specifier if s.operator == ">="
         )
-        assert floor >= Version("0.6.3")
-        assert not requirement.specifier.contains("0.7.0")
+        assert floor >= Version("0.7.0")
+        assert not requirement.specifier.contains("0.8.0")
         assert not requirement.specifier.contains("0.5.9")
 
 

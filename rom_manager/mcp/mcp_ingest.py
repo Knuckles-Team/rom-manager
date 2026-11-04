@@ -1,4 +1,4 @@
-"""MCP tools that natively ingest the RomM library into epistemic-graph.
+"""MCP tools that natively ingest the RomM library into medulla.
 
 CONCEPT:AU-KG.ingest.enterprise-source-extractor. Wire-First: each tool lists records
 via the real :class:`RommApi` client (``get_romm_client``) and pushes them into the
@@ -49,7 +49,7 @@ def register_ingest_tools(mcp: FastMCP) -> None:
             default=None, description="MCP context for progress reporting"
         ),
     ) -> Any:
-        """Natively ingest RomM ROMs into epistemic-graph as typed ``:Game`` nodes.
+        """Natively ingest RomM ROMs into medulla as typed ``:Game`` nodes.
 
         Lists ROMs via the RomM API and pushes them (with their ``:GameSystem`` +
         ``:onSystem`` links) into the knowledge graph via the fast engine client.
@@ -79,7 +79,7 @@ def register_ingest_tools(mcp: FastMCP) -> None:
             default=None, description="MCP context for progress reporting"
         ),
     ) -> Any:
-        """Natively ingest RomM platforms into epistemic-graph as ``:GameSystem`` nodes.
+        """Natively ingest RomM platforms into medulla as ``:GameSystem`` nodes.
 
         Best-effort: returns ``{"ingested": None}`` when no engine is reachable.
         CONCEPT:AU-KG.ingest.enterprise-source-extractor.
@@ -107,7 +107,7 @@ def register_ingest_tools(mcp: FastMCP) -> None:
             default=None, description="MCP context for progress reporting"
         ),
     ) -> Any:
-        """Natively ingest RomM collections into epistemic-graph as ``:GameCollection`` nodes.
+        """Natively ingest RomM collections into medulla as ``:GameCollection`` nodes.
 
         Best-effort: returns ``{"ingested": None}`` when no engine is reachable.
         CONCEPT:AU-KG.ingest.enterprise-source-extractor.

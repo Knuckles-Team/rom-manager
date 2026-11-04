@@ -1,4 +1,4 @@
-"""Native epistemic-graph blob ingestion (cover art / ROM bytes) — Wire-First coverage.
+"""Native medulla blob ingestion (cover art / ROM bytes) — Wire-First coverage.
 
 Exercises ``ingest_cover`` / ``ingest_rom_file`` against a fake ``scion_sdk.ingest``
 transport (no engine required), asserting the stored media asset's bytes, provenance
@@ -52,13 +52,13 @@ class _FakeTransport:
 
 class _UnavailableTransport:
     async def source_status(self, _connector: str, _stream: str) -> Any:
-        raise RuntimeError("epistemic-graph is unreachable")
+        raise RuntimeError("medulla is unreachable")
 
     async def submit(self, _request: Any) -> Any:
-        raise RuntimeError("epistemic-graph is unreachable")
+        raise RuntimeError("medulla is unreachable")
 
     async def store_blob(self, _data: bytes) -> str:
-        raise RuntimeError("epistemic-graph is unreachable")
+        raise RuntimeError("medulla is unreachable")
 
 
 @pytest.fixture
