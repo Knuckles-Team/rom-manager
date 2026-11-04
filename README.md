@@ -402,7 +402,7 @@ Pick the extra that matches what the operator want to run:
 | Extra | Installs | Use when |
 |-------|----------|----------|
 | `rom-manager` (core) | CLI converter + `Api` facade (no server tooling) | The operator only use the **CLI / Python API** |
-| `rom-manager[mcp]` | Connector-focused MCP server (`scion-sdk` — FastMCP/FastAPI + `epistemic-graph[full]`) | The operator run the **MCP server** (smallest server install / image) |
+| `rom-manager[mcp]` | Connector-focused MCP server (`scion-sdk` — FastMCP/FastAPI + `medulla[full]`) | The operator run the **MCP server** (smallest server install / image) |
 | `rom-manager[native]` | + `patool` (archive extraction backends) | The operator convert archived ROMs locally |
 | `rom-manager[all]` | Everything (`mcp` + `agent` + `native` + `otel`) | Development / all surfaces |
 
@@ -419,7 +419,7 @@ One multi-stage `docker/Dockerfile` builds the MCP-only image (`--target mcp`):
 
 | Image tag | Build target | Contents | Entrypoint |
 |-----------|--------------|----------|------------|
-| `example/rom-manager:mcp` | `--target mcp` | `rom-manager[mcp]` — **connector-focused**, includes `epistemic-graph[full]`; no model-orchestration stack | `rom-manager-mcp` |
+| `example/rom-manager:mcp` | `--target mcp` | `rom-manager[mcp]` — **connector-focused**, includes `medulla[full]`; no model-orchestration stack | `rom-manager-mcp` |
 
 ```bash
 docker build --target mcp   -t example/rom-manager:mcp    docker/   # connector-focused MCP server
@@ -427,14 +427,14 @@ docker build --target mcp   -t example/rom-manager:mcp    docker/   # connector-
 
 agent (`immutable agent digest`) with a co-located `:mcp` sidecar.
 
-### Knowledge-graph database (`epistemic-graph`)
+### Knowledge-graph database (`medulla`)
 
-Scion SDK core dependency (`epistemic-graph[full]`). The `[mcp]` extra keeps
+Scion SDK core dependency (`medulla[full]`). The `[mcp]` extra keeps
 deployments can use the bundled engine. For production or shared state, run
-**epistemic-graph as a dedicated database service** and configure the runtime to use it.
+**medulla as a dedicated database service** and configure the runtime to use it.
 Deployment recipes (single-node + Raft HA), connection configuration, and architecture
 diagrams are documented in the
-[epistemic-graph deployment guide](https://knuckles-team.github.io/epistemic-graph/deployment/).
+[medulla deployment guide](https://knuckles-team.github.io/medulla/deployment/).
 
 ---
 

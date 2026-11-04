@@ -1,4 +1,4 @@
-"""Native epistemic-graph typed-node ingestion -- Wire-First coverage.
+"""Native medulla typed-node ingestion -- Wire-First coverage.
 
 Exercises the real ``ingest_entities`` / ``ingest_roms`` / ``ingest_platforms`` /
 ``ingest_collections`` seam against a fake ``scion_sdk.ingest`` transport (no
@@ -14,7 +14,7 @@ from types import SimpleNamespace
 from typing import Any
 
 import pytest
-from epistemic_graph.generated.source_ingestion import SourceIngestionRequest
+from medulla.generated.source_ingestion import SourceIngestionRequest
 from scion_sdk.ingest import IngestError, KnowledgeIngest
 
 from rom_manager.kg_ingest import (
@@ -26,7 +26,7 @@ from rom_manager.kg_ingest import (
 
 
 class _FakeTransport:
-    """Records every submitted request; no epistemic-graph engine required."""
+    """Records every submitted request; no medulla engine required."""
 
     def __init__(self) -> None:
         self.requests: list[SourceIngestionRequest] = []

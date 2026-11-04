@@ -1,8 +1,8 @@
-"""Native epistemic-graph ingestion for RomM library records (typed graph nodes).
+"""Native medulla ingestion for RomM library records (typed graph nodes).
 
 CONCEPT:AU-KG.ingest.enterprise-source-extractor. This is the record-source twin of
 ``kg_media`` (blob ingestion): the package natively pushes its RomM library data into
-the epistemic-graph knowledge graph as **typed OWL nodes** (``:Game``, ``:GameSystem``,
+the medulla knowledge graph as **typed OWL nodes** (``:Game``, ``:GameSystem``,
 ``:GameCollection``, ``:GameSave``, ``:GameState``, ``:Firmware``) + links, matching the
 classes federated by ``rom_manager.ontology`` (``rom.ttl``).
 
@@ -67,7 +67,7 @@ async def ingest_entities(
     *,
     ingest: KnowledgeIngest | None = None,
 ) -> dict[str, int]:
-    """Write typed nodes (+ edges) into epistemic-graph via the SDK ingest facade.
+    """Write typed nodes (+ edges) into medulla via the SDK ingest facade.
 
     Nodes use ``node_type`` and relationships use ``relationship``. ``ingest`` may be
     injected for isolated validation.

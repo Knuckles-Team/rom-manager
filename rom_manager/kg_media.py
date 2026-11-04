@@ -1,6 +1,6 @@
-"""Native epistemic-graph blob ingestion for ROM cover art and ROM binaries.
+"""Native medulla blob ingestion for ROM cover art and ROM binaries.
 
-CONCEPT:AU-KG.ingest.list-durable-media. When a live epistemic-graph engine is reachable,
+CONCEPT:AU-KG.ingest.list-durable-media. When a live medulla engine is reachable,
 a game's cover / box art (or a ROM file itself) is stored as a content-addressed **blob**
 with a ``:MediaAsset`` graph node (carrying its RomM metadata) in ONE cross-modal ACID
 commit, via ``scion_sdk.ingest``'s ``ChangeSet(media=(MediaAsset(...),))`` +

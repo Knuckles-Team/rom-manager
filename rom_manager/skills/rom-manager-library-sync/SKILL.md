@@ -92,7 +92,7 @@ rom_ingest_roms       params_json = "{\"platform_ids\": 12, \"limit\": 500}"
 ## Gotchas
 - `params_json` is a **string** of JSON, not an object — serialize it.
 - ROM `list` is paginated by `limit`/`offset` (offset pagination), not `page`.
-- `rom_ingest_*` is **best-effort**: with no reachable epistemic-graph engine it
+- `rom_ingest_*` is **best-effort**: with no reachable medulla engine it
   returns `{"ingested": null}` — that is success (no-op), not an error.
 - Ingested node ids are `rom:game:<id>` / `rom:system:<id>`; re-running MERGEs
   (idempotent upsert), it does not duplicate.
