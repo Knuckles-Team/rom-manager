@@ -10,7 +10,6 @@ auto-discovery (toggle env ``INGESTTOOL``).
 
 from __future__ import annotations
 
-import json
 from typing import Any
 
 from fastmcp import Context, FastMCP
@@ -39,11 +38,15 @@ def register_ingest_tools(mcp: FastMCP) -> None:
 
     @mcp.tool(name="rom_ingest_roms", tags={"ingest"})
     async def rom_ingest_roms(
-        params_json: str = Field(
-            default="{}",
-            description="JSON object of list_roms filters (e.g. platform_ids, "
-            "collection_id, search_term, limit, offset).",
+        search_term: str | None = Field(default=None, description="Filter by name."),
+        platform_ids: list[int] | None = Field(
+            default=None, description="Only ROMs on these platform ids."
         ),
+        collection_id: int | None = Field(
+            default=None, description="Only ROMs in this collection id."
+        ),
+        limit: int | None = Field(default=None, description="Page size."),
+        offset: int | None = Field(default=None, description="Page offset."),
         client=Depends(get_romm_client),
         ctx: Context | None = Field(
             default=None, description="MCP context for progress reporting"
@@ -58,10 +61,17 @@ def register_ingest_tools(mcp: FastMCP) -> None:
         """
         from rom_manager.kg_ingest import ingest_roms
 
-        try:
-            kwargs = json.loads(params_json) if params_json else {}
-        except Exception:  # noqa: BLE001
-            return {"error": "Operation failed"}
+        kwargs = {
+            k: v
+            for k, v in {
+                "search_term": search_term,
+                "platform_ids": platform_ids,
+                "collection_id": collection_id,
+                "limit": limit,
+                "offset": offset,
+            }.items()
+            if v is not None
+        }
         if ctx:
             await ctx.info("RomM ingest: listing ROMs")
         roms = _records(client.list_roms(**kwargs))
@@ -70,9 +80,8 @@ def register_ingest_tools(mcp: FastMCP) -> None:
 
     @mcp.tool(name="rom_ingest_platforms", tags={"ingest"})
     async def rom_ingest_platforms(
-        params_json: str = Field(
-            default="{}",
-            description="JSON object of list_platforms filters (e.g. updated_after).",
+        updated_after: str | None = Field(
+            default=None, description="Only records updated after this ISO timestamp."
         ),
         client=Depends(get_romm_client),
         ctx: Context | None = Field(
@@ -86,10 +95,7 @@ def register_ingest_tools(mcp: FastMCP) -> None:
         """
         from rom_manager.kg_ingest import ingest_platforms
 
-        try:
-            kwargs = json.loads(params_json) if params_json else {}
-        except Exception:  # noqa: BLE001
-            return {"error": "Operation failed"}
+        kwargs = {"updated_after": updated_after} if updated_after else {}
         if ctx:
             await ctx.info("RomM ingest: listing platforms")
         platforms = _records(client.list_platforms(**kwargs))
@@ -98,9 +104,8 @@ def register_ingest_tools(mcp: FastMCP) -> None:
 
     @mcp.tool(name="rom_ingest_collections", tags={"ingest"})
     async def rom_ingest_collections(
-        params_json: str = Field(
-            default="{}",
-            description="JSON object of list_collections filters.",
+        updated_after: str | None = Field(
+            default=None, description="Only records updated after this ISO timestamp."
         ),
         client=Depends(get_romm_client),
         ctx: Context | None = Field(
@@ -114,10 +119,7 @@ def register_ingest_tools(mcp: FastMCP) -> None:
         """
         from rom_manager.kg_ingest import ingest_collections
 
-        try:
-            kwargs = json.loads(params_json) if params_json else {}
-        except Exception:  # noqa: BLE001
-            return {"error": "Operation failed"}
+        kwargs = {"updated_after": updated_after} if updated_after else {}
         if ctx:
             await ctx.info("RomM ingest: listing collections")
         collections = _records(client.list_collections(**kwargs))
