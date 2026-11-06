@@ -72,8 +72,8 @@ Search by title:
 ```
 Ingest the whole library into the KG (typed nodes), one system at a time:
 ```
-rom_ingest_platforms  params_json = "{}"
-rom_ingest_roms       params_json = "{\"platform_ids\": 12, \"limit\": 500}"
+rom_ingest_platforms  (no arguments)
+rom_ingest_roms       platform_ids=[12] limit=500
 ```
 
 ## Gotchas
