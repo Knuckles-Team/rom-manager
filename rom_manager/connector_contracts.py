@@ -23,13 +23,18 @@ CONTRACTS = (
                     "iso_type",
                     "verbose",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
-                    Refusal("CONFIRMATION_REQUIRED", "the caller has not confirmed the destructive call"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
+                    Refusal(
+                        "CONFIRMATION_REQUIRED",
+                        "the caller has not confirmed the destructive call",
+                    ),
                 ),
             ),
             ToolStep(
@@ -42,13 +47,18 @@ CONTRACTS = (
                     "iso_type",
                     "verbose",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
-                    Refusal("CONFIRMATION_REQUIRED", "the caller has not confirmed the destructive call"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
+                    Refusal(
+                        "CONFIRMATION_REQUIRED",
+                        "the caller has not confirmed the destructive call",
+                    ),
                 ),
             ),
             ToolStep(
@@ -59,13 +69,18 @@ CONTRACTS = (
                     "iso_type",
                     "verbose",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
-                    Refusal("CONFIRMATION_REQUIRED", "the caller has not confirmed the destructive call"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
+                    Refusal(
+                        "CONFIRMATION_REQUIRED",
+                        "the caller has not confirmed the destructive call",
+                    ),
                 ),
             ),
         ),
@@ -79,39 +94,42 @@ CONTRACTS = (
                     "directory",
                     "extensions",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "rom_manager_generate_cue",
-                params=(
-                    "directory",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("directory",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
                 "rom_manager_rename_by_game_code",
-                params=(
-                    "file",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("file",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
-                    Refusal("CONFIRMATION_REQUIRED", "the caller has not confirmed the destructive call"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
+                    Refusal(
+                        "CONFIRMATION_REQUIRED",
+                        "the caller has not confirmed the destructive call",
+                    ),
                 ),
             ),
         ),
@@ -121,27 +139,23 @@ CONTRACTS = (
         (
             ToolStep(
                 "rom_manager_list_game_codes",
-                params=(
-                    "prefix",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("prefix",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "rom_manager_lookup_game_code",
-                params=(
-                    "code",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("code",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
@@ -152,28 +166,28 @@ CONTRACTS = (
         (
             ToolStep(
                 "rom_ingest_collections",
-                params=(
-                    "updated_after",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("updated_after",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
                 "rom_ingest_platforms",
-                params=(
-                    "updated_after",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("updated_after",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -185,12 +199,14 @@ CONTRACTS = (
                     "platform_ids",
                     "search_term",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
         ),
@@ -204,155 +220,143 @@ CONTRACTS = (
                     "local_export",
                     "platform_ids",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_fpkgi_feed",
-                params=(
-                    "platform_slug",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("platform_slug",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_kekatsu_feed",
-                params=(
-                    "platform_slug",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("platform_slug",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_pkgi_ps3_feed",
-                params=(
-                    "content_type",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("content_type",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_pkgi_psp_feed",
-                params=(
-                    "content_type",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("content_type",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_pkgi_psvita_feed",
-                params=(
-                    "content_type",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("content_type",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_pkgj_psp_dlc_feed",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_pkgj_psp_games_feed",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_pkgj_psvita_dlc_feed",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_pkgj_psvita_games_feed",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_pkgj_psx_games_feed",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_tinfoil_feed",
-                params=(
-                    "slug",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("slug",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_webrcade_feed",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
@@ -369,11 +373,11 @@ CONTRACTS = (
                     "id",
                     "optimistic",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
@@ -383,35 +387,33 @@ CONTRACTS = (
                     "device_id",
                     "id",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_get_save_identifiers",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_get_saves_summary",
-                params=(
-                    "rom_id",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("rom_id",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
@@ -423,11 +425,11 @@ CONTRACTS = (
                     "rom_id",
                     "slot",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
@@ -443,12 +445,14 @@ CONTRACTS = (
                     "rom_id",
                     "slot",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -457,12 +461,14 @@ CONTRACTS = (
                     "id",
                     "params_json",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -471,12 +477,14 @@ CONTRACTS = (
                     "id",
                     "params_json",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -485,12 +493,14 @@ CONTRACTS = (
                     "id",
                     "params_json",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -499,12 +509,14 @@ CONTRACTS = (
                     "id",
                     "params_json",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -513,13 +525,18 @@ CONTRACTS = (
                     "confirm",
                     "saves",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
-                    Refusal("CONFIRMATION_REQUIRED", "the caller has not confirmed the destructive call"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
+                    Refusal(
+                        "CONFIRMATION_REQUIRED",
+                        "the caller has not confirmed the destructive call",
+                    ),
                 ),
             ),
         ),
@@ -533,12 +550,14 @@ CONTRACTS = (
                     "file_path",
                     "rom_id",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
         ),
@@ -548,25 +567,23 @@ CONTRACTS = (
         (
             ToolStep(
                 "romm_get_state",
-                params=(
-                    "id",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("id",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_get_state_identifiers",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
@@ -576,11 +593,11 @@ CONTRACTS = (
                     "platform_id",
                     "rom_id",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
@@ -591,12 +608,14 @@ CONTRACTS = (
                     "file_path",
                     "rom_id",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -605,12 +624,14 @@ CONTRACTS = (
                     "id",
                     "params_json",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -619,13 +640,18 @@ CONTRACTS = (
                     "confirm",
                     "states",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
-                    Refusal("CONFIRMATION_REQUIRED", "the caller has not confirmed the destructive call"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
+                    Refusal(
+                        "CONFIRMATION_REQUIRED",
+                        "the caller has not confirmed the destructive call",
+                    ),
                 ),
             ),
         ),
@@ -635,14 +661,12 @@ CONTRACTS = (
         (
             ToolStep(
                 "romm_get_rom_note_identifiers",
-                params=(
-                    "id",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("id",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
@@ -654,11 +678,11 @@ CONTRACTS = (
                     "search",
                     "tags",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
@@ -668,12 +692,14 @@ CONTRACTS = (
                     "id",
                     "params_json",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -683,12 +709,14 @@ CONTRACTS = (
                     "note_id",
                     "params_json",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -698,13 +726,18 @@ CONTRACTS = (
                     "id",
                     "note_id",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
-                    Refusal("CONFIRMATION_REQUIRED", "the caller has not confirmed the destructive call"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
+                    Refusal(
+                        "CONFIRMATION_REQUIRED",
+                        "the caller has not confirmed the destructive call",
+                    ),
                 ),
             ),
         ),
@@ -714,38 +747,34 @@ CONTRACTS = (
         (
             ToolStep(
                 "romm_get_device",
-                params=(
-                    "device_id",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("device_id",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_list_devices",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_list_netplay_rooms",
-                params=(
-                    "game_id",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("game_id",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
@@ -755,12 +784,14 @@ CONTRACTS = (
                     "body",
                     "params_json",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -769,12 +800,14 @@ CONTRACTS = (
                     "device_id",
                     "params_json",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -783,13 +816,18 @@ CONTRACTS = (
                     "confirm",
                     "device_id",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
-                    Refusal("CONFIRMATION_REQUIRED", "the caller has not confirmed the destructive call"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
+                    Refusal(
+                        "CONFIRMATION_REQUIRED",
+                        "the caller has not confirmed the destructive call",
+                    ),
                 ),
             ),
         ),
@@ -803,12 +841,14 @@ CONTRACTS = (
                     "id",
                     "params_json",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
         ),
@@ -818,99 +858,89 @@ CONTRACTS = (
         (
             ToolStep(
                 "romm_get_collection",
-                params=(
-                    "id",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("id",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_get_collection_identifiers",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_get_smart_collection",
-                params=(
-                    "id",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("id",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_get_smart_collection_identifiers",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_get_virtual_collection",
-                params=(
-                    "id",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("id",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_get_virtual_collection_identifiers",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_list_collections",
-                params=(
-                    "updated_after",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("updated_after",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_list_smart_collections",
-                params=(
-                    "updated_after",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("updated_after",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
@@ -920,11 +950,11 @@ CONTRACTS = (
                     "limit",
                     "type",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
@@ -935,12 +965,14 @@ CONTRACTS = (
                     "is_favorite",
                     "is_public",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -949,12 +981,14 @@ CONTRACTS = (
                     "data",
                     "is_public",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -965,12 +999,14 @@ CONTRACTS = (
                     "is_public",
                     "remove_cover",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -980,12 +1016,14 @@ CONTRACTS = (
                     "id",
                     "is_public",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -994,13 +1032,18 @@ CONTRACTS = (
                     "confirm",
                     "id",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
-                    Refusal("CONFIRMATION_REQUIRED", "the caller has not confirmed the destructive call"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
+                    Refusal(
+                        "CONFIRMATION_REQUIRED",
+                        "the caller has not confirmed the destructive call",
+                    ),
                 ),
             ),
             ToolStep(
@@ -1009,13 +1052,18 @@ CONTRACTS = (
                     "confirm",
                     "id",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
-                    Refusal("CONFIRMATION_REQUIRED", "the caller has not confirmed the destructive call"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
+                    Refusal(
+                        "CONFIRMATION_REQUIRED",
+                        "the caller has not confirmed the destructive call",
+                    ),
                 ),
             ),
         ),
@@ -1025,14 +1073,12 @@ CONTRACTS = (
         (
             ToolStep(
                 "romm_get_firmware",
-                params=(
-                    "id",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("id",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
@@ -1043,22 +1089,22 @@ CONTRACTS = (
                     "file_name",
                     "id",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_get_firmware_identifiers",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
@@ -1068,24 +1114,22 @@ CONTRACTS = (
                     "file_name",
                     "id",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_list_firmware",
-                params=(
-                    "platform_id",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("platform_id",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
@@ -1095,12 +1139,14 @@ CONTRACTS = (
                     "file_path",
                     "platform_id",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -1110,13 +1156,18 @@ CONTRACTS = (
                     "delete_from_fs",
                     "firmware",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
-                    Refusal("CONFIRMATION_REQUIRED", "the caller has not confirmed the destructive call"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
+                    Refusal(
+                        "CONFIRMATION_REQUIRED",
+                        "the caller has not confirmed the destructive call",
+                    ),
                 ),
             ),
         ),
@@ -1126,49 +1177,45 @@ CONTRACTS = (
         (
             ToolStep(
                 "romm_get_platform",
-                params=(
-                    "id",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("id",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_get_platform_identifiers",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_get_supported_platforms",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_list_platforms",
-                params=(
-                    "updated_after",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("updated_after",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
@@ -1178,12 +1225,14 @@ CONTRACTS = (
                     "body",
                     "params_json",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -1192,12 +1241,14 @@ CONTRACTS = (
                     "body",
                     "params_json",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -1206,25 +1257,27 @@ CONTRACTS = (
                     "body",
                     "params_json",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
                 "romm_create_setup_platforms",
-                params=(
-                    "platforms",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("platforms",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -1233,12 +1286,14 @@ CONTRACTS = (
                     "id",
                     "params_json",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -1247,13 +1302,18 @@ CONTRACTS = (
                     "confirm",
                     "id",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
-                    Refusal("CONFIRMATION_REQUIRED", "the caller has not confirmed the destructive call"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
+                    Refusal(
+                        "CONFIRMATION_REQUIRED",
+                        "the caller has not confirmed the destructive call",
+                    ),
                 ),
             ),
             ToolStep(
@@ -1262,13 +1322,18 @@ CONTRACTS = (
                     "confirm",
                     "fs_slug",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
-                    Refusal("CONFIRMATION_REQUIRED", "the caller has not confirmed the destructive call"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
+                    Refusal(
+                        "CONFIRMATION_REQUIRED",
+                        "the caller has not confirmed the destructive call",
+                    ),
                 ),
             ),
             ToolStep(
@@ -1277,13 +1342,18 @@ CONTRACTS = (
                     "confirm",
                     "fs_slug",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
-                    Refusal("CONFIRMATION_REQUIRED", "the caller has not confirmed the destructive call"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
+                    Refusal(
+                        "CONFIRMATION_REQUIRED",
+                        "the caller has not confirmed the destructive call",
+                    ),
                 ),
             ),
         ),
@@ -1298,24 +1368,22 @@ CONTRACTS = (
                     "filename",
                     "rom_ids",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_get_rom",
-                params=(
-                    "id",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("id",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
@@ -1327,11 +1395,11 @@ CONTRACTS = (
                     "ra_hash",
                     "sha1_hash",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
@@ -1348,11 +1416,11 @@ CONTRACTS = (
                     "ss_id",
                     "tgdb_id",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
@@ -1364,46 +1432,44 @@ CONTRACTS = (
                     "file_name",
                     "id",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_get_rom_filters",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_get_rom_identifiers",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_get_romfile",
-                params=(
-                    "id",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("id",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
@@ -1414,11 +1480,11 @@ CONTRACTS = (
                     "file_name",
                     "id",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
@@ -1429,11 +1495,11 @@ CONTRACTS = (
                     "file_name",
                     "id",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
@@ -1450,24 +1516,22 @@ CONTRACTS = (
                     "platform_ids",
                     "search_term",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_search_cover",
-                params=(
-                    "search_term",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("search_term",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
@@ -1478,11 +1542,11 @@ CONTRACTS = (
                     "search_by",
                     "search_term",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
@@ -1493,12 +1557,14 @@ CONTRACTS = (
                     "filename",
                     "platform",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -1508,12 +1574,14 @@ CONTRACTS = (
                     "filename",
                     "id",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -1524,12 +1592,14 @@ CONTRACTS = (
                     "remove_cover",
                     "unmatch_metadata",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -1538,12 +1608,14 @@ CONTRACTS = (
                     "id",
                     "params_json",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -1552,13 +1624,18 @@ CONTRACTS = (
                     "confirm",
                     "id",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
-                    Refusal("CONFIRMATION_REQUIRED", "the caller has not confirmed the destructive call"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
+                    Refusal(
+                        "CONFIRMATION_REQUIRED",
+                        "the caller has not confirmed the destructive call",
+                    ),
                 ),
             ),
             ToolStep(
@@ -1568,13 +1645,18 @@ CONTRACTS = (
                     "delete_from_fs",
                     "roms",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
-                    Refusal("CONFIRMATION_REQUIRED", "the caller has not confirmed the destructive call"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
+                    Refusal(
+                        "CONFIRMATION_REQUIRED",
+                        "the caller has not confirmed the destructive call",
+                    ),
                 ),
             ),
         ),
@@ -1585,46 +1667,44 @@ CONTRACTS = (
             ToolStep(
                 "romm_get_current_user",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_get_user",
-                params=(
-                    "id",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("id",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_get_user_identifiers",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_list_users",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
@@ -1634,25 +1714,27 @@ CONTRACTS = (
                     "body",
                     "params_json",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
                 "romm_create_invite_link",
-                params=(
-                    "role",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("role",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -1661,12 +1743,14 @@ CONTRACTS = (
                     "body",
                     "params_json",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -1675,12 +1759,14 @@ CONTRACTS = (
                     "data",
                     "id",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -1689,13 +1775,18 @@ CONTRACTS = (
                     "confirm",
                     "id",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
-                    Refusal("CONFIRMATION_REQUIRED", "the caller has not confirmed the destructive call"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
+                    Refusal(
+                        "CONFIRMATION_REQUIRED",
+                        "the caller has not confirmed the destructive call",
+                    ),
                 ),
             ),
         ),
@@ -1710,12 +1801,14 @@ CONTRACTS = (
                     "scopes",
                     "username",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -1724,12 +1817,14 @@ CONTRACTS = (
                     "body",
                     "params_json",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -1738,45 +1833,53 @@ CONTRACTS = (
                     "body",
                     "params_json",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
                 "romm_login_via_openid",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
                 "romm_logout",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
                 "romm_oauth_openid",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -1785,13 +1888,18 @@ CONTRACTS = (
                     "body",
                     "params_json",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
-                    Refusal("CONFIRMATION_REQUIRED", "the caller has not confirmed the destructive call"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
+                    Refusal(
+                        "CONFIRMATION_REQUIRED",
+                        "the caller has not confirmed the destructive call",
+                    ),
                 ),
             ),
         ),
@@ -1802,11 +1910,11 @@ CONTRACTS = (
             ToolStep(
                 "romm_get_config",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
@@ -1816,70 +1924,66 @@ CONTRACTS = (
                     "dest",
                     "path",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_get_setup_library",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_head_raw_asset",
-                params=(
-                    "path",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("path",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_heartbeat",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_metadata_heartbeat",
-                params=(
-                    "source",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("source",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_stats",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
@@ -1889,12 +1993,14 @@ CONTRACTS = (
                     "body",
                     "params_json",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
@@ -1904,13 +2010,18 @@ CONTRACTS = (
                     "exclusion_type",
                     "exclusion_value",
                 ),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
-                    Refusal("CONFIRMATION_REQUIRED", "the caller has not confirmed the destructive call"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
+                    Refusal(
+                        "CONFIRMATION_REQUIRED",
+                        "the caller has not confirmed the destructive call",
+                    ),
                 ),
             ),
         ),
@@ -1920,61 +2031,61 @@ CONTRACTS = (
         (
             ToolStep(
                 "romm_get_task",
-                params=(
-                    "task_id",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("task_id",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_get_tasks_status",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_list_tasks",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
                     Refusal("NOT_FOUND", "the requested record does not exist"),
                 ),
             ),
             ToolStep(
                 "romm_run_all_tasks",
                 params=(),
-                result=(
-                    "result",
-                ),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
             ToolStep(
                 "romm_run_task",
-                params=(
-                    "task_name",
-                ),
-                result=(
-                    "result",
-                ),
+                params=("task_name",),
+                result=("result",),
                 refusals=(
-                    Refusal("ACCESS_DENIED", "the credential lacks access to the operation"),
-                    Refusal("INVALID_ARGUMENT", "the upstream system rejects the input"),
+                    Refusal(
+                        "ACCESS_DENIED", "the credential lacks access to the operation"
+                    ),
+                    Refusal(
+                        "INVALID_ARGUMENT", "the upstream system rejects the input"
+                    ),
                 ),
             ),
         ),
@@ -1993,9 +2104,7 @@ LINKS = (
             "librarian_specialist",
             "rom-manager-conversion-technician",
         ),
-        skills=(
-            "rom-manager-conversion-pipeline",
-        ),
+        skills=("rom-manager-conversion-pipeline",),
     ),
     SurfaceLink(
         "rom-manager-manage-files",
@@ -2008,9 +2117,7 @@ LINKS = (
             "librarian_specialist",
             "rom-manager-conversion-technician",
         ),
-        skills=(
-            "rom-manager-conversion-pipeline",
-        ),
+        skills=("rom-manager-conversion-pipeline",),
     ),
     SurfaceLink(
         "rom-manager-inspect-game-code",
@@ -2022,9 +2129,7 @@ LINKS = (
             "librarian_specialist",
             "rom-manager-conversion-technician",
         ),
-        skills=(
-            "rom-manager-code-registry",
-        ),
+        skills=("rom-manager-code-registry",),
     ),
     SurfaceLink(
         "rom-manager-manage-ingest",
@@ -2037,9 +2142,7 @@ LINKS = (
             "librarian_specialist",
             "rom-manager-library-curator",
         ),
-        skills=(
-            "rom-manager-library-sync",
-        ),
+        skills=("rom-manager-library-sync",),
     ),
     SurfaceLink(
         "rom-manager-inspect-feed",
@@ -2062,9 +2165,7 @@ LINKS = (
             "librarian_specialist",
             "rom-manager-catalog-publisher",
         ),
-        skills=(
-            "rom-manager-catalog-feeds",
-        ),
+        skills=("rom-manager-catalog-feeds",),
     ),
     SurfaceLink(
         "rom-manager-manage-save",
@@ -2085,22 +2186,16 @@ LINKS = (
             "librarian_specialist",
             "rom-manager-player-support",
         ),
-        skills=(
-            "rom-manager-player-assets",
-        ),
+        skills=("rom-manager-player-assets",),
     ),
     SurfaceLink(
         "rom-manager-manage-screenshot",
-        tools=(
-            "romm_add_screenshot",
-        ),
+        tools=("romm_add_screenshot",),
         prompts=(
             "librarian_specialist",
             "rom-manager-player-support",
         ),
-        skills=(
-            "rom-manager-player-assets",
-        ),
+        skills=("rom-manager-player-assets",),
     ),
     SurfaceLink(
         "rom-manager-manage-state",
@@ -2116,9 +2211,7 @@ LINKS = (
             "librarian_specialist",
             "rom-manager-player-support",
         ),
-        skills=(
-            "rom-manager-player-assets",
-        ),
+        skills=("rom-manager-player-assets",),
     ),
     SurfaceLink(
         "rom-manager-manage-note",
@@ -2133,9 +2226,7 @@ LINKS = (
             "librarian_specialist",
             "rom-manager-player-support",
         ),
-        skills=(
-            "rom-manager-player-assets",
-        ),
+        skills=("rom-manager-player-assets",),
     ),
     SurfaceLink(
         "rom-manager-manage-device",
@@ -2151,22 +2242,16 @@ LINKS = (
             "librarian_specialist",
             "rom-manager-player-support",
         ),
-        skills=(
-            "rom-manager-player-assets",
-        ),
+        skills=("rom-manager-player-assets",),
     ),
     SurfaceLink(
         "rom-manager-manage-achievement",
-        tools=(
-            "romm_refresh_retro_achievements",
-        ),
+        tools=("romm_refresh_retro_achievements",),
         prompts=(
             "librarian_specialist",
             "rom-manager-player-support",
         ),
-        skills=(
-            "rom-manager-player-assets",
-        ),
+        skills=("rom-manager-player-assets",),
     ),
     SurfaceLink(
         "rom-manager-manage-collection",
@@ -2191,9 +2276,7 @@ LINKS = (
             "librarian_specialist",
             "rom-manager-library-curator",
         ),
-        skills=(
-            "rom-manager-library-catalog",
-        ),
+        skills=("rom-manager-library-catalog",),
     ),
     SurfaceLink(
         "rom-manager-manage-firmware",
@@ -2210,9 +2293,7 @@ LINKS = (
             "librarian_specialist",
             "rom-manager-library-curator",
         ),
-        skills=(
-            "rom-manager-library-catalog",
-        ),
+        skills=("rom-manager-library-catalog",),
     ),
     SurfaceLink(
         "rom-manager-manage-platform",
@@ -2234,9 +2315,7 @@ LINKS = (
             "librarian_specialist",
             "rom-manager-library-curator",
         ),
-        skills=(
-            "rom-manager-library-catalog",
-        ),
+        skills=("rom-manager-library-catalog",),
     ),
     SurfaceLink(
         "rom-manager-manage-rom",
@@ -2265,9 +2344,7 @@ LINKS = (
             "librarian_specialist",
             "rom-manager-library-curator",
         ),
-        skills=(
-            "rom-manager-library-catalog",
-        ),
+        skills=("rom-manager-library-catalog",),
     ),
     SurfaceLink(
         "rom-manager-manage-account",
@@ -2286,9 +2363,7 @@ LINKS = (
             "librarian_specialist",
             "rom-manager-player-support",
         ),
-        skills=(
-            "rom-manager-accounts",
-        ),
+        skills=("rom-manager-accounts",),
     ),
     SurfaceLink(
         "rom-manager-manage-auth",
@@ -2305,9 +2380,7 @@ LINKS = (
             "librarian_specialist",
             "rom-manager-player-support",
         ),
-        skills=(
-            "rom-manager-accounts",
-        ),
+        skills=("rom-manager-accounts",),
     ),
     SurfaceLink(
         "rom-manager-manage-server",
@@ -2326,9 +2399,7 @@ LINKS = (
             "librarian_specialist",
             "rom-manager-platform-administrator",
         ),
-        skills=(
-            "rom-manager-server-administration",
-        ),
+        skills=("rom-manager-server-administration",),
     ),
     SurfaceLink(
         "rom-manager-manage-task",
@@ -2343,9 +2414,7 @@ LINKS = (
             "librarian_specialist",
             "rom-manager-platform-administrator",
         ),
-        skills=(
-            "rom-manager-server-administration",
-        ),
+        skills=("rom-manager-server-administration",),
     ),
     SurfaceLink(
         "rom-manager-conversion",
@@ -2353,12 +2422,8 @@ LINKS = (
             "rom_manager_convert",
             "rom_manager_process_file",
         ),
-        prompts=(
-            "librarian_specialist",
-        ),
-        skills=(
-            "rom-manager-conversion",
-        ),
+        prompts=("librarian_specialist",),
+        skills=("rom-manager-conversion",),
     ),
     SurfaceLink(
         "rom-manager-game-codes",
@@ -2366,12 +2431,8 @@ LINKS = (
             "rom_manager_list_game_codes",
             "rom_manager_lookup_game_code",
         ),
-        prompts=(
-            "librarian_specialist",
-        ),
-        skills=(
-            "rom-manager-game-codes",
-        ),
+        prompts=("librarian_specialist",),
+        skills=("rom-manager-game-codes",),
     ),
     SurfaceLink(
         "rom-manager-library-sync",
@@ -2380,12 +2441,8 @@ LINKS = (
             "rom_ingest_platforms",
             "rom_ingest_roms",
         ),
-        prompts=(
-            "librarian_specialist",
-        ),
-        skills=(
-            "rom-manager-library-sync",
-        ),
+        prompts=("librarian_specialist",),
+        skills=("rom-manager-library-sync",),
     ),
     SurfaceLink(
         "rom-manager-operations",
@@ -2394,61 +2451,45 @@ LINKS = (
             "romm_heartbeat",
             "romm_list_roms",
         ),
-        prompts=(
-            "librarian_specialist",
-        ),
-        skills=(
-            "rom-manager-operations",
-        ),
+        prompts=("librarian_specialist",),
+        skills=("rom-manager-operations",),
     ),
 )
 
 LOCATIONS = (
     DataLocation(
         "rom-games",
-        (
-            "Game",
-        ),
+        ("Game",),
         "ROMM_HOST",
         "romm_list_roms",
     ),
     DataLocation(
         "rom-platforms",
-        (
-            "GameSystem",
-        ),
+        ("GameSystem",),
         "ROMM_HOST",
         "romm_list_platforms",
     ),
     DataLocation(
         "rom-collections",
-        (
-            "GameCollection",
-        ),
+        ("GameCollection",),
         "ROMM_HOST",
         "romm_list_collections",
     ),
     DataLocation(
         "rom-saves",
-        (
-            "GameSave",
-        ),
+        ("GameSave",),
         "ROMM_HOST",
         "romm_list_saves",
     ),
     DataLocation(
         "rom-states",
-        (
-            "GameState",
-        ),
+        ("GameState",),
         "ROMM_HOST",
         "romm_list_states",
     ),
     DataLocation(
         "rom-firmware",
-        (
-            "Firmware",
-        ),
+        ("Firmware",),
         "ROMM_HOST",
         "romm_list_firmware",
     ),
@@ -2488,9 +2529,7 @@ ROLES = (
     ),
     BusinessRole(
         "catalog publisher",
-        tasks=(
-            "rom-manager-inspect-feed",
-        ),
+        tasks=("rom-manager-inspect-feed",),
     ),
     BusinessRole(
         "platform administrator",

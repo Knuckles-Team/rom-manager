@@ -20,9 +20,9 @@ import json
 import sys
 from typing import Any
 
-from rom_manager.romm.tool_table import ROMM_TOOLS
 from rom_manager.romm.api import RommApi
 from rom_manager.romm.auth import get_romm_client
+from rom_manager.romm.tool_table import ROMM_TOOLS
 
 # Short resource name (e.g. "roms") -> {action: RommApi method}.
 RESOURCE_ACTIONS: dict[str, dict[str, str]] = {

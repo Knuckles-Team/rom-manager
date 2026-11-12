@@ -9,8 +9,8 @@ from pathlib import Path
 
 import pytest
 
-from rom_manager.romm.tool_table import ROMM_TOOLS
 from rom_manager.romm.api import RommApi
+from rom_manager.romm.tool_table import ROMM_TOOLS
 
 SPEC_PATH = (
     Path(__file__).resolve().parents[1] / "rom_manager" / "romm" / "openapi.json"
