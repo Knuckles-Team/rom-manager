@@ -14,7 +14,7 @@ def test_every_romm_operation_is_a_typed_tool(monkeypatch):
     monkeypatch.setenv("ROMMTOOL", "True")
     from rom_manager.mcp_server import get_mcp_instance
 
-    mcp, _, _, _ = get_mcp_instance()
+    mcp, _, _, _ = get_mcp_instance(command_args=[])
 
     async def names():
         async with Client(mcp) as client:
@@ -31,5 +31,5 @@ def test_get_mcp_instance_builds_with_romm(monkeypatch):
     monkeypatch.setenv("ROMMTOOL", "True")
     from rom_manager.mcp_server import get_mcp_instance
 
-    mcp, args, middlewares, registered_tags = get_mcp_instance()
+    mcp, args, middlewares, registered_tags = get_mcp_instance(command_args=[])
     assert mcp is not None

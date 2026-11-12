@@ -23,7 +23,7 @@ def test_conversion_and_game_code_tools_are_typed():
 
     from rom_manager.mcp_server import get_mcp_instance
 
-    mcp, _, _, _ = get_mcp_instance()
+    mcp, _, _, _ = get_mcp_instance(command_args=[])
 
     async def names():
         async with Client(mcp) as client:
@@ -48,5 +48,5 @@ def test_get_mcp_instance_smoke():
     """The full server assembly should build without raising."""
     from rom_manager.mcp_server import get_mcp_instance
 
-    mcp, args, middlewares, registered_tags = get_mcp_instance()
+    mcp, args, middlewares, registered_tags = get_mcp_instance(command_args=[])
     assert mcp is not None
