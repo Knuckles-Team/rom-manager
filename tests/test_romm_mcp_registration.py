@@ -1,36 +1,29 @@
 """RomM MCP tool registration tests (CONCEPT:RO-OS.state.api-base-one-mixin)."""
 
+import asyncio
+
 import pytest
 
-from rom_manager.mcp import register_romm_tools
-from rom_manager.mcp.mcp_romm import ROMM_TOOLS
-
-
-class FakeMCP:
-    def __init__(self):
-        self.names = []
-        self.tags = []
-
-    def tool(self, *args, **kwargs):
-        self.names.append(kwargs.get("name"))
-        self.tags.append(kwargs.get("tags"))
-
-        def decorator(fn):
-            return fn
-
-        return decorator
+from rom_manager.romm.tool_table import ROMM_TOOLS
 
 
 @pytest.mark.concept("RO-OS.state.api-base-one-mixin")
-def test_register_romm_tools_registers_every_resource():
-    mcp = FakeMCP()
-    register_romm_tools(mcp)
-    expected_names = {name for name, _t, _s, _a in ROMM_TOOLS}
-    assert set(mcp.names) == expected_names
-    flat_tags = {t for tags in mcp.tags if tags for t in tags}
-    assert "romm-roms" in flat_tags
-    assert "romm-system" in flat_tags
-    assert len(mcp.names) == 14
+def test_every_romm_operation_is_a_typed_tool(monkeypatch):
+    from fastmcp import Client
+
+    monkeypatch.setenv("ROMMTOOL", "True")
+    from rom_manager.mcp_server import get_mcp_instance
+
+    mcp, _, _, _ = get_mcp_instance()
+
+    async def names():
+        async with Client(mcp) as client:
+            return {t.name for t in await client.list_tools()}
+
+    served = asyncio.run(names())
+    methods = {m for _n, _t, _s, actions in ROMM_TOOLS for m in actions.values()}
+    missing = sorted(m for m in methods if f"romm_{m}" not in served)
+    assert not missing, missing
 
 
 @pytest.mark.concept("RO-OS.state.api-base-one-mixin")

@@ -1,20 +1,8 @@
-"""MCP tools for the RomM remote library API (CONCEPT:RO-OS.state.api-base-one-mixin).
+"""The RomM resource-group to API-method table the CLI is generated from (CONCEPT:RO-OS.state.api-base-one-mixin).
 
-One action-routed tool per RomM resource group, mirroring the conversion tool's
-``action`` + ``params_json`` shape. Each action maps 1:1 to a :class:`RommApi`
-method, giving full coverage of the RomM REST API. The tool/action map is
-declared once in :data:`ROMM_TOOLS`; :func:`register_romm_tools` builds and
-registers every tool from it.
+Each resource group maps command names to :class:`RommApi` methods, so the command line
+reaches every RomM operation. The MCP server exposes the same methods as one typed tool each.
 """
-
-import json
-from typing import Any
-
-from fastmcp import Context, FastMCP
-from fastmcp.dependencies import Depends
-from pydantic import Field
-
-from rom_manager.romm.auth import get_romm_client
 
 # Each entry: (tool_name, tag, summary, {action: RommApi method name}). Every RomM
 # operation is reachable through exactly one (tool, action) pair.
@@ -244,46 +232,3 @@ ROMM_TOOLS: list[tuple[str, str, str, dict[str, str]]] = [
         },
     ),
 ]
-
-
-def _make_romm_tool(
-    mcp: FastMCP, tool_name: str, tag: str, summary: str, actions: dict[str, str]
-) -> None:
-    """Register one action-routed RomM tool (CONCEPT:RO-OS.state.api-base-one-mixin)."""
-    action_list = ", ".join(f"'{a}'" for a in actions)
-
-    @mcp.tool(name=tool_name, tags={tag})
-    async def _romm_tool(
-        action: str = Field(description=f"Action to perform. One of: {action_list}."),
-        params_json: str = Field(
-            default="{}",
-            description="JSON object of keyword arguments for the action.",
-        ),
-        client=Depends(get_romm_client),
-        ctx: Context | None = Field(
-            default=None, description="MCP context for progress reporting"
-        ),
-    ) -> Any:
-        if ctx:
-            await ctx.info(f"RomM {tool_name}: {action}")
-        try:
-            kwargs = json.loads(params_json) if params_json else {}
-        except Exception:
-            return {"error": "Operation failed"}
-        if not isinstance(kwargs, dict):
-            return {"error": "params_json must be a JSON object"}
-        kwargs = {k: v for k, v in kwargs.items() if v is not None}
-        method = actions.get(action)
-        if method is None:
-            return {"error": f"Unknown action '{action}'. Valid actions: {action_list}"}
-        return getattr(client, method)(**kwargs)
-
-    _romm_tool.__doc__ = (
-        f"{summary}\n\nActions: {action_list}. (CONCEPT:RO-OS.state.api-base-one-mixin)"
-    )
-
-
-def register_romm_tools(mcp: FastMCP) -> None:
-    """Register every RomM resource tool on the given FastMCP server (CONCEPT:RO-OS.state.api-base-one-mixin)."""
-    for tool_name, tag, summary, actions in ROMM_TOOLS:
-        _make_romm_tool(mcp, tool_name, tag, summary, actions)

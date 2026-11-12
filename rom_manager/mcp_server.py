@@ -51,21 +51,6 @@ DEFAULT_ROM_DIRECTORY = setting("ROM_DIRECTORY", os.path.curdir)
 DEFAULT_ROM_ISO_TYPE = setting("ROM_ISO_TYPE", "chd")
 
 
-def register_prompts(mcp: FastMCP):
-    """Register externalized prompt templates (CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool).
-
-    Loads templates from ``rom_manager/prompts/`` rather than hardcoding them.
-    """
-    from rom_manager.prompts import load_prompt
-
-    @mcp.prompt(name="convert_rom")
-    def convert_rom(directory: str = ".", iso_type: str = "chd") -> str:
-        """Guided ROM conversion workflow prompt."""
-        return load_prompt("convert_rom").format(directory=directory, iso_type=iso_type)
-
-    return None
-
-
 def get_mcp_instance(*, command_args=None) -> tuple[Any, Any, Any, Any]:
     """Initialize and return the ROM Manager MCP instance, args, and middlewares.
 
@@ -82,7 +67,7 @@ def get_mcp_instance(*, command_args=None) -> tuple[Any, Any, Any, Any]:
 
 
 def register_server_surface(mcp: FastMCP) -> list[str]:
-    """Register both existing tool domains and prompts once through the SDK."""
+    """Register the existing tool domains once through the SDK."""
     registered_tags = register_tool_surface(
         mcp,
         client_cls=Api,
@@ -93,8 +78,6 @@ def register_server_surface(mcp: FastMCP) -> list[str]:
             {"client_cls": RommApi, "get_client": get_romm_client, "prefix": "romm"}
         ],
     )
-
-    register_prompts(mcp)
 
     return registered_tags
 

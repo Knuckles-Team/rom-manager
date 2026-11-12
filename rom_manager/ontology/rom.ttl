@@ -132,3 +132,4 @@
 
 # ontology-codemod R3
 <http://knuckles.team/kg#GameCollection> rdfs:subClassOf <http://knuckles.team/kg#Collection> .
+<http://knuckles.team/kg#Firmware> rdfs:subClassOf <http://knuckles.team/kg#Artifact> .

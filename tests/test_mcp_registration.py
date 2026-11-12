@@ -1,46 +1,46 @@
 """Verify MCP tool registration wiring.
 
-CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool, CONCEPT:RO-OS.governance.game-codes-naming-resolves — both tool domains register on the server.
+CONCEPT:RO-OS.identity.verifies-chdman-dolphin-tool, CONCEPT:RO-OS.governance.game-codes-naming-resolves - the conversion, game-code and RomM operations are served as typed tools.
 """
 
+import asyncio
 import importlib
 
 import pytest
 
 
 @pytest.mark.concept("RO-OS.identity.verifies-chdman-dolphin-tool")
-def test_register_functions_exported():
+def test_only_the_ingest_registrar_is_exported():
     mcp_pkg = importlib.import_module("rom_manager.mcp")
-    assert hasattr(mcp_pkg, "register_conversion_tools")
-    assert hasattr(mcp_pkg, "register_game_codes_tools")
+    assert hasattr(mcp_pkg, "register_ingest_tools")
+    assert not hasattr(mcp_pkg, "register_conversion_tools")
+    assert not hasattr(mcp_pkg, "register_game_codes_tools")
 
 
 @pytest.mark.concept("RO-OS.governance.game-codes-naming-resolves")
-def test_registration_invokes_tool_decorator():
-    """Calling register_*_tools should register a tool on a FastMCP instance."""
-    from rom_manager.mcp import (
-        register_conversion_tools,
-        register_game_codes_tools,
-    )
+def test_conversion_and_game_code_tools_are_typed():
+    from fastmcp import Client
 
-    registered_tags = []
+    from rom_manager.mcp_server import get_mcp_instance
 
-    class FakeMCP:
-        def tool(self, *args, **kwargs):
-            registered_tags.append(kwargs.get("tags"))
+    mcp, _, _, _ = get_mcp_instance()
 
-            def decorator(fn):
-                return fn
+    async def names():
+        async with Client(mcp) as client:
+            return {t.name for t in await client.list_tools()}
 
-            return decorator
-
-    mcp = FakeMCP()
-    register_conversion_tools(mcp)
-    register_game_codes_tools(mcp)
-
-    flat = {t for tags in registered_tags if tags for t in tags}
-    assert "conversion" in flat
-    assert "game-codes" in flat
+    served = asyncio.run(names())
+    for name in (
+        "rom_manager_convert",
+        "rom_manager_process_file",
+        "rom_manager_generate_cue",
+        "rom_manager_list_files",
+        "rom_manager_lookup_game_code",
+        "rom_manager_list_game_codes",
+    ):
+        assert name in served
+    assert "rom_conversion" not in served
+    assert "rom_game_codes" not in served
 
 
 @pytest.mark.concept("RO-OS.identity.verifies-chdman-dolphin-tool")

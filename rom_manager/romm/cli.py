@@ -11,7 +11,7 @@ form ``rom-manager <resource> <action> [positionals] [--flag value ...]``, e.g.:
     rom-manager stats
 
 Resource/action names map 1:1 to :class:`RommApi` methods — the same map the MCP
-tools use (:data:`rom_manager.mcp.mcp_romm.ROMM_TOOLS`) — so the CLI and tools
+tools use (:data:`rom_manager.romm.tool_table.ROMM_TOOLS`) — so the CLI and tools
 stay in lockstep.
 """
 
@@ -20,7 +20,7 @@ import json
 import sys
 from typing import Any
 
-from rom_manager.mcp.mcp_romm import ROMM_TOOLS
+from rom_manager.romm.tool_table import ROMM_TOOLS
 from rom_manager.romm.api import RommApi
 from rom_manager.romm.auth import get_romm_client
 

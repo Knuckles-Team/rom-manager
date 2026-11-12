@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from rom_manager.mcp.mcp_romm import ROMM_TOOLS
+from rom_manager.romm.tool_table import ROMM_TOOLS
 from rom_manager.romm.api import RommApi
 
 SPEC_PATH = (
