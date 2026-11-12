@@ -1,17 +1,9 @@
-"""MCP tool registration modules for rom-manager.
+"""MCP tool registration for rom-manager.
 
-Each domain has its own module with a register_*_tools function using the
-action-routed dynamic tool pattern.
+The conversion, game-code and RomM operations are served as one typed tool per client
+method by the SDK tool surface; only the knowledge-graph ingest tools register here.
 """
 
-from rom_manager.mcp.mcp_conversion import register_conversion_tools
-from rom_manager.mcp.mcp_game_codes import register_game_codes_tools
 from rom_manager.mcp.mcp_ingest import register_ingest_tools
-from rom_manager.mcp.mcp_romm import register_romm_tools
 
-__all__ = [
-    "register_conversion_tools",
-    "register_game_codes_tools",
-    "register_ingest_tools",
-    "register_romm_tools",
-]
+__all__ = ["register_ingest_tools"]
