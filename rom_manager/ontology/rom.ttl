@@ -1,7 +1,8 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix core: <https://knuckles-team.github.io/ontology/core#> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix dc: <http://purl.org/dc/terms/> .
-@prefix : <http://knuckles.team/kg#> .
+@prefix : <https://knuckles-team.github.io/ontology/connector/rom-manager#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
@@ -15,10 +16,12 @@
 # are NOT redefined here.
 
 :Game a owl:Class ;
+    rdfs:subClassOf core:Game ;
     rdfs:label "Game" ;
     rdfs:comment "A ROM / game title in the library, on a single system (romm_roms). Carries filesystem + external-provider metadata (IGDB, MobyGames, ScreenScraper, RetroAchievements)." .
 
 :GameSystem a owl:Class ;
+    rdfs:subClassOf core:GameSystem ;
     rdfs:label "Game System" ;
     rdfs:comment "A gaming platform / console the library organises games under, e.g. Nintendo 64, PlayStation, Game Boy Advance (romm_platforms)." .
 
@@ -27,10 +30,12 @@
     rdfs:comment "A user or virtual/smart grouping of games, e.g. a franchise or a favourites list (romm_collections)." .
 
 :GameSave a owl:Class ;
+    rdfs:subClassOf core:GameSave ;
     rdfs:label "Game Save" ;
     rdfs:comment "An in-game save file (battery/SRAM-style) attached to a Game (romm_saves)." .
 
 :GameState a owl:Class ;
+    rdfs:subClassOf core:GameState ;
     rdfs:label "Game State" ;
     rdfs:comment "An emulator save-state snapshot attached to a Game (romm_states)." .
 
@@ -55,7 +60,7 @@
     rdfs:label "has cover" ;
     rdfs:comment "Links a Game to its cover / box-art image, stored as a shared :AssetOccurrence." ;
     rdfs:domain :Game ;
-    rdfs:range :AssetOccurrence .
+    rdfs:range core:AssetOccurrence .
 
 :hasSave a owl:ObjectProperty ;
     rdfs:label "has save" ;
@@ -123,7 +128,7 @@
     rdfs:range xsd:integer ;
     rdfs:domain :GameSystem .
 
-<http://knuckles.team/kg/rom> a owl:Ontology ;
+<https://knuckles-team.github.io/ontology/connector/rom> a owl:Ontology ;
     rdfs:label "ROM Library Ontology" ;
     rdfs:comment """Retro-game / ROM library model — games, gaming systems, collections,
     save files, emulator save-states and firmware from a RomM library plus this package's
@@ -131,5 +136,5 @@
     :Blob classes. Federated into the scion-sdk knowledge-graph hub.""" .
 
 # ontology-codemod R3
-<http://knuckles.team/kg#GameCollection> rdfs:subClassOf <http://knuckles.team/kg#Collection> .
-<http://knuckles.team/kg#Firmware> rdfs:subClassOf <http://knuckles.team/kg#Artifact> .
+<https://knuckles-team.github.io/ontology/connector/rom-manager#GameCollection> rdfs:subClassOf <https://knuckles-team.github.io/ontology/core#Collection> .
+<https://knuckles-team.github.io/ontology/connector/rom-manager#Firmware> rdfs:subClassOf <https://knuckles-team.github.io/ontology/core#Artifact> .
