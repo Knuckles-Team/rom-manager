@@ -15,6 +15,27 @@ metadata:
 
 Use the typed tools of the `rom-manager` connector: one tool per upstream API operation, named `<operation>`. Each tool takes typed parameters; there is no `action` or `params_json` routing.
 
+## Steps
+
+1. Locate the item with `romm_list_roms` (`search_term`, `platform_ids`, `limit`) or `romm_list_platforms`.
+   Verify the result identifies one `id`.
+2. Read it with `romm_get_rom` (`id`) or `romm_get_platform` (`id`).
+   Verify the name and platform match the request.
+3. To identify a file, call `romm_get_rom_by_hash` with a hash such as `crc_hash`.
+   Verify the returned ROM name matches the file.
+4. To change metadata, state the fields and call `romm_update_rom` (`data`, `id`).
+   Verify with `romm_get_rom` that only those fields changed.
+5. To delete, get explicit approval and call `romm_delete_roms` (`confirm`, `roms`) with `confirm=true` and `delete_from_fs` false unless asked.
+   Verify `romm_get_rom` now returns not-found.
+
+## Failure recovery
+
+| Failure | Cause | Recovery |
+|---------|-------|----------|
+| HTTP 401 or 403 from a RomM tool | `ROMM_URL` with `ROMM_USERNAME` and `ROMM_PASSWORD` (or `ROMM_TOKEN`) missing, wrong, or the account lacks the role | Set valid RomM credentials for the `rom-manager` server and call `romm_heartbeat` (no parameters) to confirm; ask the operator for an account with the needed role |
+| Not-found for an id | The numeric `id` belongs to another record type, or the item was removed | Re-list with `romm_list_roms` or `romm_list_platforms` and copy the current `id` |
+| Destructive tool refused | `confirm=true` was not passed, or no operator approval was given | Describe the exact records to the operator, get approval, and pass `confirm=true` |
+
 ## Where the data lives
 
 - **rom-games** (`ROMM_HOST`): holds Game; read with `romm_list_roms`.

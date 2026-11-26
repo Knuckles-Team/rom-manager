@@ -15,6 +15,24 @@ metadata:
 
 Use the typed tools of the `rom-manager` connector: one tool per upstream API operation, named `<operation>`. Each tool takes typed parameters; there is no `action` or `params_json` routing.
 
+## Steps
+
+1. Take the serial from the file name or request and normalize its case.
+   Verify it matches a pattern like `SLUS-00594`.
+2. Look it up with `rom_manager_lookup_game_code` (`code`).
+   Verify the result is a title or an explicit miss.
+3. To browse a region, call `rom_manager_list_game_codes` (`prefix`) with `SLUS`, `SLES` or `SLPS`.
+   Verify the returned codes start with the prefix.
+4. Report the title with the region the prefix implies, taken from the `rom_manager_lookup_game_code` result.
+   Verify the same title is not claimed for a different region.
+
+## Failure recovery
+
+| Failure | Cause | Recovery |
+|---------|-------|----------|
+| Lookup misses | Code absent from the local registry | Call `rom_manager_list_game_codes` (`prefix`) to check nearby codes, and report an unknown title instead of guessing |
+| Wrong region title | Same game has a different serial per region | Look up the exact serial from the file name and do not reuse another region's code |
+
 ## Where the data lives
 
 - **rom-games** (`ROMM_HOST`): holds Game; read with `romm_list_roms`.
