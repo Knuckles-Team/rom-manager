@@ -23,6 +23,27 @@ serving, and durable graph state belong to their owning repositories. Read
 `AGENTS.md` before changing code and keep provider credentials, ROM paths, and
 endpoints out of source, logs, and skill content.
 
+## Steps
+
+1. Find the owning spec row with `git grep -n "<term>" -- specs`.
+   Verify an existing row is extended before adding new requirement text.
+2. Make the smallest change in the existing `RomManager` code or tool surface.
+   Verify with `git diff --stat` that only intended files changed.
+3. Run focused tests with `uv run --all-extras pytest tests/test_mcp_registration.py -q`.
+   Verify the run ends with all tests passed.
+4. Run the repository gate with `uvx pre-commit run --all-files`.
+   Verify every hook reports Passed.
+5. Stage reviewed paths with `git add -- <path>` and inspect `git diff --cached --name-status`.
+   Verify only intended files are staged before committing with the `Spec:` trailer.
+
+## Failure recovery
+
+| Failure | Cause | Recovery |
+|---------|-------|----------|
+| Pre-commit hook fails | Formatting, spelling or spec gate violation | Read the hook output, fix the named file, and re-stage that path |
+| Tests need missing binaries | A test calls `chdman` or a live RomM instead of the runner seams | Mock through the existing runner seams so the test passes without those binaries |
+| No spec row found | Requirement not yet declared | Extend the nearest spec under `specs/` first |
+
 ## Rapid delivery: the 5-minute contract
 
 Specs are already designed. Deliver small, reviewable slices and cite the

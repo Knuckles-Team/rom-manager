@@ -15,6 +15,25 @@ metadata:
 
 Use the typed tools of the `rom-manager` connector: one tool per upstream API operation, named `<operation>`. Each tool takes typed parameters; there is no `action` or `params_json` routing.
 
+## Steps
+
+1. List platforms with `romm_list_platforms` (no parameters) to pick the feed target.
+   Verify the platform slug exists.
+2. Fetch the matching feed such as `romm_tinfoil_feed` (`slug`) or `romm_webrcade_feed` (no parameters).
+   Verify the response is non-empty and well-formed.
+3. For a gamelist call `romm_export_gamelist` (`platform_ids`, `local_export`).
+   Verify the export covers the requested platforms.
+4. Spot-check one entry against `romm_get_rom` (`id`).
+   Verify its title and platform match the feed.
+
+## Failure recovery
+
+| Failure | Cause | Recovery |
+|---------|-------|----------|
+| HTTP 401 or 403 from a RomM tool | `ROMM_URL` with `ROMM_USERNAME` and `ROMM_PASSWORD` (or `ROMM_TOKEN`) missing, wrong, or the account lacks the role | Set valid RomM credentials for the `rom-manager` server and call `romm_heartbeat` (no parameters) to confirm; ask the operator for an account with the needed role |
+| Empty feed | Platform has no ROMs or the slug is wrong | Check `romm_list_platforms` for the exact slug and `romm_list_roms` (`platform_ids`) for content |
+| Local export not written | `local_export` was set where the server cannot write | Call `romm_export_gamelist` with `local_export` false and take the returned content |
+
 ## Where the data lives
 
 - **rom-games** (`ROMM_HOST`): holds Game; read with `romm_list_roms`.

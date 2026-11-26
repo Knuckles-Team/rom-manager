@@ -15,6 +15,27 @@ metadata:
 
 Use the typed tools of the `rom-manager` connector: one tool per upstream API operation, named `<operation>`. Each tool takes typed parameters; there is no `action` or `params_json` routing.
 
+## Steps
+
+1. Check liveness with `romm_heartbeat` (no parameters).
+   Verify it returns a healthy response.
+2. Read configuration and statistics with `romm_get_config` (no parameters) and `romm_stats` (no parameters).
+   Verify values are returned and keep secrets out of the report.
+3. List background jobs with `romm_list_tasks` (no parameters).
+   Verify the task you need is named exactly.
+4. Start a job with `romm_run_task` (`task_name`) after operator approval.
+   Verify with `romm_get_tasks_status` that it reports running or complete.
+5. To change exclusions, call `romm_add_exclusion` (`body`, `params_json`) after approval.
+   Verify the effect with `romm_get_config`.
+
+## Failure recovery
+
+| Failure | Cause | Recovery |
+|---------|-------|----------|
+| HTTP 401 or 403 from a RomM tool | `ROMM_URL` with `ROMM_USERNAME` and `ROMM_PASSWORD` (or `ROMM_TOKEN`) missing, wrong, or the account lacks the role | Set valid RomM credentials for the `rom-manager` server and call `romm_heartbeat` (no parameters) to confirm; ask the operator for an account with the needed role |
+| Task name rejected | Misspelled `task_name` | Copy the exact name from `romm_list_tasks` |
+| Destructive tool refused | `confirm=true` was not passed, or no operator approval was given | Describe the exact records to the operator, get approval, and pass `confirm=true` |
+
 ## Where the data lives
 
 - **rom-games** (`ROMM_HOST`): holds Game; read with `romm_list_roms`.

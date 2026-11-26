@@ -15,6 +15,27 @@ metadata:
 
 Use the typed tools of the `rom-manager` connector: one tool per upstream API operation, named `<operation>`. Each tool takes typed parameters; there is no `action` or `params_json` routing.
 
+## Steps
+
+1. Identify who is affected with `romm_list_users` (no parameters).
+   Verify the target user appears in the list.
+2. Read the account with `romm_get_user` (`id`).
+   Verify role and username match the request without echoing credentials.
+3. To invite a user, call `romm_create_invite_link` (`role`) after operator approval.
+   Verify a link is returned and share it only with the operator.
+4. To change an account, state the change and call `romm_update_user` (`data`, `id`).
+   Verify with `romm_get_user` that only the stated fields changed.
+5. To remove an account, get explicit approval and call `romm_delete_user` (`confirm`, `id`) with `confirm=true`.
+   Verify `romm_list_users` no longer lists it.
+
+## Failure recovery
+
+| Failure | Cause | Recovery |
+|---------|-------|----------|
+| HTTP 401 or 403 from a RomM tool | `ROMM_URL` with `ROMM_USERNAME` and `ROMM_PASSWORD` (or `ROMM_TOKEN`) missing, wrong, or the account lacks the role | Set valid RomM credentials for the `rom-manager` server and call `romm_heartbeat` (no parameters) to confirm; ask the operator for an account with the needed role |
+| User not found | Wrong `id` | List with `romm_list_users` and copy the `id` |
+| Destructive tool refused | `confirm=true` was not passed, or no operator approval was given | Describe the exact records to the operator, get approval, and pass `confirm=true` |
+
 ## Where the data lives
 
 - **rom-games** (`ROMM_HOST`): holds Game; read with `romm_list_roms`.

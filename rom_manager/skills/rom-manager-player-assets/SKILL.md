@@ -15,6 +15,27 @@ metadata:
 
 Use the typed tools of the `rom-manager` connector: one tool per upstream API operation, named `<operation>`. Each tool takes typed parameters; there is no `action` or `params_json` routing.
 
+## Steps
+
+1. Find the game with `romm_list_roms` (`search_term`).
+   Verify one `id` is chosen as the `rom_id`.
+2. List its assets with `romm_list_saves` (`rom_id`) and `romm_list_states` (`rom_id`).
+   Verify the entries belong to that ROM.
+3. To upload, call `romm_add_save` (`file_path`, `rom_id`, `emulator`) or `romm_add_state` (`file_path`, `rom_id`, `emulator`).
+   Verify the new entry appears in the matching list tool.
+4. To fetch a file, call `romm_download_save` (`id`, `dest`).
+   Verify the file exists at `dest` and is non-empty.
+5. To remove assets, get explicit approval and call `romm_delete_saves` (`confirm`, `saves`) with `confirm=true`.
+   Verify the list tool no longer returns them.
+
+## Failure recovery
+
+| Failure | Cause | Recovery |
+|---------|-------|----------|
+| HTTP 401 or 403 from a RomM tool | `ROMM_URL` with `ROMM_USERNAME` and `ROMM_PASSWORD` (or `ROMM_TOKEN`) missing, wrong, or the account lacks the role | Set valid RomM credentials for the `rom-manager` server and call `romm_heartbeat` (no parameters) to confirm; ask the operator for an account with the needed role |
+| Upload rejected | `file_path` unreadable or `rom_id` wrong | Confirm the path exists and the `rom_id` with `romm_get_rom` (`id`), then upload again with `romm_add_save` |
+| Destructive tool refused | `confirm=true` was not passed, or no operator approval was given | Describe the exact records to the operator, get approval, and pass `confirm=true` |
+
 ## Where the data lives
 
 - **rom-games** (`ROMM_HOST`): holds Game; read with `romm_list_roms`.

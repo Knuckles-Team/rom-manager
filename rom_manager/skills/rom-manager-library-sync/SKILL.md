@@ -2,13 +2,7 @@
 name: rom-manager-library-sync
 skill_type: skill
 description: >-
-  Browse and sync a RomM (romm.app) game library via the rom-manager MCP server —
-  list/search ROMs and platforms, browse collections, look up a ROM by hash, and
-  natively ingest games/systems into the knowledge graph as typed :Game/:GameSystem
-  nodes. Use when the agent must inventory a RomM server, find a specific game,
-  reconcile a library by CRC/MD5/SHA1 hash, or push the catalogue into the KG. Do
-  NOT use for on-disk ISO->CHD/RVZ conversion (rom-manager-conversion) or resolving
-  a serial code to a title (rom-manager-game-codes).
+  Browse and sync a RomM (romm.app) library via rom-manager: list/search ROMs, platforms and collections, look up a ROM by hash, and ingest games into the knowledge graph as :Game/:GameSystem nodes. Use to inventory a RomM server or reconcile by hash. Do NOT use for disc conversion (rom-manager-conversion) or serial lookups (rom-manager-game-codes).
 license: MIT
 tags: [rom-manager, romm, games, library, mcp, knowledge-graph]
 metadata:
@@ -17,9 +11,32 @@ metadata:
 ---
 # ROM Manager — Library Sync
 
+Scope: Browse and sync a RomM (romm.app) game library via the rom-manager MCP server — list/search ROMs and platforms, browse collections, look up a ROM by hash, and natively ingest games/systems into the knowledge graph as typed :Game/:GameSystem nodes. Use when the agent must inventory a RomM server, find a specific game, reconcile a library by CRC/MD5/SHA1 hash, or push the catalogue into the KG. Do NOT use for on-disk ISO->CHD/RVZ conversion (rom-manager-conversion) or resolving a serial code to a title (rom-manager-game-codes).
+
 Domain-typed access to a **RomM** remote game library through the `rom-manager`
 MCP server, plus the native path that mirrors the catalogue into the knowledge
 graph as typed `:Game` / `:GameSystem` / `:GameCollection` nodes.
+
+## Steps
+
+1. Confirm connectivity with `romm_platforms` action `list`.
+   Verify the platform list is non-empty and no auth error occurs.
+2. Find games with `romm_roms` action `search` or `list`, using `search_term`, `platform_ids`, `limit` and `offset`.
+   Verify the result count and the page window.
+3. Identify a file by hash with `romm_roms` action `by_hash` and one of `crc_hash`, `md5_hash`, `sha1_hash` or `ra_hash`.
+   Verify the returned ROM name matches the file.
+4. Ingest platforms first with `rom_ingest_platforms` (no arguments).
+   Verify `ingested` is a number, not null.
+5. Ingest ROMs with `rom_ingest_roms` and `platform_ids` plus `limit`.
+   Verify `ingested` is a number and spot-check a node id of the form `rom:game:<id>`.
+
+## Failure recovery
+
+| Failure | Cause | Recovery |
+|---------|-------|----------|
+| HTTP 401 or 403 from a RomM tool | `ROMM_URL` with `ROMM_USERNAME` and `ROMM_PASSWORD` (or `ROMM_TOKEN`) missing, wrong, or the account lacks the role | Set valid RomM credentials for the `rom-manager` server and call `romm_heartbeat` (no parameters) to confirm; ask the operator for an account with the needed role |
+| `ingested` is null | No reachable medulla engine; the call is a best-effort no-op | Ask the operator to restore the engine connection through Arbora, then call `rom_ingest_roms` again and check `ingested` |
+| Empty ROM list | Filter too narrow or offset past the end | Drop `search_term`, reset `offset` to 0, and call `romm_roms` action `list` with `platform_ids` |
 
 ## When to use
 - Inventory a RomM server: list platforms, list/search ROMs, browse collections.

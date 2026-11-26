@@ -9,6 +9,27 @@ description: >-
 
 Use the provider's governed MCP tools through Arbora delegation.
 
+## Steps
+
+1. Establish the verified session and tenant, and list the tool surface with the `find` operation of the Arbora MCP server.
+   Verify the rom-manager tools are listed before choosing one.
+2. Open the workflow catalog at `references/catalog.md` only if the request needs a provider-specific procedure.
+   Verify the procedure matches the tool names just discovered.
+3. Run a read-only tool first, for example `romm_heartbeat` (no parameters) or `rom_manager_list_files` (`directory`).
+   Verify it returns data without an auth error.
+4. For any change, present the impact to the operator and preview it by calling the Arbora tool without `execute=true`.
+   Verify the preview names the exact files or records affected.
+5. Execute the approved change and read the result back with the matching read tool such as `rom_manager_list_files` (`directory`).
+   Verify the observed state matches the stated impact.
+
+## Failure recovery
+
+| Failure | Cause | Recovery |
+|---------|-------|----------|
+| Tool not found | Stale tool name or schema | Re-run discovery with `find` and use the exact name returned |
+| HTTP 401 or 403 from a RomM tool | `ROMM_URL` with `ROMM_USERNAME` and `ROMM_PASSWORD` (or `ROMM_TOKEN`) missing, wrong, or the account lacks the role | Set valid RomM credentials for the `rom-manager` server and call `romm_heartbeat` (no parameters) to confirm; ask the operator for an account with the needed role |
+| Preview unavailable | The tool has no preview mode | Report that to the operator and require explicit approval before executing; read back the affected records after |
+
 ## Workflow
 
 1. Establish the verified GraphSession and tenant before discovery or retrieval.

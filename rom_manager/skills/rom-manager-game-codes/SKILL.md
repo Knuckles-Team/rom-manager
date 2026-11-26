@@ -2,12 +2,7 @@
 name: rom-manager-game-codes
 skill_type: skill
 description: >-
-  Resolve game serial/product codes to clean titles and rename ROM files by their
-  embedded code via the rom-manager MCP server — look up a code (e.g. SLUS-00594),
-  list the known code registry, or rename a file in-place from its code. Use when the
-  agent must normalise cryptic ROM filenames or map a serial to a human title. Do NOT
-  use for ISO->CHD/RVZ conversion (rom-manager-conversion) or browsing a RomM server
-  (rom-manager-library-sync).
+  Resolve game serial/product codes (e.g. SLUS-00594) to clean titles and rename ROM files by embedded code via rom-manager; list the code registry. Use to normalise cryptic ROM filenames or map a serial to a title. Do NOT use for ISO to CHD/RVZ conversion (rom-manager-conversion) or RomM browsing (rom-manager-library-sync).
 license: MIT
 tags: [rom-manager, game-codes, naming, roms, mcp]
 metadata:
@@ -16,9 +11,32 @@ metadata:
 ---
 # ROM Manager — Game Codes & Naming
 
+Scope: Resolve game serial/product codes to clean titles and rename ROM files by their embedded code via the rom-manager MCP server — look up a code (e.g. SLUS-00594), list the known code registry, or rename a file in-place from its code. Use when the agent must normalise cryptic ROM filenames or map a serial to a human title. Do NOT use for ISO->CHD/RVZ conversion (rom-manager-conversion) or browsing a RomM server (rom-manager-library-sync).
+
 Domain-typed access to the `rom-manager` game-code registry: turn a game serial /
 product code into its clean title, and rename ROM files in place using the code
 embedded in their filename.
+
+## Steps
+
+1. Look up the serial with `rom_game_codes` action `lookup` and `params_json` set to `{"code": "SLUS-00594"}`.
+   Verify the result is a clean title or null.
+2. On a null result, treat it as a clean miss and search RomM metadata with `romm_roms` action `search`.
+   Verify any title found comes from the RomM record, not a guess.
+3. Inspect the known registry with `rom_game_codes` action `list` and `params_json` set to `{}`.
+   Verify the expected region prefix such as `SLUS` is present.
+4. Before renaming, preview names with `rom_conversion` action `list_files` for the directory.
+   Verify the files hold embedded codes.
+5. Rename with `rom_game_codes` action `rename` and `params_json` naming the `file` or `directory`.
+   Verify the new names with `list_files` and that no file was lost.
+
+## Failure recovery
+
+| Failure | Cause | Recovery |
+|---------|-------|----------|
+| Lookup returns null | Code not in the local registry or wrong region prefix | Check the region prefix and spelling, then try `romm_roms` action `search` with `search_term` |
+| Rename produced unexpected names | Files carried a wrong or ambiguous embedded code | Stop, list the directory with `list_files`, and rename single files with `file` set instead of `directory` |
+| Tool error about params | `params_json` was passed as an object | Serialize `params_json` as a JSON string and call again with the same keys |
 
 ## When to use
 - Resolve a serial/product code (e.g. `SLUS-00594`, `SLES-02731`) to a title.

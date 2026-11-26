@@ -15,6 +15,27 @@ metadata:
 
 Use the typed tools of the `rom-manager` connector: one tool per upstream API operation, named `<operation>`. Each tool takes typed parameters; there is no `action` or `params_json` routing.
 
+## Steps
+
+1. List candidates with `rom_manager_list_files` (`directory`, `extensions`).
+   Verify only the intended images are listed.
+2. Choose `iso_type` for the platform and convert one file first with `rom_manager_process_file` (`file`, `iso_type`) after operator approval.
+   Verify the output file exists and report the size delta.
+3. For a whole directory call `rom_manager_process_directory` (`directory`, `iso_type`, `cpu_count`) keeping `clean_origin_files` false unless asked.
+   Verify every source has a converted target.
+4. Generate cue sheets for multi-track sets with `rom_manager_generate_cue` (`directory`).
+   Verify the `.cue` file lists every `.bin` track.
+5. Rename by serial with `rom_manager_rename_by_game_code` (`file`) after approval.
+   Verify the new name with `rom_manager_list_files`.
+
+## Failure recovery
+
+| Failure | Cause | Recovery |
+|---------|-------|----------|
+| Conversion tool fails | `chdman` or `dolphin-tool` missing from `PATH` | Install the missing binary and confirm with `chdman --help` or `dolphin-tool --help` before converting |
+| Destructive tool refused | No operator approval, or `clean_origin_files` set unintentionally | Ask the operator, and keep `clean_origin_files` false unless the user asked to reclaim space |
+| Nothing listed | Wrong `directory` or `extensions` | Pass an absolute `directory` and widen `extensions` in `rom_manager_list_files` |
+
 ## Where the data lives
 
 - **rom-games** (`ROMM_HOST`): holds Game; read with `romm_list_roms`.
